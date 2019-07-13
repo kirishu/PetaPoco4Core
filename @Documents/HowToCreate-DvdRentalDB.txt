@@ -1,0 +1,61 @@
+PostgreSql公式で紹介されているテストデータベース「dvdrental」の作り方
+    15のテーブル、7つのViewなどが入っているDBです。
+    see: http://www.postgresqltutorial.com/postgresql-sample-database/
+    ※前提
+        PostgreSqlサーバは構築済みであること
+        Peer認証ではなくmd5で他のユーザからpsqlコマンドが使えるようになっていること
+
+    ER図はこちら
+    http://www.postgresqltutorial.com/postgresql-sample-database/
+
+1.  DB作成
+    # psql -U postgres
+
+    postgres=# CREATE DATABASE dvdrental ENCODING 'UTF8';
+    postgres=# \q
+
+2.  スクリプト一式をダウンロードしてロードする
+    
+    # curl -O http://www.postgresqltutorial.com/wp-content/uploads/2017/10/dvdrental.zip
+    # unzip dvdrental.zip
+    # pg_restore -U postgres -d dvdrental ./dvdrental.tar
+    
+3.  testmanユーザを作って権限を付与する
+
+    # psql -U postgres -d dvdrental
+
+    dvdrental=# CREATE ROLE testman WITH LOGIN PASSWORD 'testman';
+    dvdrental=# CREATE SCHEMA testman authorization testman;
+    dvdrental=# GRANT CONNECT ON DATABASE dvdrental TO testman;
+
+    ※ロードすると全オブジェクトが「public」というスキーマで作られるので、testmaに変更する
+
+    dvdrental=# ALTER SCHEMA public RENAME TO testman;
+    dvdrental=# GRANT ALL ON ALL TABLES IN SCHEMA testman TO testman;
+
+    postgres=# \q
+
+    これでdvdrentalデータベースに、testman（パスワードもtestman）というユーザで利用が可能になりました。
+
+4.  Database.tt の設定例
+
+    // ******** 設定ここから *********
+    
+    DatabaseName = "dvdrental";
+    ConnectionString = "Server=192.168.1.100;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testman;";
+    ProviderName = "Npgsql";
+    Namespace = "ProjectName.Database.DvdRental";
+
+    ConvertPascalCase = true;       // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
+    
+    GeneratePocos = true;           // Pocoオブジェクトを作る
+    GenerateCommon = true;          // Databaseオブジェクトを作る
+    RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
+    
+    GenerateOperations = false;     // Pocoオブジェクト自身にメソッドを追加するならtrue（false推奨）
+    TrackModifiedColumns = true;    // 更新列自動追跡機能を使うならtrue（true推奨）
+    IncludeViews = true;            // Viewも対象にするならtrue
+    
+    ClassPrefix = "";
+    ClassSuffix = "";
+    // ******** 設定ここまで *********

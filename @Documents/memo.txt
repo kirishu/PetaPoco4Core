@@ -1,0 +1,6 @@
+.NET Core SDK 2.2.104以上が必要（.NET Core Test Explorerが必要とする）
+
+
+
+
+

@@ -1,0 +1,28 @@
+# Autosave files
+*~
+
+# build
+[Oo]bj/
+[Bb]in/
+packages/
+TestResults/
+.vs/
+
+# globs
+*.DS_Store
+*.sln.cache
+*.suo
+*.cache
+*.userprefs
+*.usertasks
+*.user
+test-results/
+Thumbs.db
+*.nupkg
+
+# resharper
+*_Resharper.*
+*.Resharper
+
+# dotCover
+*.dotCover

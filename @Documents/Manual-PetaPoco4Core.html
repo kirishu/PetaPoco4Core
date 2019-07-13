@@ -1,0 +1,2060 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PetaPocoExtension Manual</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <style>
+        /* ---------------------------------------------
+            * YUI3 global reset
+            --------------------------------------------- */
+        /*
+            Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+            Code licensed under the BSD License:
+            http://developer.yahoo.net/yui/license.txt
+            version: 3.0.0
+            build: 1549
+            */
+        html {
+            color: #000;
+            background: #fff;
+            background-color: transparent;
+            background-image: none;
+            height: 100%;
+        }
+
+        body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        fieldset, img {
+            border: 0;
+        }
+
+        address, caption, cite, code, dfn, em, strong, th, var {
+            font-style: normal;
+            font-weight: normal;
+        }
+        /*
+                li { list-style:none; }
+                caption,th{ text-align:left; }
+            */
+        li {
+            margin-left: 40px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-size: 100%;
+            font-weight: normal;
+        }
+
+        q:before, q:after {
+            content: '';
+        }
+
+        abbr, acronym {
+            border: 0;
+            font-variant: normal;
+        }
+
+        sup {
+            vertical-align: text-top;
+        }
+
+        sub {
+            vertical-align: text-bottom;
+        }
+
+        input, textarea, select {
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
+        legend {
+            color: #000;
+        }
+        /* ----------------------------------------- */
+        * {
+            font-size: 12px;
+            font-family: "メイリオ","MS UI Gothic";
+        }
+
+        h1 {
+            color: #6d9bc7;
+            font-size: 18pt;
+            font-weight: bold;
+            line-height: 1.1em;
+            margin-top: 40px;
+        }
+
+        h2 {
+            color: #6d9bc7;
+            font-size: 18pt;
+            font-weight: bold;
+            line-height: 1.1em;
+            margin-top: 40px;
+        }
+
+        h3 {
+            color: #606060;
+            font-size: 14pt;
+            font-weight: bold;
+            line-height: 1.1em;
+            margin-top: 30px;
+        }
+
+        h4 {
+            color: #7030a0;
+            font-size: 10pt;
+            font-weight: bold;
+            line-height: 1.1em;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        h5 {
+            font-weight: normal;
+            font-size: 10pt;
+        }
+
+        h6 {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* ***************************************** */
+        #area__left {
+            float: left;
+            position: fixed;
+            top: 0;
+            left: 0;
+            vertical-align: baseline;
+            overflow: auto;
+            height: 100%;
+        }
+
+        #area__menu {
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+            #area__menu ul {
+                margin-bottom: 20px;
+                margin: 0;
+                padding: 0;
+            }
+
+                #area__menu ul li {
+                    margin: 0;
+                    padding: 0;
+                    display: block;
+                    font-size: 12pt;
+                    font-weight: bold;
+                    line-height: 1.6em;
+                    cursor: pointer;
+                }
+
+        #area__content {
+            padding-left: 15px;
+        }
+
+        @media screen and (max-width:1023px) {
+            #area__left {
+                display: none;
+            }
+
+            #area__content {
+                margin-left: 0px;
+                border-left: 0;
+            }
+        }
+
+        @media screen and (min-width:1024px) {
+            #area__left {
+                display: block;
+                width: 300px;
+            }
+
+            #area__content {
+                margin-left: 300px;
+                border-left: 1px solid #aaa;
+            }
+        }
+
+        /* ***************************************** */
+        pre {
+            line-height: 140%;
+            background-color: #fff;
+        }
+
+            pre.prettyprint {
+                margin: 10px 10px 20px 20px;
+                background-color: #f8f8f8;
+                padding: 5px;
+                border-left: solid 4px #6d9bc7;
+                overflow: auto;
+            }
+
+                pre.prettyprint span {
+                    font-family: "ＭＳ ゴシック", Consolas, 'Courier New', Courier, Monaco, monospace !important;
+                }
+
+            pre.note {
+                white-space: pre-wrap;
+            }
+
+        .str {
+            color: #A31515;
+        }
+        /* String */
+        .kwd {
+            color: #0000FF;
+        }
+        /* Keyword */
+        .com {
+            color: #008000;
+        }
+        /* Comment */
+        .typ {
+            color: #2B91AF;
+        }
+        /* Type */
+        .lit {
+            color: #000000;
+        }
+        /* Literal */
+        .pun {
+            color: #000000;
+        }
+        /* Puncuation */
+        .pln {
+            color: #000000;
+        }
+        /* Plain */
+        .tag {
+            color: #FF0000;
+        }
+        /* Tag */
+        .atn {
+            color: #FF0000;
+        }
+        /* AttrName */
+        .atv {
+            color: #0000FF;
+        }
+        /* AttrValue */
+        .dec {
+            color: #f00;
+        }
+
+        /* ----------------------------------------- */
+        .table-mapping {
+            margin: 10px;
+        }
+
+            .table-mapping tbody tr:hover {
+                background-color: #ddd;
+            }
+
+            .table-mapping th {
+                border: 1px solid #ddd;
+                background-color: #004040;
+                color: #fff;
+                padding: 3px;
+            }
+
+            .table-mapping td {
+                border: 1px solid #ddd;
+                padding: 3px;
+                min-width: 100px;
+            }
+    </style>
+</head>
+<body>
+    <!-- メニューエリア -->
+    <div id="area__left">
+        <div id="area__menu">
+            <ul></ul>
+        </div>
+    </div>
+    <!-- メインコンテンツエリア -->
+    <div id="area__content">
+
+        <div style="text-align:right;font-style:italic">07-Jul-2019 &nbsp; kiri@syncnoah.com</div>
+        <p>きりはらカスタマイズ版</p>
+        <h1 style="margin:0;">PetaPoco4Coreの使い方</h1>
+        <h6>（PetaPoco v4.0.3 ベース）</h6>
+
+        <p>
+            .NET用micro-ORMです。
+        </p>
+        <p>
+            オリジナルの公式サイト [<a href="http://www.toptensoftware.com/petapoco/" target=_blank>http://www.toptensoftware.com/petapoco/</a>]
+        </p>
+        <br />
+
+        <p>
+            【特徴】
+            <ul>
+                <li>SQL文は自分で書く</li>
+                <li>マッピングは自動でやってくれる</li>
+                <li>みんな大好きLINQで操作</li>
+                <li>DMLのメソッドがひと通り揃っている</li>
+                <li>TextTemplateによる自動Entity生成機能あり</li>
+                <li>ADO.NETをラッピングしているだけなので、パフォーマンスは著名なORMの中でもトップクラス</li>
+                <li>.NET Framework時代の v4.0.3をベースに、.Net Standard 2.0用に修正を加えたものです</li>
+            </ul>
+        </p>
+
+        <p>
+            【注意】
+            <ul>
+                <li>このマニュアルは、オリジナルを継承したカスタムクラス「DatabaseExtension」を対象にしているので、オリジナルとは異なる点があります</li>
+                <li>さらにT4Templateも超カスタムしてます</li>
+                <li>このT4TemplateでEntityクラスを生成済みとして書いています</li>
+                <li>
+                    このマニュアル内で使っているサンプルDBは、MySQLの公式で紹介されている[employees]データベースです<br />
+                    <a href="https://dev.mysql.com/doc/employee/en/sakila-structure.html" target="_blank">https://dev.mysql.com/doc/employee/en/sakila-structure.html</a>
+                </li>
+            </ul>
+        </p>
+
+        <h2>使い方</h2>
+        <p>
+            まずLINQの理解があることが前提です。
+        </p>
+
+        <h3>接続</h3>
+
+        <h4>DBへ接続</h4>
+<pre class="prettyprint lang-cs">
+// アプリの起動時に接続文字列をセット（MySQLの例）
+Database.Employees.Config.ConnectionString
+    = "server=[SERVER_NAME];"
+    + "database=[DATABASE_NAME];"
+    + "uid=[USER_ID];"
+    + "pwd=[PASSWORD];"
+    + "SslMode=None;";
+
+using (var db = new Database.Employees.DB())
+{
+    // これで接続
+}
+</pre>
+<pre class="note">
+public staticメンバのConfig.ConnectionStringに接続文字列をセットして、Databasesオブジェクトのインスタンスを作成すれば繋がります。
+接続文字列のセットは、アプリケーションで最初に1回行えば、以降は省略できます。
+</pre>
+
+        <h4>別DBへ接続したいとき</h4>
+<pre class="prettyprint lang-cs">
+// 別DBの接続文字列
+var otherStr = "server=SERVER_ADDRESS;uid=hoge;pwd=fuga;database=OTHERDB;";
+
+// DatabaseExtensionを直接使う例
+// 接続文字列とDBプロバイダ名（ドライバ名）を指定すればOK
+using (var otherdb = new PetaPoco.DatabaseExtension(otherStr, "MySql.Data.MySqlClient"))
+{
+    // これで接続
+}
+</pre>
+        <p>対応しているRDBは下記の5種類</p>
+        <table class=table-mapping>
+            <tr>
+                <th>RDB</th>
+                <th>主なプロバイダ名</th>
+            </tr>
+            <tr>
+                <td>MS SQL Server</td>
+                <td>System.Data.SqlClient</td>
+            </tr>
+            <tr>
+                <td>MySQL / MariaDB</td>
+                <td>MySql.Data.MySqlClient</td>
+            </tr>
+            <tr>
+                <td>PostgreSQL</td>
+                <td>Npgsql</td>
+            </tr>
+            <tr>
+                <td>Oracle</td>
+                <td>System.Data.OracleClient</td>
+            </tr>
+            <tr>
+                <td>SQLite</td>
+                <td>System.Data.SQLite</td>
+            </tr>
+        </table>
+
+
+
+        <h3>Select例</h3>
+
+
+        <h4>PKで1件だけ抽出</h4>
+<pre class="prettyprint lang-cs">
+var rec1 = db.SingleById&lt;Database.Employees.Employee&gt;(99999);
+var rec2 = db.SingleOrDefaultById&lt;Database.Employees.Employee&gt;(10006);
+</pre>
+<pre class="note">
+PKの値を引数にして、SingleById, SingleOrDefaultById を使います。
+抽出結果が複数件数あると例外が発生します。
+ヒットなしの場合、SignleOrDefaultByIdはnullが返り、SingleByIdの場合は例外が発生します。
+
+ここで使える&lt;T&gt;は、T4Templateで自動生成されたEntityクラスのみです。
+（正確に言うと、PetaPoco.TableName や PetaPoco.PrimaryKey アトリビュートが付与されているクラス）
+※ここではこのようなEntityクラスを普通のPocoと区別するため、「PetaPocoRecordオブジェクト」と呼んでいます。
+</pre>
+<pre class="prettyprint lang-cs">
+// employeesテーブルの例
+[TableName("employees")]
+[PrimaryKey("emp_no", AutoIncrement=false)]
+[ExplicitColumns]
+public class Employee: PetaPoco.PetaPocoRecord&lt;Employee&gt;
+{
+    [Column(Name="emp_no")] public int EmpNo { get { return _EmpNo; } set { _EmpNo = value; MarkColumnModified("emp_no"); } } int _EmpNo;
+    [Column(Name="birth_date")] public DateTime BirthDate { get { return _BirthDate; } set { _BirthDate = value; MarkColumnModified("birth_date"); } } DateTime _BirthDate;
+    [Column(Name="first_name")] public string FirstName { get { return _FirstName; } set { _FirstName = value; MarkColumnModified("first_name"); } } string _FirstName;
+    [Column(Name="last_name")] public string LastName { get { return _LastName; } set { _LastName = value; MarkColumnModified("last_name"); } } string _LastName;
+    [Column(Name="gender")] public string Gender { get { return _Gender; } set { _Gender = value; MarkColumnModified("gender"); } } string _Gender;
+    [Column(Name="hire_date")] public DateTime HireDate { get { return _HireDate; } set { _HireDate = value; MarkColumnModified("hire_date"); } } DateTime _HireDate;
+}
+</pre>
+
+
+        <h4>PKが複数列で構成されている場合</h4>
+<pre class="prettyprint lang-cs">
+// PKが３列で構成されているテーブルの例
+var pk = new {
+    emp_no = 10006,
+    title = "Senior Engineer",
+    from_date = DateTime.Parse("1990/08/05"),
+};
+var rec = db.SingleOrDefaultById&lt;Database.Employees.Title&gt;(pk);
+</pre>
+<pre class="note">
+匿名型を作って渡してやる。
+
+※ちなみにオリジナルのPetaPocoは 複合PK（Composite keys）に対応していません。
+</pre>
+
+
+        <h4>条件を指定して1件だけ抽出</h4>
+<pre class="prettyprint lang-cs">
+var rec1 = db.Single&lt;Database.Employees.DeptEmp&gt;("WHERE emp_no=@0 AND dept_no=@1", 1001, "d005");
+var rec1 = db.SingleOrDefault&lt;Database.Employees.DeptEmp&gt;("WHERE emp_no=@0 AND dept_no=@1", 1001, "d005");
+</pre>
+<pre class="note">
+Single、SingleOrDefault を使う。
+抽出結果が複数件数あると例外が発生します。
+ヒットなしの場合、SignleOrDefaultはnullが返り、Singleの場合は例外が発生します。
+
+ちなみに、PetaPocoRecordオブジェクトの場合、WHERE句から書けばOK。
+（もちろん"SELECT * FROM ～"と全部書いてもOKだけど）
+</pre>
+
+
+        <h4>複数結果の中から先頭の1件だけ抽出</h4>
+<pre class="prettyprint lang-cs">
+var rec1 = db.First&lt;Database.Employees.DeptEmp&gt;("WHERE dept_no=@0 ORDER BY emp_no", "d005");
+var rec2 = db.FirstOrDefault&lt;Database.Employees.DeptEmp&gt;("WHERE dept_no=@0 ORDER BY emp_no", "d005");
+</pre>
+<pre class="note">
+First、FirstOrDefault を使う。
+ヒットなしの場合、FirstOrDefaultはnullが返り、Firstの場合は例外が発生します。
+</pre>
+
+
+        <h4>単一項目スカラ クエリ</h4>
+<pre class="prettyprint lang-cs">
+var count = db.ExecuteScalar&lt;int&gt;("SELECT Count(*) FROM employee");
+</pre>
+<pre class="note">
+ExecuteScalarを使う。
+指定した型で結果を受ける。
+</pre>
+
+        <h4>複数件数取得(Fetch)</h4>
+<pre class="prettyprint lang-cs">
+var records = db.Fetch&lt;Database.Employees.DeptEmp&gt;("WHERE dept_no=@0", "d005");
+</pre>
+<pre class="note">
+Fetchメソッドを使う。
+メソッドの戻りは、List&lt;T&gt;。
+該当無しの場合は、空のコレクション（Count=0）が戻る。
+
+ちなみにQueryというメソッドもあるけど、こちらは戻り値が IEnumerable&lt;T&gt; となる。
+（Ftech は単に Query の結果を ToList()したもの）
+このQueryを使う場合、LINQ遅延実行に注意・・・詳しくはこの後の【注意点】を参照。
+</pre>
+
+
+
+        <h4>SQL Builder</h4>
+<pre class="note">
+SQLを組み立てるオブジェクト。
+SQLインジェクション対策のため必ず使おう。
+</pre>
+<pre class="prettyprint lang-cs">
+var sql = PetaPoco.Sql.Builder
+    .Append("SELECT * FROM dept_emp")
+    .Append(" WHERE emp_no=@0", 1001)
+    .Append("   AND dept_no=@0", "d005")
+    .Append("   AND from_date BETWEEN @0 AND @1", DateTime.Parse("1991/06/25"), DateTime.Parse("2005/12/31"))
+
+var recs = db.Fetch&lt;Database.Employees.DeptEmp&gt;(sql);
+foreach (var rec in recs)
+{
+    Console.WriteLine(rec.EmpNo + rec.DeptNo);
+}
+</pre>
+<pre class="note">
+↑これは、このように↓も書ける。
+</pre>
+<pre class="prettyprint lang-cs">
+var recs = db.Fetch&lt;Database.Employees.DeptEmp&gt;(PetaPoco.Sql.Builder
+    .Append(" WHERE emp_no=@0", 1001)
+    .Append("   AND dept_no=@0", "d005")
+    .Append("   AND from_date BETWEEN @0 AND @1", DateTime.Parse("1991/06/25"), DateTime.Parse("2005/12/31"))
+);
+</pre>
+<pre class="note">
+PetaPocoRecordオブジェクトのEntityなら、Select句, From句は省略可能。
+どちらかと言うと、省略したほうがベター（レイアウト変更時に柔軟に対応できるため）。
+
+また、↓こんな書き方もできる。
+</pre>
+<pre class="prettyprint lang-cs">
+var recs = db.Fetch&lt;Database.Employees.DeptEmp&gt;(PetaPoco.Sql.Builder
+    .Where("emp_no=@0", 1001)
+    .Where("dept_no=@0", "d005")
+    .Where("from_date BETWEEN @0 AND @1", DateTime.Parse("1991/06/25"), DateTime.Parse("2005/12/31"))
+);
+</pre>
+<pre class="note">
+他にも JOIN句やORDER句のメソッドもあります。
+
+Whereメソッドは、一番最初に現れるとき "WHERE" を、それ以降に "AND" を付与して連結してくれる。
+↑の例だと、条件が全てANDで連結される。
+んじゃ "OR" を入れたい場合はどうすんの？というと、
+           .Where("cond1")
+           .Where("(cond2 OR cond3)")
+てやると、「WHERE cond1 AND (cond2 OR cond3)」となります。
+</pre>
+
+        <h4>SQL Builder - 値代入時の注意</h4>
+<pre class="prettyprint lang-cs">
+.Append("WHERE update_date &gt;= CAST(@0, AS datetime)", "2011/01/15 10:00:00")　・・・　OK
+
+.Append("SELECT TOP @0", 10)　・・・　NG
+.Append("ORDER BY hoge @0", "ASC")　・・・　NG
+</pre>
+<pre class="note">
+代入の仕様だけど、WHERE句、FROM句の値の代入なら問題ないけど、SELECT句やORDER句はダメみたい。（エラーになっちゃう）
+※ADO.NETのCommandの使用に準じている
+これらをどうしてもやりたい場合は、普通に文字列編集した結果を渡すしかないです。
+</pre>
+
+        <h4>SQL Builder - サブクエリにリテラル</h4>
+<pre class="prettyprint lang-cs">
+// WHERE emp_no IN (10001,10002,10003) というサブクエリで表現する場合
+// まずはコレクション作成
+var cds = new int[] {
+    10001,
+    10002,
+    10003,
+};
+// コレクションを匿名型で渡してやる
+sql.Append("WHERE emp_no IN (@codes)" , new { codes = cds });
+</pre>
+
+        <h4>SQL Builder - 名前付きパラメータ</h4>
+<pre class="prettyprint lang-cs">
+sql.Append("AND update_date &gt;= @start AND update_date &lt;= @end",
+                new
+                {
+                    start = DateTime.Now.AddDays(-2),
+                    end = DateTime.Now
+                }
+          );
+</pre>
+
+
+        <h4>SQL Builder - LIKE条件の例</h4>
+<pre class="prettyprint lang-cs">
+string searchText = "検索文字列";
+sql.Append("WHERE first_name LIKE @0 ESCAPE '\\\\'" , "%" + searchText + "%");
+sql.Append("   OR last_name LIKE @0 ESCAPE '\\\\'" , "%" + searchText + "%");
+
+// 発行されるSQL文は、"WHERE first_name LIKE '検索文字列' ESCAPE '\\' OR last_name LIKE ～～" ってなります。
+// ※MySQLの場合は、デフォルトで '\' がエスケープ指定されます（"ESCAPE"はいらない）
+</pre>
+
+
+        <h4>SQL Builder - SQL文のコピー</h4>
+<pre class="note">
+PetaPoco.Sql はオブジェクトなので、単純にコピーできない。
+</pre>
+<pre class="prettyprint lang-cs">
+// ダメな例
+var sql = PetaPoco.Sql.Builder.Append("SELECT * FROM employees");
+
+var sql2 = sql;
+var sql3 = sql;
+
+sql2.Append("WHERE emp_no = 10002");
+sql3.Append("WHERE emp_no = 99999");
+
+// ってやると、
+// sql2の内容は、     SELECT * FROM employees WHERE emp_no = 10002 WHERE emp_no = 99999
+// sql3の内容も、     SELECT * FROM employees WHERE emp_no = 10002 WHERE emp_no = 99999
+
+</pre>
+<pre class="note">
+PetaPoc.SqlオブジェクトのSQLプロパティとArgumentsプロパティを使って新しいインスタンスを作りましょう
+</pre>
+<pre class="prettyprint lang-cs">
+// OKな例
+var sql = PetaPoco.Sql.Builder.Append("SELECT * FROM employees");
+
+var sql2 = new PetaPoco.Sql(sql.SQL, sql.Arguments);
+var sql3 = new PetaPoco.Sql(sql.SQL, sql.Arguments);
+
+sql2.Append("WHERE emp_no = 10002");
+sql3.Append("WHERE emp_no = 99999");
+
+// sql2の内容     SELECT * FROM employees WHERE emp_no = 10002
+// sql3の内容     SELECT * FROM employees WHERE emp_no = 99999
+
+</pre>
+
+
+        <h4>テーブル結合クエリ</h4>
+<pre class="note">
+クエリ結果を受け取るEntityクラスを自分で作る。
+<s>列のプロパティに [PetaPoco.Column]アトリビュートを付けると、クエリ結果列と自動的にマッピングしてくれる。</s>
+※アトリビュートをつけなくてもマッピングしてくれます。
+　ただし、↓の例のようにアトリビュート付きのEntityクラスを継承した場合は、追加列にも同様に[PetaPoco.Column]をつけないとダメ。
+　（正確には[PetaPoco.ExplicitColumns]が付いているクラス）
+
+イチから作るのは面倒なので、PetaPocoRecordクラスを継承して列を追加するとベター。
+</pre>
+<pre class="prettyprint lang-cs">
+// dept_empテーブルを継承して列を2つ追加したクラス
+[PetaPoco.ExplicitColumns]
+private class DeptEmpDto : Database.Employees.DeptEmp
+{
+    [PetaPoco.Column(Name="last_name")]
+    public string LastName { get; set; }
+    [PetaPoco.Column(Name="first_name")]
+    public string FirstName { get; set; }
+}
+
+// マスタと外部結合して、↑のクラスにセットする。
+var recs = db.Fetch&lt;DeptEmpDto&gt;(PetaPoco.Sql.Builder
+    .Append("SELECT t.*")
+    .Append("     , m.last_name")
+    .Append("     , m.first_name")
+    .Append("  FROM dept_emp AS t")
+    .Append("       LEFT JOIN employees AS m")
+    .Append("              ON t.emp_no = m.emp_no")
+    .Append(" WHERE t.dept_no = @0", "d005")
+);
+</pre>
+<pre class="note">
+↑の結果、List&lt;DeptEmpDto&gt;が返る。
+
+    ※ちなみに・・・
+       コレ以外に、↓こんな具合にも書ける（Dapperのような書き方）。
+
+           db.Fetch&lt;T1, T2, T1&gt;((p, a)=&gt; { p.t2_obj = a; return p; }, sql);
+
+       この場合、T1の中にT2の型プロパティが含まれている必要があります。
+       なんかいまいちプリミティブじゃなくピンと来ないし、わざわざT1の中にT2用のフィールドを
+       追加したクラスを作るくらいなら、最初からSELECT抽出フィールド用のクラス作ったほうがわかりやすいと思う。
+
+       official blog : <a href="http://www.toptensoftware.com/Articles/115/PetaPoco-Mapping-One-to-Many-and-Many-to-One-Relationships">PetaPoco - Mapping One-to-Many and Many-to-One Relationships</a>
+
+</pre>
+
+
+        <h4>列のアトリビュート</h4>
+
+
+<pre class="prettyprint lang-cs">
+        <h5>[Column]</h5>
+    // クラスのアトリビュートに[PetaPoco.ExplicitColumns]が付いている場合、このColumnをつけた列だけがマッピングされる。
+    // （付いていないフィールドはマッピングされない）
+
+    [PetaPoco.Column]
+    public string FirstName { get; set; }
+
+    // ※[PetaPoco.ExplicitColumns]が付いていないクラスなら、このColumnは不要
+</pre>
+
+<pre class="prettyprint lang-cs">
+        <h5>[Column(Name="列名")]</h5>
+    // フィールド名と異なる列名を指定できる。
+    // ※逆にいうとNameを指定しないときは、プロパティ名と抽出列名が完全に一致しないとマッピングされない。
+    // ↓抽出結果の列「hoge_hoge」を FugaFuga にマッピングする
+
+    [PetaPoco.Column(Name="hoge_hoge")]
+    public string FugaFuga { get; set; }
+
+
+    ※ "Name=" は省略可能。↓でもイケる。
+    　 [PetaPoco.Column("列名")]
+</pre>
+
+<pre class="prettyprint lang-cs">
+        <h5>[Ignore]</h5>
+    // マッピングしない列を指定
+    // ↓FirstName列はマッピングされない
+
+    [PetaPoco.Ignore]
+    public string FirstName { get; set; }
+</pre>
+
+<pre class="note">
+他にも
+　　[ResultColumn]
+　　[AutoJoin]
+　　[VersionColumn]
+なんてのがあるけど、よくわからない・・・
+
+</pre>
+
+
+
+
+        <h4>Paging</h4>
+<pre class="prettyprint lang-cs">
+// 1ページ当たり50件として、2ページ目の結果を取得する例
+var results = db.Page&lt;Database.Employees.Order&gt;(2, 50, PetaPoco.Sql.Builder
+    .Where("OrderDate BETWEEN @0 AND @1", DateTime.Parse("1996/09/19"), DateTime.Parse("1997/11/25"))
+    .OrderBy("OrderDate ASC")
+    .OrderBy("OrderID ASC")
+    );
+
+// 戻りの型は、PetaPoco.Page&lt;Database.Employees.Order&gt;
+// 総件数 "TotalItems"や、総ページ "TotalPages"など、ページングに必要な値を付加してくれる。
+// 抽出結果コレクション "Items" にはこの場合、51～100番目の結果が格納されます。
+
+var totalCount = results.TotalItems;
+var pageCount = results.TotalPages;
+var records = results.Items;     // 取得型はList&lt;T&gt;
+</pre>
+<pre class="note">
+※超便利な機能だけど、MSSQL2000では使えません。
+　ROWNUMBER関数が無いからダメです。
+</pre>
+
+<pre class="note">
+
+オリジナルのPageメソッドは、全体の件数を取得する際、
+SQL文からHAVING,ORDER句を取り除き、SELECT句をCOUNT(*)
+に置き換えて処理を行っている。
+
+でもこれだとHAVING句やGROUP句があるクエリでは具合が悪い。
+そこで、元のSQL文からORDER句だけを取り除き、
+全体をインラインクエリにして件数を取得するメソッド
+（PageWithHaving&lt;T&gt;）を作りました。
+</pre>
+<pre class="prettyprint lang-cs">
+// Having や GroupBy があるクエリをページングするときは、PageWithHavingを使いましょう
+// 使い方はPageと全く同じです
+var results = db.PageWithHaving&lt;SalaryDto&gt;(2, 50, PetaPoco.Sql.Builder
+    .Append("SELECT Country")
+    .Append("     , MAX(Salary) AS MaxSalary")
+    .Append("  FROM Employees")
+    .Append(" GROUP BY Country")
+    .Append("HAVING MaxSalary > 1000")
+    .Append(" ORDER BY MaxSalary")
+    );
+</pre>
+
+        <!--
+        <h4>Dictionaryで受け取る</h4>
+        <pre class="prettyprint lang-cs">
+        var results = db.Dictionary&lt;int, string&gt;(PetaPoco.Sql.Builder
+            .Append("SELECT emp_no")
+            .Append("     , last_name")
+            .Append("  FROM employees")
+        );
+        </pre>
+        <pre class="note">
+        クエリ結果をDictionary&lt;K,V&gt;で受け取れます。
+        単純な結果の場合なら、いちいちクラスを作んなくてもOK。
+        ※ Dictionaryには、重複したキーの挿入はできません。
+          またList&lt;T&gt;と違って、配列の順番は保証されません。
+        </pre>
+        -->
+
+        <h4>dynamicで受け取る</h4>
+<pre class="prettyprint lang-cs">
+var results = db.Fetch&lt;dynamic&gt;(PetaPoco.Sql.Builder
+        .Append("SELECT emp_no")
+        .Append("     , first_name")
+        .Append("     , last_name")
+        .Append("     , gender")
+        .Append("     , birth_date")
+        .Append("  FROM employees")
+    );
+
+    foreach (var rec in results)
+    {
+        System.Diagnostics.Debug.WriteLine("名：{0}", rec.first_name);
+        System.Diagnostics.Debug.WriteLine("姓：{0}", rec.last_name);
+    }
+</pre>
+<pre class="note">
+クエリ結果を動的型（IEnumerable&lt;dynamic&gt;）で受け取れます。
+簡単便利だけど、わかりづらかったり、バグを誘発し易いし、パフォーマンス的にも不利なので
+乱用は避けましょう。
+</pre>
+
+
+        <h4>DataTableで受け取る</h4>
+<pre class="prettyprint lang-cs">
+var dt = db.GetDataTable(PetaPoco.Sql.Builder
+        .Append("SELECT emp_no")
+        .Append("     , first_name")
+        .Append("     , last_name")
+        .Append("     , gender")
+        .Append("     , birth_date")
+        .Append("  FROM employees")
+    );
+
+foreach (System.Data.DataRow row in dt.rows)
+{
+    for (var i = 0; i &lt; dt.Columns.Count; i++)
+    {
+        if (row[i] == null || row[i] is DBNull)
+        {
+            sb.Append("[null] / ");
+        }
+        else
+        {
+            sb.Append(row[i].ToString() + " / ");
+        }
+    }
+    sb.AppendLine("");
+}
+System.Diagnostics.Debug.WriteLine(sb.ToString());
+</pre>
+<pre class="note">
+クエリ結果をSystem.Data.DataTableで受け取れます。
+でも基本的に乱用禁止。
+ADO.NETを素で使わない。思想が古い。OOP理念に反している。LINQ使え、LINQ。
+</pre>
+
+
+
+
+
+
+        <h3>Inserts, Updates and Deletes</h3>
+        <h4>Insert</h4>
+<pre class="prettyprint lang-cs">
+var rec = new Database.Employees.M_Master()
+{
+    Col01 = 10,
+    NameA = "hoge",
+    Col02 = 99,
+    NameB = "fugafuga",
+    UpdateDm = DateTime.Now,
+};
+db.Insert(rec);
+</pre>
+<pre class="note">
+Entityクラス（PetaPocoオブジェクト）にデータをセットしてInsertメソッドを実行。
+</pre>
+
+        <h4>Update</h4>
+<pre class="note">
+取得したレコードを更新する例
+</pre>
+<pre class="prettyprint lang-cs">
+// レコード取得
+var rec = db.SingleOrDefaultById&lt;Database.Employees.Employee&gt;(123);
+
+// データ変更
+rec.HomePhone = "03-3768-7250";
+rec.UpdateDm = DateTime.Now;
+
+// 更新
+db.Update(rec);
+
+// 発行されるSQL文は、変更列だけが記述される
+// UPDATE Employees SET HomePhone = @0, UpdateDm = @1 WHERE EmployeeID = @2
+
+</pre>
+<pre class="note">
+Database.ttで生成する際、TrackModifiedColumns をtrueで実行すると、更新列自動追跡機能が実装されます。
+こうして生成したEntityは、値がセットされた列だけを更新し、セットを行っていない列はUPDATE文に含まれなくなります。
+
+</pre>
+
+
+
+<pre class="note">
+DMLを書く例
+</pre>
+<pre class="prettyprint lang-cs">
+db.Update&lt;Database.Employees.T_Table001&gt;(PetaPoco.Sql.Builder
+    .Append("SET Column01=@0", "AAAA")
+    .Append("  , Column02=@0", "BBBB")
+    .Append("  , Column03=@0", "CCCC")
+    .Append(" WHERE KeyCode=@0", 123)
+    );
+</pre>
+
+
+        <!--
+        <pre class="note">
+        一部のフィールドだけを更新する例
+        </pre>
+        <pre class="prettyprint lang-cs">
+        // Entityに値をセット
+        var rec = new Database.Employees.T_Table001();
+        rec.KeyCode = 123;    // ← PKセット
+        rec.Column04 = "ほげ";
+        rec.Column05 = null;
+
+        // 更新するフィールド名コレクションをIEnumerable&lt;string&gt;で作成
+        var updateclos = new List&lt;string&gt;() {
+            "Column04",
+            "Column05",
+        };
+        // Update実行
+        db.Update(rec, updatecols);
+
+
+        </pre>
+        <pre class="prettyprint lang-cs">
+        // 更新フィールドが超多く、除外するものがチョットで面倒な時は・・・
+        // Entityから列名コレクションを取得して、そこから不要な列を取り除く作戦
+
+        // 全フィールド名コレクションを取得
+        var pd = PetaPoco.Database.PocoData.ForType(Database.Employees.T_Table001.GetType());
+        var updatecols = pd.Columns.Keys.ToList();
+        // ↑から除外フィールドを取り除く
+        updatecols.RemoveAll(x => (
+            x.Equals("Column01", StringComparison.CurrentCultureIgnoreCase) ||
+            x.Equals("Column02", StringComparison.CurrentCultureIgnoreCase) ||
+            x.Equals("Column03", StringComparison.CurrentCultureIgnoreCase)
+            ));
+        // Update実行
+        db.Update(rec, updatecols);
+        </pre>
+        -->
+
+
+
+
+
+
+
+        <h4>Delete</h4>
+<pre class="prettyprint lang-cs">
+// レコード取得
+var rec = db.SingleOrDefault&lt;Database.Employees.T_Table001&gt;("WHERE KeyCodeA=@0 AND KeyCodeB=@1", 123, 20001);
+// 削除
+db.Delete(rec);
+
+
+// または
+db.Delete&lt;Database.Employees.T_Table001&gt;("WHERE KeyCodeA=@0 AND KeyCodeB=@1", 123, 20001);
+</pre>
+<pre class="note">
+
+これら以外に、Entityクラスを使わない方法もあります。
+</pre>
+<pre class="prettyprint lang-cs">
+// テーブル名、PK名、更新内容を匿名型、PKの値を渡してUpdateする例
+db.Update("tablename", "pkname", new { title="New title" }, 123);
+
+// テーブル名、PK名、PKの値を渡してDeleteする例
+db.Delete("tablename", "pkname", null, 123);
+</pre>
+
+
+
+
+        <h4>Save</h4>
+<pre class="prettyprint lang-cs">
+db.Save(Entity);
+</pre>
+<pre class="note">
+引数に渡したレコードが存在しなかったらInsert、あったらUpdateしてくれるメソッド。
+※OracleのMargeみたいなやつ。PKの値だけで判断してます。
+ただし、PKがIDENTITY型（auto increment）じゃないとダメみたい。
+更新前のEntity値が新規行か否かを返してくれる IsNew(Entity)っていうメソッドもあるけど、これもPKがIDENTITY型でないとダメ。
+
+でもさ、IDENTITY型のテーブルにInsertする場合ってキー値なんか指定しないし、
+キーの有無を調べる局面なんていまだかつてないんだけど・・・
+</pre>
+
+        <h4>Transaction</h4>
+<pre class="prettyprint lang-cs">
+using (var db = new Database.Employees.DB())
+{
+    // transaction start
+    db.BeginTransaction();
+
+    // ***更新処理を行う***
+
+    if (isSuccess)
+    {
+        // commit transaction
+        db.CompleteTransaction();
+    }
+    else
+    {
+        // rollback
+        db.AbortTransaction();
+    }
+}
+</pre>
+<pre class="note">
+Completeが発行されなければ、自動的にRollbackします。
+
+</pre>
+
+
+
+
+
+        <h3>Non-query Commands, DDL</h3>
+        <h4>Execute</h4>
+<pre class="prettyprint lang-cs">
+db.Execute(PetaPoco.Sql.Builder
+    .Append("UPDATE M_Master")
+    .Append("  SET NameA=@0", "ほげ")
+    .Append("WHERE KeyCodeA=@0", 2)
+);
+</pre>
+<pre class="note">
+DML、DDLはExecuteメソッドで実行。
+</pre>
+
+        <h4>Stored Prcedure</h4>
+        <span style="color:#cc0000;font-weight:normal;">(多分MSSQLのみ)</span>
+
+<pre class="prettyprint lang-sql">
+-- Employees.CustOrdersOrders
+CREATE PROCEDURE CustOrdersOrders @CustomerID nchar(5)
+AS
+SELECT OrderID,
+       OrderDate,
+       RequiredDate,
+       ShippedDate
+FROM Orders
+WHERE CustomerID = @CustomerID
+ORDER BY OrderID
+
+GO
+</pre>
+
+<pre class="note">
+↑こんなストアドがあった場合、受け取るmodel(DTO)を作って・・・
+</pre>
+<pre class="prettyprint lang-cs">
+private class spCustOrdersOrders
+{
+    public int OrderID { get; set; }
+    public DateTime? OrderDate { get; set; }
+    public DateTime? RequiredDate { get; set; }
+    public DateTime? ShippedDate { get; set; }
+}
+</pre>
+
+<pre class="prettyprint lang-cs">
+var records = db.Query&lt;spCustOrdersOrders&gt;(PetaPoco.Sql.Builder
+    .Append("EXEC CustOrdersOrders @@CustomerID=@0", "CHOPS")
+    );
+MessageBox.Show(string.Join("\n", records.Select(q =&gt; q.OrderID).ToArray()));
+</pre>
+<pre class="note">
+Queryで実行。
+ストアドの引数名を書く場合は、@を2個連続して記述する。
+
+
+</pre>
+
+
+<pre class="prettyprint lang-cs">
+// システム ストアド プロシージャを実行する例
+using (var db = new PetaPoco.DatabaseEx(@"Data Source=SERVER_ADDRESS;Database=master;User ID=sa;Password=passwd;", "System.Data.SqlClient"))
+{
+    db.Execute(PetaPoco.Sql.Builder
+        .Append("USE otherdb;")
+        .Append("EXEC sp_change_users_login @@Action=@0 , @@UserNamePattern=@1, @@LoginName=@1;", "update_one", "hogeuser")
+    );
+}
+</pre>
+<pre class="note">
+戻り値が無い場合は、Executeメソッドを使う。
+行ブロックはセミコロンで区切る。
+</pre>
+
+
+        <h4>User Temporary Table</h4>
+        <span style="color:#cc0000;font-weight:normal;">(MSSQLのみ)</span>
+
+<pre class="note">
+【CREATE TABLE文を発行する例】
+</pre>
+<pre class="prettyprint lang-cs">
+using (var db = new Database.Employees.DB)
+{
+    // コネクションのキープを有効に（普通はコマンド毎に接続／断を行う）
+    db.KeepConnectionAlive = true;
+
+    db.Execute(PetaPoco.Sql.Builder
+        .Append("CREATE TABLE #hogetemp")
+        .Append(" (col01 int not null")
+        .Append(" ,col02 nvarchar(10)")
+        .Append(" ,col03 int")
+        .Append(" )")
+        );
+
+    db.Execute("INSERT INTO #hogetemp VALUES (1, 'AAA', 100)");
+}
+// 接続が切れると自動的にDROPされる
+</pre>
+
+<pre class="note">
+
+【SELECT INTO の例】
+   何故かPetaPoco経由だと、"SELECT INTO ～"で作成した一時表が使えない。
+   しょうがないので、既存テーブルと同じ構造の一時表を作成するメソッドを、PetaPocoExtensionに作りました。
+</pre>
+<pre class="prettyprint lang-cs">
+using (var db = new Database.Employees.DB())
+{
+    db.KeepConnectionAlive = true;
+
+    // CreateTemporaryFromTableメソッドで、既存テーブルと同じ構造の一時表を作成する
+    // PK、インデックス、トリガは無し。NULL可否設定はコピーされる。
+    db.CreateTemporaryFromTable("#hogetemp", "T_Table001");
+
+    db.Execute("INSERT INTO #hogetemp SELECT * FROM T_Table001");
+
+    // コピー元のPetaPocoオブジェクトが使えます
+    var records = db.Query&lt;Database.Employees.T_Table001&gt;("SELECT * FROM #hogetemp ORDER BY col01");
+}
+</pre>
+
+
+
+
+
+        <h3>デバッグ情報</h3>
+<pre class="note">
+VisualStudioにてDebug構成で実行しているときは、出力ウィンドウにSQLコマンドを出力します。
+</pre>
+<pre class="prettyprint lang-cs">
+var weeks = new string[] { "月", "水", "金", };
+var q = db.Query&lt;Database.Employees.M_Holiday&gt;("WHERE WeekName IN (@names)", new { names = weeks });
+</pre>
+<pre class="note">
+↑こんなコードを実行すると、出力ウィンドウには↓こんな感じで表示する。
+</pre>
+<pre class="prettyprint lang-sql">
+[OnExecutingCommand]
+-- BEGIN COMMAND
+SET @0 = '月';
+SET @1 = '水';
+SET @2 = '金';
+--
+SELECT [DateHoliday], [WeekName], [HolidayName] FROM [M_Holiday] WHERE WeekName IN (@0,@1,@2)
+-- END COMMAND
+
+[OnExecutedCommand] 51.0051 milliseconds
+</pre>
+<pre class="note">
+↑この出力の BEGIN COMMAND ～ END COMMAND をクエリ ツールに貼り付ければ実行できます。
+
+    A5:SQL Mk-2で使う時は、「設定」→「オプション」→「SQL」で、
+        ・パラメータ利用モード　…「":"のみパラメータとして利用する」 or 「利用しない」
+        ・実行位置　…　先頭から全て
+        ・SQLの区切り　…　セミコロン
+    　 にすると、F5押下で実行できます。
+    　 ※ <span style="color:#cc0000;">MS SQL Serverの場合は、Ctrl + Shift + Enter</span>で実行します。
+    　 （A5:SQL Mk-2の隠しコマンドらしい）
+</pre>
+
+
+<pre class="note">
+
+</pre>
+        <h2>注意点</h2>
+
+        <h3>LINQ 遅延実行</h3>
+<pre class="note">
+Queryメソッドの結果は、IEnumerable&lt;T&gt;を返すので、処理は遅延実行されます。
+※メソッドを発行したタイミングではSELECT文は実行されず、実際に使う場面で実行されます。
+　さらに言うと、使うたびにSELECT文が実行されます。
+
+そのため、結果コレクションを複数回使いまわす処理を行うと、
+　　『この Command に関連付けられている DataReader が既に開かれています。このコマンドを最初に閉じる必要があります。』
+てなエラーが出ます。
+（ADO.NETのReaderオブジェクトは1接続中に1コマンドしか実行できないから）
+
+具体的な例で言うと、複数行を取得して、ループ内で1件づつ更新するとき。
+</pre>
+<pre class="prettyprint lang-cs">
+// テーブル全件取得
+var recs = db.Query&lt;Database.Employees.Employee&gt;("ORDER BY EmployeeID");
+
+foreach (var rec in recs)
+{
+    // 列を編集
+    rec.HomePhone = "1234569789";
+
+    // UPDATE実行
+    db.Update(rec);
+}
+
+// ↑この場合、ループの度にSELECT文が実行される。
+// 1回目は良いけど、2回目には例外エラーが発生する。
+</pre>
+
+<pre class="note">
+<span style="color:#900;">コレを回避するには、LINQ拡張メソッドの「ToList」や「ToArray」を使って、LINQオブジェクトを実態化（メモ化）して使います。</span>
+          // テーブル全件取得（型をList&lt;T&gt;にする）
+          var recs = db.Query&lt;Database.Employees.Employee&gt;(sql)<span style="color:#900;">.ToList()</span>;
+
+こうすれば、クエリが実際に実行されるのはToList()を行った時の一回だけ。コレクションを使いまわしてもOK。
+
+※WCFで結果を返す場合も、ToList()で実態化させないと、うまく動かなかったりします。
+詳しい解説：
+<a href="http://www.atmarkit.co.jp/fdotnet/chushin/greatblogentry_06/greatblogentry_06_01.html">http://www.atmarkit.co.jp/fdotnet/chushin/greatblogentry_06/greatblogentry_06_01.html</a>
+
+
+</pre>
+
+        <!--
+        <h3>MSSQL2000で使う注意点</h3>
+        <pre class="note">
+        現在出回っている全てのORMがそうだけど、このPetaPocoも本来はSQLServer 2000には対応していません。
+        なので一部使えないメソッドがあります。
+        わかっているのは、<span class="typ">Page, Fetch, SkipTake, Save, IsNew</span> の5メソッドがダメ。
+
+        全部便利な機能だけど、SQL2KはROWNUMBER関数が無いからダメです。
+        </pre>
+        -->
+
+<pre class="note">
+
+</pre>
+        <h2>Database.ttについて</h2>
+<pre class="note">
+PetaPocoに付属してきたT4Templateファイルです。
+（Javaでいうところの Velocity や FreeMarker Templateみたいなもの）
+
+DBに接続して、指定したDBのテーブルから列情報を読み取り、自動的にEntityクラス（PetaPocoオブジェクト）のソース・ファイルを作ってくれます。
+
+※本来、templateファイル（Database.tt）はプロジェクトに含めて、VisualStudioからテンプレート実行を行うのが普通かもしれないけど、
+　この使い方だと、ファイルの保存時に毎回出力ファイルを自動再生成しようとしちゃう。
+　このときもし、DBサーバにアクセス出来ないと、既存のcsファイルを上書きして空のファイルを生成しちゃうので、自動実行されないよう
+　プロジェクトに含めるのはやめて、コマンドラインから手動で生成するようにしましょう。
+
+※元祖PetaPocoに付属のT4Templateは、下記の制約がありました。
+　　　① PKが複数列で構成されていても先頭列しか定義されない（もし3列でPKを構成していても、[PK=先頭列のみ]としちゃう）
+　　　② SQL2Kに対応していないので実行すると落ちる（SQL2005以降システムカタログが大幅に変更になったため）
+　　　③ 接続情報はApp.config/Web.configの&lt;ConnectionString&gt;定義から取得する
+
+ネットの偉い人が①を改良したもの（複合PKがいけるPetaPoco本体とT4Template）を作成し、アップしていました。
+（エライ人のGitHub[<a href="https://github.com/michaeldimoudis/PetaPoco">https://github.com/michaeldimoudis/PetaPoco</a>]）
+
+それを拝借し、さらに改造して②,③の対応を行ないました。
+※③の接続情報は App.config/Web.configを見に行かず、Database.ttに直接記述します。
+
+</pre>
+
+
+        <h3>使い方</h3>
+        <h4>① 基本設定</h4>
+<pre class="note">
+PetaPoco.csと同フォルダにあるファイル「Database.tt」をテキストエディタで開き、DB接続文字列や、生成されるクラスの名前空間等を設定します。
+</pre>
+<pre class="prettyprint lang-cs">
+&lt;#@ include file="PetaPoco.Core.ttinclude" #&gt;
+&lt;#
+    // Settings
+    // ******** 設定はここから *********
+    DatabaseName = "Employees";
+    ConnectionString = "Server=hostname;Database=Employees;Integrated Security=False;User ID=hoge;Password=fuga;";
+    ProviderName="System.Data.SqlClient";
+
+    Namespace = "HogeProject.Database.Employees";
+    // ******** ここまで *********
+</pre>
+
+        <h4>② コード生成</h4>
+<pre class="note">
+コマンドプロンプトを起動し、該当フォルダに移動します。
+下記のコマンドを貼り付けて実行します。
+</pre>
+<pre class="prettyprint lang-cs">
+C:\Users\kiri.SYNCNOAH> D:
+D:\&gt; cd D:\HogeProject\Database
+
+D:\HogeProject\Database&gt; "C:\Program Files (86)\Common Files\Microsoft Shared\TextTemplating\14.0\TextTransform.exe" Database.tt -out Employees.cs
+
+// 32bit OSのときはこっち
+D:\HogeProject\Database&gt; "C:\Program Files\Common Files\Microsoft Shared\TextTemplating\14.0\TextTransform.exe" Database.tt -out Employees.cs
+</pre>
+<pre class="note">
+最後のパラメータは出力ファイル名。
+こいつをプロジェクトに含めて使用します。
+※テーブルのレイアウトが変更となったら、このコマンドを実行してcsファイルを再生成すること。
+</pre>
+
+        <h3>注意</h3>
+<pre class="note">
+このT4Template、ご丁寧にもテーブル名が複数形だったら、レコードEntity名は単数形に変換してくれちゃってるので注意！
+例：[IPM_Items]テーブルのEntityは、[IPM_Item]、
+　　[Categories]テーブルのEntityは、[Category]
+PetaPoco.Core.ttincludeの1400行付近に置換ルールがあります。
+</pre>
+        <br />
+        <br />
+
+
+
+        <h3>名前のUpper/Lower</h3>
+<pre class="note">
+RDBによって、名前（テーブルやカラム等）の大文字／小文字区別仕様が異なります。
+<pre class="prettyprint lang-sql">
+-- パスカル表記
+CREATE TABLE HogeMaster (
+    HogeId     int
+);
+</pre>
+たとえば、↑こんなテーブルがあった場合、デフォルトのままでは↓こんな感じになります。
+<table class="table-mapping">
+        <thead>
+        <tr>
+        <th></th>
+        <th>MS SQL</th>
+        <th>MySQL</th>
+        <th>Oracle</th>
+        <th>PostgreSQL</th>
+        </tr>
+    </thead>
+        <tbody>
+        <tr>
+        <td>生成されるクラス名（テーブル名）</td>
+        <td>HogeMaster</td>
+        <td>HogeMaster</td>
+        <td>hogemaster</td>
+        <td>hogemaster</td>
+        <tr>
+        <tr>
+        <td>生成されるカラム名（メンバ名）</td>
+        <td>HogeId</td>
+        <td>HogeId</td>
+        <td>hogeid</td>
+        <td>hogeid</td>
+        <tr>
+        <tr>
+        <td>SELECT HogeId FROM HogeMaster</td>
+        <td>OK(*1)</td>
+        <td>OK</td>
+        <td>OK</td>
+        <td>OK</td>
+        <tr>
+        <tr>
+        <td>SELECT HogeId FROM hogemaster <br />（テーブル名が小文字）</td>
+        <td>OK(*1)</td>
+        <td>NG(*2)</td>
+        <td>OK</td>
+        <td>OK</td>
+        <tr>
+        <tr>
+        <td>SELECT hogeid FROM HogeMaster <br />（カラム名が小文字）</td>
+        <td>OK(*1)</td>
+        <td>OK</td>
+        <td>OK</td>
+        <td>OK</td>
+        <tr>
+    </tbody>
+</table>
+*1) MS SQLの場合、照合順序設定を"Japanese_CI_AS"のように"CI"を含む場合は区別しない。"CS"を含む場合は区別される。
+<div style="margin-left:30px;">
+この"CI""AS"の末尾の一文字
+"I"－Insensitive：識別しない
+"S"－Sensitive：識別する
+
+さらに、前の一文字
+"C"－Case:大文字小文字　（"A"と"a"）
+"A"－Accesnt：アクセント記号　（"a"と"á"）
+"K"－Kana：ひらがなとカタカナ　（"あ"と"ア"）
+"W"－Width(?)：文字列幅　（"ア"と"ｱ"）
+
+これらの組み合わせで出来ています。
+なので、"Japanese_CI_AS"なら、「日本語・大文字小文字は識別しない・アクセントは識別する」という意味。
+省略されたものは「識別しない」になるらしい。
+</div>
+*2) Windows版MySQLならOK。Linux版はNG。
+
+
+OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）で括ると、区別される。
+    CREATE TABLE "HogeMaster" (
+        "HogeId"     int
+    );
+こうすると、生成されるクラス名・メンバ名はパスカル表記になる。
+ただしその場合、SQLでも引用符で括る必要がある。
+    SELECT "HogeId" FROM "HogeMaster";
+
+</pre>
+
+
+        <br />
+        <h2>Mapping</h2>
+        <h3>MS SQL Server</h3>
+        <table class="table-mapping">
+            <thead>
+                <tr>
+                    <th>RDB type</th>
+                    <th>range</th>
+                    <th>note</th>
+                    <th>C# type</th>
+                    <th>remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>bigint</td>
+                    <td>-9223372036854775808 ～ 9223372036854775807</td>
+                    <td>8</td>
+                    <td>long</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>int</td>
+                    <td>-2147483648 ～ 2147483647</td>
+                    <td>4</td>
+                    <td>int</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>smallint</td>
+                    <td>-32768 ～ 32767</td>
+                    <td>2</td>
+                    <td>short</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>tinyint</td>
+                    <td>0 ～ 255</td>
+                    <td>1</td>
+                    <td>byte</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>bit</td>
+                    <td>0 ～ 1</td>
+                    <td>1</td>
+                    <td>bool</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>decimal</td>
+                    <td>-10^38 +1 ～ 10^38 –1</td>
+                    <td>1 - 9 :  5 byte<br />10-19 :  9 byte<br />20-28 : 13 byte<br />29-38 : 17 byte</td>
+                    <td>decimal</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>numeric</td>
+                    <td>〃</td>
+                    <td>〃</td>
+                    <td>decimal</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>money</td>
+                    <td>-922337203685477.5808 ～ 922337203685477.5807</td>
+                    <td>8</td>
+                    <td>decimal</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>smallmoney</td>
+                    <td>-214748.3648 ～ 214748.3647</td>
+                    <td>4</td>
+                    <td>decimal</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>float</td>
+                    <td>-1.79E + 308 ～ 1.79E + 308</td>
+                    <td>1-24  : 7桁 : 4 byte<br />25-53 :15桁 : 8 byte</td>
+                    <td>double</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>real</td>
+                    <td>-3.40E + 38 ～ 3.40E + 38</td>
+                    <td>4 byte</td>
+                    <td>float</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>datetime</td>
+                    <td>1753/1/1 0:00:00 ～ 9999/12/31 23:59:59</td>
+                    <td>1/300秒、つまり 3.33ミリ秒の精度<br />値は、.000、.003、または .007 秒単位に丸められます</td>
+                    <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>datetime2</td>
+                    <td>0001/1/1 0:00:00 ～ 9999/12/31 23:59:59</td>
+                    <td>精度は 100 ナノ秒<br />23:59:59.9999999</td>
+                    <td>DateTime</td>
+                    <td>&gt;=2005</td>
+                </tr>
+                <tr>
+                    <td>smalldatetime</td>
+                    <td>1900/1/1 0:00 ～ 2079/6/6 23:59</td>
+                    <td>精度は1分</td>
+                    <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>date</td>
+                    <td>0000/1/1 ～ 9999/12/31</td>
+                    <td>精度は1日</td>
+                    <td>DateTime</td>
+                    <td>&gt;=2005</td>
+                </tr>
+                <tr>
+                    <td>time</td>
+                    <td>00:00:00.0000000 ～ 23:59:59.9999999</td>
+                    <td>精度は 100 ナノ秒</td>
+                    <td>DateTime</td>
+                    <td>&gt;=2005</td>
+                </tr>
+                <tr>
+                    <td>char</td>
+                    <td>8000</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>varchar</td>
+                    <td>8000</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>text</td>
+                    <td>2,147,483,647</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>nchar</td>
+                    <td>4000</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>nvarchar</td>
+                    <td>4000</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>ntext</td>
+                    <td>1,073,741,823</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>binary</td>
+                    <td>8,000 byte</td>
+                    <td></td>
+                    <td>byte[]</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>varbinary</td>
+                    <td>8,000 byte</td>
+                    <td></td>
+                    <td>byte[]</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>image</td>
+                    <td>2,147,483,647 byte</td>
+                    <td></td>
+                    <td>byte[]</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>timestamp</td>
+                    <td></td>
+                    <td></td>
+                    <td>byte[]</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>uniqueidentifier</td>
+                    <td></td>
+                    <td></td>
+                    <td>Guid</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+        <h3>MySQL</h3>
+        <table class="table-mapping">
+            <thead>
+                <tr>
+                    <th>RDB type</th>
+                    <th>range</th>
+                    <th>note</th>
+                    <th>C# type</th>
+                    <th>remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>BIGINT</td>
+                    <td>-9223372036854775808 ～ 9223372036854775807</td>
+                    <td>8</td>
+                    <td>long</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>BIGINT (UNSIGNED)</td>
+                    <td>0～18446744073709551615</td>
+                    <td>8</td>
+                    <td>ulong</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>INT</td>
+                    <td>-2147483648 ～ 2147483647</td>
+                    <td>4</td>
+                    <td>int</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>INT (UNSIGNED)</td>
+                    <td>0～4294967295</td>
+                    <td>4</td>
+                    <td>uint</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>MEDIUMINT</td>
+                    <td>-8388608 ～ 8388607</td>
+                    <td>3</td>
+                    <td>int</td>
+                    <td>*カスタマイズ</td>
+                </tr>
+                <tr>
+                    <td>MEDIUMINT (UNSIGNED)</td>
+                    <td>0～16777215</td>
+                    <td>3</td>
+                    <td>uint</td>
+                    <td>*カスタマイズ</td>
+                </tr>
+                <tr>
+                    <td>SMALLINT</td>
+                    <td>-32768 ～ 32767</td>
+                    <td>2</td>
+                    <td>short</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>SMALLINT (UNSIGNED)</td>
+                    <td>0～65535</td>
+                    <td>2</td>
+                    <td>ushort</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>TINYINT</td>
+                    <td>-128 ～ 127</td>
+                    <td>1</td>
+                    <td>sbyte</td>
+                    <td rowspan="2">*カスタマイズ<br /><span style="color:#990000;">オリジナルは、TINYINTを無条件でboolにしてました<br />（ver5で直したみたい）</span></td>
+                </tr>
+                <tr>
+                    <td>TINYINT (UNSIGNED)</td>
+                    <td>0～255</td>
+                    <td>1</td>
+                    <td>byte</td>
+                </tr>
+                <tr>
+                    <td>BIT</td>
+                    <td>1 ～ 64</td>
+                    <td>(M+7)/8</td>
+                    <td><span style="color:red;">bool</span></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>BOOL</td>
+                    <td>TINYINT(1)のシノニム</td>
+                    <td>1</td>
+                    <td>bool</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>DECIMAL</td>
+                    <td>最大65桁</td>
+                    <td>(M/9)*4+(4)</td>
+                    <td>decimal</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>DOUBLE</td>
+                    <td>-1.79E + 308 ～ 1.79E + 308</td>
+                    <td></td>
+                    <td>double</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>FLOAT</td>
+                    <td>-3.40E + 38 ～ 3.40E + 38</td>
+                    <td></td>
+                    <td>float</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>DATE</td>
+                    <td>1000-01-01 ～ 9999-12-31</td>
+                    <td>3</td>
+                    <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>TIME</td>
+                    <td>-838:59:59 ～ 838:59:59</td>
+                    <td>3</td>
+                    <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>DATETIME</td>
+                    <td>1000-01-01 00:00:00 ～ 9999-12-31 23:59:59</td>
+                    <td>8</td>
+                    <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>TIMESTAMP</td>
+                    <td>1970-01-01 00:00:01 ～ 2037-12-31 23:59:59</td>
+                    <td>4</td>
+                    <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>CHAR</td>
+                    <td>255</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>VARCHAR</td>
+                    <td>65535</td>
+                    <td>M*3+2</td>
+                    <td>string</td>
+                    <td>CHARACTER SET utf8なら1文字あたり3byte必要<br />※1レコード長は最大65535byte</td>
+                </tr>
+                <tr>
+                    <td>TINYTEXT</td>
+                    <td>255</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>TEXT</td>
+                    <td>65,535</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>MEDIUMTEXT</td>
+                    <td>16,777,215</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>LONGTEXT</td>
+                    <td>4,294,967,295</td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>TINYBLOB</td>
+                    <td></td>
+                    <td></td>
+                    <td>byte[]</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>BLOB</td>
+                    <td></td>
+                    <td></td>
+                    <td>byte[]</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>MEDIUMBLOB</td>
+                    <td></td>
+                    <td></td>
+                    <td>byte[]</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>LONGBLOB</td>
+                    <td></td>
+                    <td></td>
+                    <td>byte[]</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>ENUM</td>
+                    <td>65535 選択肢</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>SET</td>
+                    <td>64選択肢</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+        <h3>Oracle</h3>
+<pre class="note">
+（※準備中）
+</pre>
+
+
+        <h3>PostgreSQL</h3>
+        <table class="table-mapping">
+            <thead>
+                <tr>
+                    <th>RDB type</th>
+                    <th>range</th>
+                    <th>note</th>
+                    <th>C# type</th>
+                    <th>remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>bigint</td>
+                    <td>-9223372036854775808 ～ 9223372036854775807</td>
+                    <td>8</td>
+                    <td>long</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>bigserial</td>
+                    <td>0～18446744073709551615</td>
+                    <td>8</td>
+                    <td>long</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>integer, int</td>
+                    <td>-2147483648 ～ 2147483647</td>
+                    <td>4</td>
+                    <td>int</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>serial</td>
+                    <td>0～4294967295</td>
+                    <td>4</td>
+                    <td>int</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>smallint</td>
+                    <td>-32768 ～ 32767</td>
+                    <td>2</td>
+                    <td>short</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>boolean, bool</td>
+                    <td>0 ～ 1</td>
+                    <td>1</td>
+                    <td>bool</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>decimal</td>
+                    <td></td>
+                    <td></td>
+                    <td>decimal</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>money</td>
+                    <td></td>
+                    <td></td>
+                    <td>decimal</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>numeric</td>
+                    <td></td>
+                    <td></td>
+                    <td>decimal</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>real</td>
+                    <td>6桁精度</td>
+                    <td>4</td>
+                    <td>single</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>double precision</td>
+                    <td>15桁精度</td>
+                    <td>8</td>
+                    <td>double</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>date, time, timetz, timestamp, timestamptz</td>
+                    <td></td>
+                    <td></td>
+                    <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>bytea</td>
+                    <td></td>
+                    <td></td>
+                    <td>byte[]</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>（その他）</td>
+                    <td></td>
+                    <td></td>
+                    <td>string</td>
+                    <td></td>
+                </tr>
+            <tbody>
+        </table>
+
+        <!--
+        <br />
+        <br />
+        <h2>PetaPoco v5について</h2>
+        <pre class="note">
+        GitHubやNuGetで取得できるPetaPoco（ver5以降）は大幅に変わってしまいました。
+
+        ソースはシンプルな1ファイルではなく、各クラスごとにファイルが別れて、
+        機能が増えた分、廃止されたメソッドもあります。
+        ソースのソリューションには、1ファイルに結合するプロジェクト「PetaPoco.Cs.Joiner」があり、
+        一応これで1ファイルにはできるけど、7Kステップオーバーの、ちっともMicroでないものになっちゃいました。
+        ※オリジナルのver4.0.3は2.3Kだというのに。
+           それまでにはなかったコメント行や、コード規則に則ったコーディングなっているから・・・ってのもあるんだけど。
+
+        シンプルなソースを、好みでカスタマイズできるのが利点だったのに、ちょっと残念。
+        NuGetでDLL版を使うくらいなら、いっそEntityFrameworkを使ったほうが、いろいろと良いかも・・・
+
+
+        </pre>
+        -->
+
+
+    </div>
+
+    <div style=height:40px;></div>
+
+    <div style="clear: both;"></div>
+</body>
+</html>
+<script type="text/javascript">
+    $(function () {
+        // メニューの中身を作る
+        $("body").prepend("<h2 id='__DUMMY_TOP__'>Top</h2>");
+
+        // h2,h3,h4の文字列がメニューになる
+        $("h2, h3, h4").each(function () {
+            var $li = $("<li>" + $(this).text() + "</li>").appendTo($("#area__menu ul"));
+            // attributeに[targetTop]ってのを作る
+            $li.attr("targetTop", ($(this).position().top - 30)); 6
+
+            var hn = $(this).get(0).tagName.toLowerCase();
+            if (hn == "h2") {
+                $li.css("color", "#6d9bc7")
+                    .css("padding-left", "5px")
+                    .attr("defaultColor", "#6d9bc7");
+            } else if (hn == "h3") {
+                $li.css("color", "#606060")
+                    .css("padding-left", "20px")
+                    .attr("defaultColor", "#606060");
+            } else {
+                $li.css("color", "#7030a0")
+                    .css("padding-left", "40px")
+                    .css("font-size", "8pt")
+                    .css("font-weight", "600")
+                    .attr("defaultColor", "#7030a0");
+            }
+        });
+
+        $("#__DUMMY_TOP__").remove();
+
+        $("#area__menu ul li")
+            .hover(function () {
+                $(this).css("background", "#ddd");
+            }, function () {
+                $(this).css("background", "#fff");
+            })
+            .click(function () {
+                $("html, body").animate({ scrollTop: $(this).attr("targetTop") }, 'fast');
+                $("#area__menu ul li").each(function () {
+                    $(this).css("color", $(this).attr("defaultColor"));
+                });
+                $(this).css("color", "#880000");
+
+            });
+    });
+</script>

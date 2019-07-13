@@ -1,0 +1,56 @@
+MySQL公式で紹介されているテストデータベース「employees」の作り方
+    6つのテーブルに約400万件のデータが入っているDBです。
+    （MySQLサーバは構築済みであること）
+    see: https://dev.mysql.com/doc/employee/en/employees-installation.html
+
+    ER図はこちら
+    https://dev.mysql.com/doc/employee/en/sakila-structure.html
+
+
+1.  スクリプト一式(ZIP)をダウンロードしてサーバ上で解凍する
+    
+    $ curl -L -O https://github.com/datacharmer/test_db/archive/master.zip
+    $ unzip master.zip
+    
+2.  mysqlコマンドラインでスクリプトを流し込む
+
+    $ cd test_db-master
+    $ mysql -u [username] -p -t < employees.sql
+
+3.  ユーザと権限を付与する
+    
+    $ mysql -u [username] -p
+
+    > use employees;
+    > create user testman@localhost identified by 'testman';
+    > create user testman@'192.168.1.%' identified by 'testman';
+    > grant all on employees.* to testman@localhost;
+    > grant all on employees.* to testman@'192.168.1.%';
+    > flush privileges;
+    > \q
+
+    これでemployeesデータベースに、testman（パスワードもtestman）というユーザで
+    ローカルと192.168.1.*から接続が可能になりました。
+    
+4.  Database.tt の設定例
+
+    // ******** 設定ここから *********
+    
+    DatabaseName = "employees";
+    ConnectionString = @"server=192.168.1.100;uid=testman;pwd=testman;database=employees;SslMode=None;";
+    ProviderName = "MySql.Data.MySqlClient";
+    Namespace = "ProjectName.Database.Employees";
+
+    ConvertPascalCase = false;      // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
+    
+    GeneratePocos = true;           // Pocoオブジェクトを作る
+    GenerateCommon = true;          // Databaseオブジェクトを作る
+    RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
+    
+    GenerateOperations = false;     // Pocoオブジェクト自身にメソッドを追加するならtrue（false推奨）
+    TrackModifiedColumns = true;    // 更新列自動追跡機能を使うならtrue（true推奨）
+    IncludeViews = false;           // Viewも対象にするならtrue
+    
+    ClassPrefix = "";
+    ClassSuffix = "";
+    // ******** 設定ここまで *********
