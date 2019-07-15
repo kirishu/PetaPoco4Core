@@ -79,6 +79,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                     var cnt = db.Execute("INSERT INTO pt_table01 values ('01',true, 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
                 }
             });
+            ex.SqlState.Equals("23505");
         }
 
         [Fact]
@@ -107,6 +108,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                     db.Insert(rec);
                 }
             });
+            ex.SqlState.Equals("23505");
         }
 
 

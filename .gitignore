@@ -26,3 +26,9 @@ Thumbs.db
 
 # dotCover
 *.dotCover
+
+# custom
+.nogit/
+[Ll]og/
+[Ll]ogs/
+*.[Ll]og

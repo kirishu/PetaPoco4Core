@@ -1,7 +1,7 @@
-﻿/**
- * PetaPocoExtent v1.1.0
+﻿/*
+ * DatabaseExtension v1.1.0
  * PetaPoco.Database 拡張クラス
- * */
+ */
 #region 変更履歴
 // 25-Feb-2013 新規作成
 // 22-Dec-2013 [OnExecutingCommand] DEBUG時のSQLログをクエリアナライザから実行可能な形式にする
