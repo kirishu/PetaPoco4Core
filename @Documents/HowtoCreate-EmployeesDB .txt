@@ -22,14 +22,14 @@ MySQL公式で紹介されているテストデータベース「employees」の
     $ mysql -u [username] -p
 
     > use employees;
-    > create user testman@localhost identified by 'testman';
-    > create user testman@'192.168.1.%' identified by 'testman';
+    > create user testman@localhost identified by 'testpwd';
+    > create user testman@'192.168.1.%' identified by 'testpwd';
     > grant all on employees.* to testman@localhost;
     > grant all on employees.* to testman@'192.168.1.%';
     > flush privileges;
     > \q
 
-    これでemployeesデータベースに、testman（パスワードもtestman）というユーザで
+    これでemployeesデータベースに、ユーザ testman（パスワードは testpwd）で
     ローカルと192.168.1.*から接続が可能になりました。
     
 4.  Database.tt の設定例
@@ -37,7 +37,7 @@ MySQL公式で紹介されているテストデータベース「employees」の
     // ******** 設定ここから *********
     
     DatabaseName = "employees";
-    ConnectionString = @"server=192.168.1.100;uid=testman;pwd=testman;database=employees;SslMode=None;";
+    ConnectionString = @"server=192.168.1.100;uid=testman;pwd=testpwd;database=employees;SslMode=None;";
     ProviderName = "MySql.Data.MySqlClient";
     Namespace = "ProjectName.Database.Employees";
 

@@ -25,7 +25,7 @@ namespace PetaPoco
     public class ExplicitColumnsAttribute : Attribute
     {
     }
-    // For non-explicit pocos, causes a property to be ignored
+
     /// <summary>
     ///     Represents an attribute which can decorate a Poco property to ensure PetaPoco does not map column, and therefore
     ///     ignores the column.
@@ -47,7 +47,6 @@ namespace PetaPoco
         public string Name { get; set; }
     }
 
-    // For explicit pocos, marks property as a column
     /// <summary>
     ///     Represents an attribute which can decorate a poco property as a result only column. A result only column is a
     ///     column that is only populated in queries and is not used for updates or inserts operations.
@@ -59,9 +58,8 @@ namespace PetaPoco
         public ResultColumnAttribute(string name) : base(name) { }
     }
 
-    // Specify the table name of a poco
     /// <summary>
-    ///     Represents an attribute, which when applied to a Poco class, specifies the the DB table name which it maps to
+    /// Represents an attribute, which when applied to a Poco class, specifies the the DB table name which it maps to
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class TableNameAttribute : Attribute
@@ -74,8 +72,8 @@ namespace PetaPoco
     }
 
     /// <summary>
-    ///     Is an attribute, which when applied to a Poco class, specifies primary key column. Additionally, specifies whether
-    ///     the column is auto incrementing and the optional sequence name for Oracle sequence columns.
+    /// Is an attribute, which when applied to a Poco class, specifies primary key column. Additionally, specifies whether
+    /// the column is auto incrementing and the optional sequence name for Oracle sequence columns.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class PrimaryKeyAttribute : Attribute

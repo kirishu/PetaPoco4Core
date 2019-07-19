@@ -4,7 +4,7 @@ using Xunit.Abstractions;
 
 namespace PetaPoco4Core.Test.PostgreSql
 {
-    public class Update系: BaseTestClass
+    public class Update系: TestBase
     {
         public Update系(ITestOutputHelper output) : base(output) { }
 
@@ -251,7 +251,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT007_更新列のみ更新_事前読込なし()
+        public void PT007_変更列のみ更新_事前読込なし()
         {
             using (var db = new DB())
             {
@@ -291,7 +291,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT007_更新列のみ更新_事前読込なし_2()
+        public void PT007_変更列のみ更新_事前読込なし_2()
         {
             using (var db = new DB())
             {

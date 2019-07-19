@@ -533,8 +533,10 @@ class SqlServerSchemaReader : SchemaReader
             case "datetime":
             case "datetime2":
             case "date":
-            case "time":
                 sysType=  "DateTime";
+                  break;
+            case "time":
+                sysType=  "TimeSpan";
                   break;
             case "float":
                 sysType="double";
@@ -713,8 +715,10 @@ SELECT @primaryKeys;";
             case "smalldatetime":
             case "datetime":
             case "date":
-            case "time":
                 sysType=  "DateTime";
+                  break;
+            case "time":
+                sysType=  "TimeSpan";
                   break;
             case "float":
                 sysType="double";
@@ -1094,6 +1098,9 @@ class MySqlSchemaReader : SchemaReader
             case "datetime":
             case "timestamp":
                 propType=  "DateTime";
+                  break;
+            case "time":
+                propType=  "TimeSpan";
                   break;
             case "float":
                 propType="float";

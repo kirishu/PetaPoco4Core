@@ -106,6 +106,13 @@ namespace PetaPoco
                     log.Append(param.ParameterName.Replace(this.ParamPrefix, "p"));      // "@"を"p"に変更する
                     log.Append(' ');
                     log.Append(GetLogQuotedParameterValue(param.Value));
+                    if (param.DbType == DbType.Date
+                        || param.DbType == DbType.DateTime
+                        || param.DbType == DbType.Time)
+                    {
+                        log.Append(' ');
+                        log.Append(GetLogParameterType(param));
+                    }
                 }
                 else
                 {
@@ -182,23 +189,6 @@ namespace PetaPoco
                     {
                         log.Append(value.ToString());
                     }
-                    //else if (value is DateTime)
-                    //{
-                    //    // SQL Server only supports ISO8601 with 3 digit precision on datetime,
-                    //    // datetime2 (>= SQL Server 2008) parses the .net format, and will
-                    //    // implicitly cast down to datetime.
-                    //    // Alternatively, use the format string "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffK"
-                    //    // to match SQL server parsing
-                    //    log.Append("CAST('");
-                    //    log.Append(((DateTime)value).ToString(DATETIME_FORMAT_ROUNDTRIP));
-                    //    log.Append("' as datetime2)");
-                    //}
-                    //else if (value is DateTimeOffset)
-                    //{
-                    //    log.Append('\'');
-                    //    log.Append(((DateTimeOffset)value).ToString(DATETIME_FORMAT_ROUNDTRIP));
-                    //    log.Append('\'');
-                    //}
                     else if (value is DateTime || value is DateTimeOffset)
                     {
                         if (_dbType == DBType.SqlServer)
@@ -212,6 +202,10 @@ namespace PetaPoco
                         {
                             log.Append(((DateTime)value).ToString("yyyy/MM/dd HH:mm:ss"));
                         }
+                    }
+                    else if (value is TimeSpan)
+                    {
+                        log.Append(((TimeSpan)value).ToString("g"));    //g [-][d:]h:mm:ss[.FFFFFFF]
                     }
                     else if (value is Guid)
                     {
@@ -289,58 +283,44 @@ namespace PetaPoco
                 case DbType.AnsiStringFixedLength:
                 case DbType.String:
                 case DbType.StringFixedLength:
-                    {
-                        log.Append("NVARCHAR(4000)");
-                    }
+                    log.Append("NVARCHAR(4000)");
                     break;
                 case DbType.Boolean:
-                    {
-                        log.Append("BIT");
-                    }
+                    log.Append("BIT");
                     break;
                 case DbType.Byte:
-                    {
-                        log.Append("TINYINT");
-                    }
+                    log.Append("TINYINT");
                     break;
                 case DbType.Int16:
                 case DbType.SByte:
-                    {
-                        log.Append("SMALLINT");
-                    }
+                    log.Append("SMALLINT");
                     break;
                 case DbType.Int32:
                 case DbType.UInt16:
-                    {
-                        log.Append("INT");
-                    }
+                    log.Append("INT");
                     break;
                 case DbType.Int64:
                 case DbType.UInt32:
-                    {
-                        log.Append("BIGINT");
-                    }
+                    log.Append("BIGINT");
                     break;
                 case DbType.UInt64:
                 case DbType.Currency:
                 case DbType.Decimal:
                 case DbType.VarNumeric:
-                    {
-                        log.Append("DECIMAL");
-                    }
+                    log.Append("DECIMAL");
                     break;
                 case DbType.Single:
-                    {
-                        log.Append("FLOAT");
-                    }
+                    log.Append("DECIMAL");
                     break;
                 case DbType.Double:
-                    {
-                        log.Append("REAL");
-                    }
+                    log.Append("REAL");
                     break;
                 case DbType.Time:
+                    log.Append("TIME");
+                    break;
                 case DbType.Date:
+                    log.Append("DATE");
+                    break;
                 case DbType.DateTime:
                 case DbType.DateTime2:
                 case DbType.DateTimeOffset:

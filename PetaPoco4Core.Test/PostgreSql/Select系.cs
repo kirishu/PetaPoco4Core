@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 
 namespace PetaPoco4Core.Test.PostgreSql
 {
-    public class Select系: BaseTestClass
+    public class Select系: TestBase
     {
         public Select系(ITestOutputHelper output) : base(output) { }
 
@@ -19,6 +19,8 @@ namespace PetaPoco4Core.Test.PostgreSql
                 TestCommon.CreateTempTable01(db);
 
                 var rec = db.SingleById<PtTable01>("03");
+                _output.WriteLine(db.LastCommand);
+
                 Assert.NotNull(rec);
                 Assert.True(rec.ColBool);
                 Assert.Equal(999, rec.ColInt.Value);
@@ -26,6 +28,9 @@ namespace PetaPoco4Core.Test.PostgreSql
                 Assert.Equal("岩手県", rec.ColVarchar);
                 Assert.Equal("system", rec.CreateBy);
                 Assert.Equal(DateTime.Parse("2018/10/24 12:00:00"), rec.CreateDt);
+
+                Assert.Contains("WHERE \"key01\" = @0", db.LastCommand);
+                Assert.Contains("@0 [String] = \"03\"", db.LastCommand);
             }
         }
 
@@ -52,6 +57,10 @@ namespace PetaPoco4Core.Test.PostgreSql
                 Assert.Equal("岩手県", rec.ColVarchar);
                 Assert.Equal("system", rec.CreateBy);
                 Assert.Equal(DateTime.Parse("2018/10/24 12:00:00"), rec.CreateDt);
+
+                Assert.Contains("WHERE \"key01\" = @0 AND \"key02\" = @1", db.LastCommand);
+                Assert.Contains("@0 [String] = \"03\"", db.LastCommand);
+                Assert.Contains("@1 [Int32] = \"3\"", db.LastCommand);
             }
         }
 

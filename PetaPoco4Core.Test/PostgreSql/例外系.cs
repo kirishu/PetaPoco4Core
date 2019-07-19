@@ -4,7 +4,7 @@ using Xunit.Abstractions;
 
 namespace PetaPoco4Core.Test.PostgreSql
 {
-    public class 例外系: BaseTestClass
+    public class 例外系: TestBase
     {
         public 例外系(ITestOutputHelper output): base(output) { }
 
@@ -71,7 +71,6 @@ namespace PetaPoco4Core.Test.PostgreSql
                 }
             });
             ex.SqlState.Equals("23505");
-            ex.Message.Contains("Npgsql.PostgresException: 23505:").Equals(true);
             _output.WriteLine(ex.ToString());
 
             /*
@@ -238,6 +237,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
             });
+            ex.ErrorCode.Equals("10061");       // 対象のコンピューターによって拒否されたため、接続できませんでした。
             _output.WriteLine(ex.ToString());
         }
 

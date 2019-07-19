@@ -24,25 +24,25 @@ PostgreSql公式で紹介されているテストデータベース「dvdrental�
 
     # psql -U postgres -d dvdrental
 
-    dvdrental=# CREATE ROLE testman WITH LOGIN PASSWORD 'testman';
+    dvdrental=# CREATE ROLE testman WITH LOGIN PASSWORD 'testpwd';
     dvdrental=# CREATE SCHEMA testman authorization testman;
     dvdrental=# GRANT CONNECT ON DATABASE dvdrental TO testman;
 
-    ※ロードすると全オブジェクトが「public」というスキーマで作られるので、testmaに変更する
+    ※ロードすると全オブジェクトが「public」というスキーマで作られるので、testmanに変更する
 
     dvdrental=# ALTER SCHEMA public RENAME TO testman;
     dvdrental=# GRANT ALL ON ALL TABLES IN SCHEMA testman TO testman;
 
     postgres=# \q
 
-    これでdvdrentalデータベースに、testman（パスワードもtestman）というユーザで利用が可能になりました。
+    これでdvdrentalデータベースに、ユーザ testman（パスワードは testpwd）で利用が可能になりました。
 
 4.  Database.tt の設定例
 
     // ******** 設定ここから *********
     
     DatabaseName = "dvdrental";
-    ConnectionString = "Server=192.168.1.100;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testman;";
+    ConnectionString = "Server=192.168.1.100;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
     ProviderName = "Npgsql";
     Namespace = "ProjectName.Database.DvdRental";
 

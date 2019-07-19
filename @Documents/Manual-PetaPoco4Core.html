@@ -3,8 +3,10 @@
 <head>
     <meta charset="utf-8">
     <title>PetaPocoExtension Manual</title>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
     <style>
         /* ---------------------------------------------
             * YUI3 global reset
@@ -128,6 +130,11 @@
         h6 {
             margin-top: 10px;
             margin-bottom: 10px;
+        }
+
+        span.h5 {
+            font-weight: normal;
+            font-size: 10pt;
         }
 
         /* ***************************************** */
@@ -299,7 +306,7 @@
             オリジナルの公式サイト [<a href="http://www.toptensoftware.com/petapoco/" target=_blank>http://www.toptensoftware.com/petapoco/</a>]
         </p>
         <br />
-        
+
         <p>
             【特徴】
             <ul>
@@ -419,12 +426,12 @@ PKの値を引数にして、SingleById, SingleOrDefaultById を使います。
 [ExplicitColumns]
 public class Employee: PetaPoco.PetaPocoRecord&lt;Employee&gt;
 {
-    [Column(Name="emp_no")] public int EmpNo { get { return _EmpNo; } set { _EmpNo = value; MarkColumnModified("emp_no"); } } int _EmpNo;
-    [Column(Name="birth_date")] public DateTime BirthDate { get { return _BirthDate; } set { _BirthDate = value; MarkColumnModified("birth_date"); } } DateTime _BirthDate;
-    [Column(Name="first_name")] public string FirstName { get { return _FirstName; } set { _FirstName = value; MarkColumnModified("first_name"); } } string _FirstName;
-    [Column(Name="last_name")] public string LastName { get { return _LastName; } set { _LastName = value; MarkColumnModified("last_name"); } } string _LastName;
-    [Column(Name="gender")] public string Gender { get { return _Gender; } set { _Gender = value; MarkColumnModified("gender"); } } string _Gender;
-    [Column(Name="hire_date")] public DateTime HireDate { get { return _HireDate; } set { _HireDate = value; MarkColumnModified("hire_date"); } } DateTime _HireDate;
+    [Column("emp_no")] public int EmpNo { get { return _EmpNo; } set { _EmpNo = value; MarkColumnModified("emp_no"); } } int _EmpNo;
+    [Column("birth_date")] public DateTime BirthDate { get { return _BirthDate; } set { _BirthDate = value; MarkColumnModified("birth_date"); } } DateTime _BirthDate;
+    [Column("first_name")] public string FirstName { get { return _FirstName; } set { _FirstName = value; MarkColumnModified("first_name"); } } string _FirstName;
+    [Column("last_name")] public string LastName { get { return _LastName; } set { _LastName = value; MarkColumnModified("last_name"); } } string _LastName;
+    [Column("gender")] public string Gender { get { return _Gender; } set { _Gender = value; MarkColumnModified("gender"); } } string _Gender;
+    [Column("hire_date")] public DateTime HireDate { get { return _HireDate; } set { _HireDate = value; MarkColumnModified("hire_date"); } } DateTime _HireDate;
 }
 </pre>
 
@@ -505,8 +512,8 @@ SQLインジェクション対策のため必ず使おう。
 <pre class="prettyprint lang-cs">
 var sql = PetaPoco.Sql.Builder
     .Append("SELECT * FROM dept_emp")
-    .Append(" WHERE emp_no=@0", 1001)
-    .Append("   AND dept_no=@0", "d005")
+    .Append(" WHERE emp_no = @0", 1001)
+    .Append("   AND dept_no = @0", "d005")
     .Append("   AND from_date BETWEEN @0 AND @1", DateTime.Parse("1991/06/25"), DateTime.Parse("2005/12/31"))
 
 var recs = db.Fetch&lt;Database.Employees.DeptEmp&gt;(sql);
@@ -520,8 +527,8 @@ foreach (var rec in recs)
 </pre>
 <pre class="prettyprint lang-cs">
 var recs = db.Fetch&lt;Database.Employees.DeptEmp&gt;(PetaPoco.Sql.Builder
-    .Append(" WHERE emp_no=@0", 1001)
-    .Append("   AND dept_no=@0", "d005")
+    .Append(" WHERE emp_no = @0", 1001)
+    .Append("   AND dept_no = @0", "d005")
     .Append("   AND from_date BETWEEN @0 AND @1", DateTime.Parse("1991/06/25"), DateTime.Parse("2005/12/31"))
 );
 </pre>
@@ -533,8 +540,8 @@ PetaPocoRecordオブジェクトのEntityなら、Select句, From句は省略可
 </pre>
 <pre class="prettyprint lang-cs">
 var recs = db.Fetch&lt;Database.Employees.DeptEmp&gt;(PetaPoco.Sql.Builder
-    .Where("emp_no=@0", 1001)
-    .Where("dept_no=@0", "d005")
+    .Where("emp_no = @0", 1001)
+    .Where("dept_no = @0", "d005")
     .Where("from_date BETWEEN @0 AND @1", DateTime.Parse("1991/06/25"), DateTime.Parse("2005/12/31"))
 );
 </pre>
@@ -563,17 +570,20 @@ Whereメソッドは、一番最初に現れるとき "WHERE" を、それ以降
 </pre>
 
         <h4>SQL Builder - サブクエリにリテラル</h4>
-<pre class="prettyprint lang-cs">
-// WHERE emp_no IN (10001,10002,10003) というサブクエリで表現する場合
+        <pre class="prettyprint lang-cs">
+// WHERE WeekName IN ('月','水','金') というサブクエリで表現する場合
 // まずはコレクション作成
-var cds = new int[] {
-    10001,
-    10002,
-    10003,
+var weeks = new List&lt;string&gt;
+{
+    "月",
+    "水",
+    "金",
 };
-// コレクションを匿名型で渡してやる
-sql.Append("WHERE emp_no IN (@codes)" , new { codes = cds });
+
+// コレクションをそのままパラメータで渡してやる
+sql.Append("WHERE WeekName IN (@0)", weeks);
 </pre>
+
 
         <h4>SQL Builder - 名前付きパラメータ</h4>
 <pre class="prettyprint lang-cs">
@@ -636,6 +646,8 @@ sql3.Append("WHERE emp_no = 99999");
 </pre>
 
 
+
+
         <h4>テーブル結合クエリ</h4>
 <pre class="note">
 クエリ結果を受け取るEntityクラスを自分で作る。
@@ -651,9 +663,9 @@ sql3.Append("WHERE emp_no = 99999");
 [PetaPoco.ExplicitColumns]
 private class DeptEmpDto : Database.Employees.DeptEmp
 {
-    [PetaPoco.Column(Name="last_name")]
+    [PetaPoco.Column("last_name")]
     public string LastName { get; set; }
-    [PetaPoco.Column(Name="first_name")]
+    [PetaPoco.Column("first_name")]
     public string FirstName { get; set; }
 }
 
@@ -685,11 +697,11 @@ var recs = db.Fetch&lt;DeptEmpDto&gt;(PetaPoco.Sql.Builder
 </pre>
 
 
-        <h4>列のアトリビュート</h4>
+<h4>列のアトリビュート</h4>
 
 
 <pre class="prettyprint lang-cs">
-        <h5>[Column]</h5>
+    <span class="h5">[Column]</span>
     // クラスのアトリビュートに[PetaPoco.ExplicitColumns]が付いている場合、このColumnをつけた列だけがマッピングされる。
     // （付いていないフィールドはマッピングされない）
 
@@ -700,7 +712,7 @@ var recs = db.Fetch&lt;DeptEmpDto&gt;(PetaPoco.Sql.Builder
 </pre>
 
 <pre class="prettyprint lang-cs">
-        <h5>[Column(Name="列名")]</h5>
+    <span class="h5">[Column(Name="列名")]</span>
     // フィールド名と異なる列名を指定できる。
     // ※逆にいうとNameを指定しないときは、プロパティ名と抽出列名が完全に一致しないとマッピングされない。
     // ↓抽出結果の列「hoge_hoge」を FugaFuga にマッピングする
@@ -714,7 +726,7 @@ var recs = db.Fetch&lt;DeptEmpDto&gt;(PetaPoco.Sql.Builder
 </pre>
 
 <pre class="prettyprint lang-cs">
-        <h5>[Ignore]</h5>
+    <span class="h5">[Ignore]</span>
     // マッピングしない列を指定
     // ↓FirstName列はマッピングされない
 
@@ -751,10 +763,6 @@ var totalCount = results.TotalItems;
 var pageCount = results.TotalPages;
 var records = results.Items;     // 取得型はList&lt;T&gt;
 </pre>
-<pre class="note">
-※超便利な機能だけど、MSSQL2000では使えません。
-　ROWNUMBER関数が無いからダメです。
-</pre>
 
 <pre class="note">
 
@@ -781,21 +789,21 @@ var results = db.PageWithHaving&lt;SalaryDto&gt;(2, 50, PetaPoco.Sql.Builder
 </pre>
 
         <!--
-        <h4>Dictionaryで受け取る</h4>
-        <pre class="prettyprint lang-cs">
-        var results = db.Dictionary&lt;int, string&gt;(PetaPoco.Sql.Builder
-            .Append("SELECT emp_no")
-            .Append("     , last_name")
-            .Append("  FROM employees")
-        );
-        </pre>
-        <pre class="note">
-        クエリ結果をDictionary&lt;K,V&gt;で受け取れます。
-        単純な結果の場合なら、いちいちクラスを作んなくてもOK。
-        ※ Dictionaryには、重複したキーの挿入はできません。
-          またList&lt;T&gt;と違って、配列の順番は保証されません。
-        </pre>
-        -->
+    <h4>Dictionaryで受け取る</h4>
+    <pre class="prettyprint lang-cs">
+    var results = db.Dictionary&lt;int, string&gt;(PetaPoco.Sql.Builder
+        .Append("SELECT emp_no")
+        .Append("     , last_name")
+        .Append("  FROM employees")
+    );
+    </pre>
+    <pre class="note">
+    クエリ結果をDictionary&lt;K,V&gt;で受け取れます。
+    単純な結果の場合なら、いちいちクラスを作んなくてもOK。
+    ※ Dictionaryには、重複したキーの挿入はできません。
+      またList&lt;T&gt;と違って、配列の順番は保証されません。
+    </pre>
+    -->
 
         <h4>dynamicで受け取る</h4>
 <pre class="prettyprint lang-cs">
@@ -815,7 +823,7 @@ var results = db.Fetch&lt;dynamic&gt;(PetaPoco.Sql.Builder
     }
 </pre>
 <pre class="note">
-クエリ結果を動的型（IEnumerable&lt;dynamic&gt;）で受け取れます。
+クエリ結果を動的型（List&lt;dynamic&gt;）で受け取れます。
 簡単便利だけど、わかりづらかったり、バグを誘発し易いし、パフォーマンス的にも不利なので
 乱用は避けましょう。
 </pre>
@@ -863,7 +871,7 @@ ADO.NETを素で使わない。思想が古い。OOP理念に反している。L
         <h3>Inserts, Updates and Deletes</h3>
         <h4>Insert</h4>
 <pre class="prettyprint lang-cs">
-var rec = new Database.Employees.M_Master()
+var rec = new Database.Employees.M_Master
 {
     Col01 = 10,
     NameA = "hoge",
@@ -918,43 +926,43 @@ db.Update&lt;Database.Employees.T_Table001&gt;(PetaPoco.Sql.Builder
 
 
         <!--
-        <pre class="note">
-        一部のフィールドだけを更新する例
-        </pre>
-        <pre class="prettyprint lang-cs">
-        // Entityに値をセット
-        var rec = new Database.Employees.T_Table001();
-        rec.KeyCode = 123;    // ← PKセット
-        rec.Column04 = "ほげ";
-        rec.Column05 = null;
+    <pre class="note">
+    一部のフィールドだけを更新する例
+    </pre>
+    <pre class="prettyprint lang-cs">
+    // Entityに値をセット
+    var rec = new Database.Employees.T_Table001();
+    rec.KeyCode = 123;    // ← PKセット
+    rec.Column04 = "ほげ";
+    rec.Column05 = null;
 
-        // 更新するフィールド名コレクションをIEnumerable&lt;string&gt;で作成
-        var updateclos = new List&lt;string&gt;() {
-            "Column04",
-            "Column05",
-        };
-        // Update実行
-        db.Update(rec, updatecols);
+    // 更新するフィールド名コレクションをIEnumerable&lt;string&gt;で作成
+    var updateclos = new List&lt;string&gt;() {
+        "Column04",
+        "Column05",
+    };
+    // Update実行
+    db.Update(rec, updatecols);
 
 
-        </pre>
-        <pre class="prettyprint lang-cs">
-        // 更新フィールドが超多く、除外するものがチョットで面倒な時は・・・
-        // Entityから列名コレクションを取得して、そこから不要な列を取り除く作戦
+    </pre>
+    <pre class="prettyprint lang-cs">
+    // 更新フィールドが超多く、除外するものがチョットで面倒な時は・・・
+    // Entityから列名コレクションを取得して、そこから不要な列を取り除く作戦
 
-        // 全フィールド名コレクションを取得
-        var pd = PetaPoco.Database.PocoData.ForType(Database.Employees.T_Table001.GetType());
-        var updatecols = pd.Columns.Keys.ToList();
-        // ↑から除外フィールドを取り除く
-        updatecols.RemoveAll(x => (
-            x.Equals("Column01", StringComparison.CurrentCultureIgnoreCase) ||
-            x.Equals("Column02", StringComparison.CurrentCultureIgnoreCase) ||
-            x.Equals("Column03", StringComparison.CurrentCultureIgnoreCase)
-            ));
-        // Update実行
-        db.Update(rec, updatecols);
-        </pre>
-        -->
+    // 全フィールド名コレクションを取得
+    var pd = PetaPoco.Database.PocoData.ForType(Database.Employees.T_Table001.GetType());
+    var updatecols = pd.Columns.Keys.ToList();
+    // ↑から除外フィールドを取り除く
+    updatecols.RemoveAll(x => (
+        x.Equals("Column01", StringComparison.CurrentCultureIgnoreCase) ||
+        x.Equals("Column02", StringComparison.CurrentCultureIgnoreCase) ||
+        x.Equals("Column03", StringComparison.CurrentCultureIgnoreCase)
+        ));
+    // Update実行
+    db.Update(rec, updatecols);
+    </pre>
+    -->
 
 
 
@@ -1077,13 +1085,13 @@ private class spCustOrdersOrders
 </pre>
 
 <pre class="prettyprint lang-cs">
-var records = db.Query&lt;spCustOrdersOrders&gt;(PetaPoco.Sql.Builder
+var records = db.Fetch&lt;spCustOrdersOrders&gt;(PetaPoco.Sql.Builder
     .Append("EXEC CustOrdersOrders @@CustomerID=@0", "CHOPS")
     );
 MessageBox.Show(string.Join("\n", records.Select(q =&gt; q.OrderID).ToArray()));
 </pre>
 <pre class="note">
-Queryで実行。
+Fetchなどのメソッドで実行。
 ストアドの引数名を書く場合は、@を2個連続して記述する。
 
 
@@ -1149,7 +1157,7 @@ using (var db = new Database.Employees.DB())
     db.Execute("INSERT INTO #hogetemp SELECT * FROM T_Table001");
 
     // コピー元のPetaPocoオブジェクトが使えます
-    var records = db.Query&lt;Database.Employees.T_Table001&gt;("SELECT * FROM #hogetemp ORDER BY col01");
+    var records = db.Fetch&lt;Database.Employees.T_Table001&gt;("SELECT * FROM #hogetemp ORDER BY col01");
 }
 </pre>
 
@@ -1162,8 +1170,8 @@ using (var db = new Database.Employees.DB())
 VisualStudioにてDebug構成で実行しているときは、出力ウィンドウにSQLコマンドを出力します。
 </pre>
 <pre class="prettyprint lang-cs">
-var weeks = new string[] { "月", "水", "金", };
-var q = db.Query&lt;Database.Employees.M_Holiday&gt;("WHERE WeekName IN (@names)", new { names = weeks });
+var weeks = new List&lt;string&gt; { "月", "水", "金", };
+var q = db.Fetch&lt;Database.Employees.M_Holiday&gt;("WHERE WeekName IN (@0)", weeks);
 </pre>
 <pre class="note">
 ↑こんなコードを実行すると、出力ウィンドウには↓こんな感じで表示する。
@@ -1229,29 +1237,18 @@ foreach (var rec in recs)
 </pre>
 
 <pre class="note">
-<span style="color:#900;">コレを回避するには、LINQ拡張メソッドの「ToList」や「ToArray」を使って、LINQオブジェクトを実態化（メモ化）して使います。</span>
-          // テーブル全件取得（型をList&lt;T&gt;にする）
-          var recs = db.Query&lt;Database.Employees.Employee&gt;(sql)<span style="color:#900;">.ToList()</span>;
+<span style="color:#900;">コレを回避するには、Queryメソッドではなく、Fetchを使う</span>
+    var recs = db.<span style="color:#900;">Fetch</span>&lt;Database.Employees.Employee&gt;("ORDER BY EmployeeID");
 
-こうすれば、クエリが実際に実行されるのはToList()を行った時の一回だけ。コレクションを使いまわしてもOK。
+こうすれば、クエリが実際に実行されるのはSELECT文を発行した一回だけ。コレクションを使いまわしてもOK。
 
-※WCFで結果を返す場合も、ToList()で実態化させないと、うまく動かなかったりします。
+※WCFで結果を返す場合も、QueryのままではToList()で実態化させないと、うまく動かなかったりします。
 詳しい解説：
 <a href="http://www.atmarkit.co.jp/fdotnet/chushin/greatblogentry_06/greatblogentry_06_01.html">http://www.atmarkit.co.jp/fdotnet/chushin/greatblogentry_06/greatblogentry_06_01.html</a>
 
 
 </pre>
 
-        <!--
-        <h3>MSSQL2000で使う注意点</h3>
-        <pre class="note">
-        現在出回っている全てのORMがそうだけど、このPetaPocoも本来はSQLServer 2000には対応していません。
-        なので一部使えないメソッドがあります。
-        わかっているのは、<span class="typ">Page, Fetch, SkipTake, Save, IsNew</span> の5メソッドがダメ。
-
-        全部便利な機能だけど、SQL2KはROWNUMBER関数が無いからダメです。
-        </pre>
-        -->
 
 <pre class="note">
 
@@ -1325,7 +1322,7 @@ D:\HogeProject\Database&gt; "C:\Program Files\Common Files\Microsoft Shared\Text
 このT4Template、ご丁寧にもテーブル名が複数形だったら、レコードEntity名は単数形に変換してくれちゃってるので注意！
 例：[IPM_Items]テーブルのEntityは、[IPM_Item]、
 　　[Categories]テーブルのEntityは、[Category]
-PetaPoco.Core.ttincludeの1400行付近に置換ルールがあります。
+PetaPoco.Core.tt の1360行付近に置換ルールがあります。
 </pre>
         <br />
         <br />
@@ -1333,65 +1330,85 @@ PetaPoco.Core.ttincludeの1400行付近に置換ルールがあります。
 
 
         <h3>名前のUpper/Lower</h3>
-<pre class="note">
+        <pre class="note">
 RDBによって、名前（テーブルやカラム等）の大文字／小文字区別仕様が異なります。
 <pre class="prettyprint lang-sql">
 -- パスカル表記
 CREATE TABLE HogeMaster (
     HogeId     int
 );
+
 </pre>
 たとえば、↑こんなテーブルがあった場合、デフォルトのままでは↓こんな感じになります。
+</pre>
+
 <table class="table-mapping">
-        <thead>
+    <thead>
         <tr>
-        <th></th>
-        <th>MS SQL</th>
-        <th>MySQL</th>
-        <th>Oracle</th>
-        <th>PostgreSQL</th>
+            <th></th>
+            <th>MS SQL</th>
+            <th>MySQL</th>
+            <th>Oracle</th>
+            <th>PostgreSQL</th>
         </tr>
     </thead>
-        <tbody>
+    <tbody>
         <tr>
-        <td>生成されるクラス名（テーブル名）</td>
-        <td>HogeMaster</td>
-        <td>HogeMaster</td>
-        <td>hogemaster</td>
-        <td>hogemaster</td>
+            <td>生成されるクラス名（テーブル名）</td>
+            <td>HogeMaster</td>
+            <td>HogeMaster</td>
+            <td>hogemaster</td>
+            <td>hogemaster</td>
+        </tr>
         <tr>
+            <td>生成されるカラム名（メンバ名）</td>
+            <td>HogeId</td>
+            <td>HogeId</td>
+            <td>hogeid</td>
+            <td>hogeid</td>
+        </tr>
         <tr>
-        <td>生成されるカラム名（メンバ名）</td>
-        <td>HogeId</td>
-        <td>HogeId</td>
-        <td>hogeid</td>
-        <td>hogeid</td>
+            <td>SELECT HogeId FROM HogeMaster</td>
+            <td>OK(*1)</td>
+            <td>OK</td>
+            <td>OK</td>
+            <td>OK</td>
+        </tr>
         <tr>
+            <td>SELECT HogeId FROM hogemaster <br />（テーブル名が小文字）</td>
+            <td>OK(*1)</td>
+            <td>NG(*2)</td>
+            <td>OK</td>
+            <td>OK</td>
+        </tr>
         <tr>
-        <td>SELECT HogeId FROM HogeMaster</td>
-        <td>OK(*1)</td>
-        <td>OK</td>
-        <td>OK</td>
-        <td>OK</td>
-        <tr>
-        <tr>
-        <td>SELECT HogeId FROM hogemaster <br />（テーブル名が小文字）</td>
-        <td>OK(*1)</td>
-        <td>NG(*2)</td>
-        <td>OK</td>
-        <td>OK</td>
-        <tr>
-        <tr>
-        <td>SELECT hogeid FROM HogeMaster <br />（カラム名が小文字）</td>
-        <td>OK(*1)</td>
-        <td>OK</td>
-        <td>OK</td>
-        <td>OK</td>
-        <tr>
+            <td>SELECT hogeid FROM HogeMaster <br />（カラム名が小文字）</td>
+            <td>OK(*1)</td>
+            <td>OK</td>
+            <td>OK</td>
+            <td>OK</td>
+        </tr>
     </tbody>
 </table>
-*1) MS SQLの場合、照合順序設定を"Japanese_CI_AS"のように"CI"を含む場合は区別しない。"CS"を含む場合は区別される。
-<div style="margin-left:30px;">
+
+<pre class="note">
+        *1) MS SQLの場合、照合順序設定を"Japanese_CI_AS"のように"CI"を含む場合は区別しない。"CS"を含む場合は区別される。<a href="#modal_sqlserver_tips" rel="modal:open">[?]</a>
+        *2) Windows版MySQLならOK。Linux版はNG。
+
+
+OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）で括ると、区別される。
+
+    CREATE TABLE "HogeMaster" (
+        "HogeId"     int
+    );
+
+こうすると、生成されるクラス名・メンバ名はパスカル表記になる。
+ただしその場合、SQLでも引用符で括る必要がある。
+    SELECT "HogeId" FROM "HogeMaster";
+
+</pre>
+<div id="modal_sqlserver_tips" class="modal">
+    <pre style="text-wrap: avoid; white-space: pre-wrap; word-break:break-all;">
 この"CI""AS"の末尾の一文字
 "I"－Insensitive：識別しない
 "S"－Sensitive：識別する
@@ -1405,19 +1422,8 @@ CREATE TABLE HogeMaster (
 これらの組み合わせで出来ています。
 なので、"Japanese_CI_AS"なら、「日本語・大文字小文字は識別しない・アクセントは識別する」という意味。
 省略されたものは「識別しない」になるらしい。
+    </pre>
 </div>
-*2) Windows版MySQLならOK。Linux版はNG。
-
-
-OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）で括ると、区別される。
-    CREATE TABLE "HogeMaster" (
-        "HogeId"     int
-    );
-こうすると、生成されるクラス名・メンバ名はパスカル表記になる。
-ただしその場合、SQLでも引用符で括る必要がある。
-    SELECT "HogeId" FROM "HogeMaster";
-
-</pre>
 
 
         <br />
@@ -1428,7 +1434,7 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                 <tr>
                     <th>RDB type</th>
                     <th>range</th>
-                    <th>note</th>
+                    <th>size</th>
                     <th>C# type</th>
                     <th>remark</th>
                 </tr>
@@ -1543,7 +1549,7 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                     <td>time</td>
                     <td>00:00:00.0000000 ～ 23:59:59.9999999</td>
                     <td>精度は 100 ナノ秒</td>
-                    <td>DateTime</td>
+                    <td>TimeSpan</td>
                     <td>&gt;=2005</td>
                 </tr>
                 <tr>
@@ -1629,13 +1635,13 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
 
 
 
-        <h3>MySQL</h3>
+        <h3>MySQL / MariaDB</h3>
         <table class="table-mapping">
             <thead>
                 <tr>
                     <th>RDB type</th>
                     <th>range</th>
-                    <th>note</th>
+                    <th>size</th>
                     <th>C# type</th>
                     <th>remark</th>
                 </tr>
@@ -1753,13 +1759,6 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                     <td></td>
                 </tr>
                 <tr>
-                    <td>TIME</td>
-                    <td>-838:59:59 ～ 838:59:59</td>
-                    <td>3</td>
-                    <td>DateTime</td>
-                    <td></td>
-                </tr>
-                <tr>
                     <td>DATETIME</td>
                     <td>1000-01-01 00:00:00 ～ 9999-12-31 23:59:59</td>
                     <td>8</td>
@@ -1771,6 +1770,13 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                     <td>1970-01-01 00:00:01 ～ 2037-12-31 23:59:59</td>
                     <td>4</td>
                     <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>TIME</td>
+                    <td>-838:59:59 ～ 838:59:59</td>
+                    <td>3</td>
+                    <td>TimeSpan</td>
                     <td></td>
                 </tr>
                 <tr>
@@ -1874,7 +1880,7 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                 <tr>
                     <th>RDB type</th>
                     <th>range</th>
-                    <th>note</th>
+                    <th>size</th>
                     <th>C# type</th>
                     <th>remark</th>
                 </tr>
@@ -1889,7 +1895,7 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                 </tr>
                 <tr>
                     <td>bigserial</td>
-                    <td>0～18446744073709551615</td>
+                    <td>1 ～ 9223372036854775807</td>
                     <td>8</td>
                     <td>long</td>
                     <td></td>
@@ -1903,7 +1909,7 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                 </tr>
                 <tr>
                     <td>serial</td>
-                    <td>0～4294967295</td>
+                    <td>1 ～ 2147483647</td>
                     <td>4</td>
                     <td>int</td>
                     <td></td>
@@ -1924,22 +1930,22 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                 </tr>
                 <tr>
                     <td>decimal</td>
-                    <td></td>
-                    <td></td>
-                    <td>decimal</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>money</td>
-                    <td></td>
+                    <td>小数点前までは131072桁、小数点以降は16383桁</td>
                     <td></td>
                     <td>decimal</td>
                     <td></td>
                 </tr>
                 <tr>
                     <td>numeric</td>
+                    <td>decimalのシノニム</td>
                     <td></td>
+                    <td>decimal</td>
                     <td></td>
+                </tr>
+                <tr>
+                    <td>money</td>
+                    <td>-92233720368547758.08 ～ +92233720368547758.07</td>
+                    <td>8</td>
                     <td>decimal</td>
                     <td></td>
                 </tr>
@@ -1958,10 +1964,24 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                     <td></td>
                 </tr>
                 <tr>
-                    <td>date, time, timetz, timestamp, timestamptz</td>
-                    <td></td>
-                    <td></td>
+                    <td>date</td>
+                    <td>BC4,713 ～ AD5,874,897　（精度は1日）</td>
+                    <td>4</td>
                     <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>timestamp</td>
+                    <td>BC4,713 ～ AD294,276　（精度は1μ秒）</td>
+                    <td>8</td>
+                    <td>DateTime</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>time</td>
+                    <td>00:00:00 ～ 24:00:00　（精度は1μ秒）</td>
+                    <td>8</td>
+                    <td>TimeSpan</td>
                     <td></td>
                 </tr>
                 <tr>
@@ -1982,25 +2002,25 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
         </table>
 
         <!--
-        <br />
-        <br />
-        <h2>PetaPoco v5について</h2>
-        <pre class="note">
-        GitHubやNuGetで取得できるPetaPoco（ver5以降）は大幅に変わってしまいました。
+    <br />
+    <br />
+    <h2>PetaPoco v5について</h2>
+    <pre class="note">
+    GitHubやNuGetで取得できるPetaPoco（ver5以降）は大幅に変わってしまいました。
 
-        ソースはシンプルな1ファイルではなく、各クラスごとにファイルが別れて、
-        機能が増えた分、廃止されたメソッドもあります。
-        ソースのソリューションには、1ファイルに結合するプロジェクト「PetaPoco.Cs.Joiner」があり、
-        一応これで1ファイルにはできるけど、7Kステップオーバーの、ちっともMicroでないものになっちゃいました。
-        ※オリジナルのver4.0.3は2.3Kだというのに。
-           それまでにはなかったコメント行や、コード規則に則ったコーディングなっているから・・・ってのもあるんだけど。
+    ソースはシンプルな1ファイルではなく、各クラスごとにファイルが別れて、
+    機能が増えた分、廃止されたメソッドもあります。
+    ソースのソリューションには、1ファイルに結合するプロジェクト「PetaPoco.Cs.Joiner」があり、
+    一応これで1ファイルにはできるけど、7Kステップオーバーの、ちっともMicroでないものになっちゃいました。
+    ※オリジナルのver4.0.3は2.3Kだというのに。
+       それまでにはなかったコメント行や、コード規則に則ったコーディングなっているから・・・ってのもあるんだけど。
 
-        シンプルなソースを、好みでカスタマイズできるのが利点だったのに、ちょっと残念。
-        NuGetでDLL版を使うくらいなら、いっそEntityFrameworkを使ったほうが、いろいろと良いかも・・・
+    シンプルなソースを、好みでカスタマイズできるのが利点だったのに、ちょっと残念。
+    NuGetでDLL版を使うくらいなら、いっそEntityFrameworkを使ったほうが、いろいろと良いかも・・・
 
 
-        </pre>
-        -->
+    </pre>
+    -->
 
 
     </div>
