@@ -1,8 +1,9 @@
 ﻿using System;
 using Xunit;
 using Xunit.Abstractions;
+using MySql.Data.MySqlClient;
 
-namespace PetaPoco4Core.Test.PostgreSql
+namespace PetaPoco4Core.Test.MySql
 {
     public class Update系: TestBase
     {
@@ -20,14 +21,14 @@ namespace PetaPoco4Core.Test.PostgreSql
                 var recbefore = db.SingleById<PtTable01>("10");
 
                 var sql = PetaPoco.Sql.Builder
-                    .Append("UPDATE pt_table01")
-                    .Append("  SET col_bool = @0", false)
-                    .Append("    , col_int = @0", 555)
-                    .Append("    , col_dec = @0", 5555.55m)
-                    .Append("    , col_varchar = @0", "Update'テスト'ABC")
-                    .Append("    , update_by = @0", "pt_test002")
-                    .Append("    , update_dt = @0", DateTime.Parse("2018/12/19 11:11:11"))
-                    .Append(" WHERE key01 = @0", "10");
+                    .Append("UPDATE PtTable01")
+                    .Append("   SET ColBool = @0", false)
+                    .Append("     , ColInt = @0", 555)
+                    .Append("     , ColDec = @0", 5555.55m)
+                    .Append("     , ColVarchar = @0", "Update'テスト'ABC")
+                    .Append("     , UpdateBy = @0", "pt_test002")
+                    .Append("     , UpdateDt = @0", DateTime.Parse("2018/12/19 11:11:11"))
+                    .Append(" WHERE Key01 = @0", "10");
                 db.Execute(sql);
 
                 _output.WriteLine(db.LastCommand);
@@ -89,15 +90,15 @@ namespace PetaPoco4Core.Test.PostgreSql
                 TestCommon.CreateTempTable01(db);
 
                 var sql = PetaPoco.Sql.Builder
-                    .Append("UPDATE pt_table01")
-                    .Append("  SET col_varchar = @0", "Update'テスト'ABC")
-                    .Append(" WHERE key01 >= @0", "01")
-                    .Append("   AND key01 <= @0", "05");
+                    .Append("UPDATE PtTable01")
+                    .Append("   SET ColVarchar = @0", "Update'テスト'ABC")
+                    .Append(" WHERE Key01 >= @0", "01")
+                    .Append("   AND Key01 <= @0", "05");
                 db.Execute(sql);
 
                 _output.WriteLine(db.LastCommand);
 
-                var recs = db.Fetch<PtTable01>("WHERE key01 >= @0 AND key01 <= @1 ORDER BY key01", "01", "05");
+                var recs = db.Fetch<PtTable01>("WHERE Key01 >= @0 AND Key01 <= @1 ORDER BY Key01", "01", "05");
                 foreach (var rec in recs)
                 {
                     Assert.Equal("Update'テスト'ABC", rec.ColVarchar);
@@ -115,92 +116,93 @@ namespace PetaPoco4Core.Test.PostgreSql
                 TestCommon.CreateTempTable01(db);
 
                 var sql = PetaPoco.Sql.Builder
-                    .Append("UPDATE pt_table01")
-                    .Append("  SET col_varchar = @0", "Update'テスト'ABC")
-                    .Append(" WHERE key01 = @0", "99");
+                    .Append("UPDATE PtTable01")
+                    .Append("   SET ColVarchar = @0", "Update'テスト'ABC")
+                    .Append(" WHERE Key01 = @0", "99");
                 var cnt = db.Execute(sql);
 
                 _output.WriteLine(db.LastCommand);
 
-                // pt_table01 の key01 = 99を取得する
+                // PtTable01 の Key01 = 99を取得する
                 var recafter = db.SingleOrDefaultById<PtTable01>("99");
                 Assert.Null(recafter);
             }
         }
 
-        [Fact]
-        public void PT005_カラムサイズオーバーエラー_DDL発行()
-        {
-            // Npgsql.PostgresExceptionが発生したらOK
-            var ex = Assert.Throws<Npgsql.PostgresException>(() =>
-            {
-                using (var db = new DB())
-                {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
+        //[Fact]
+        //public void PT005_カラムサイズオーバーエラー_DDL発行()
+        //{
+        //    // MySqlExceptionが発生したらOK
+        //    var ex = Assert.Throws<MySqlException>(() =>
+        //    {
+        //        using (var db = new DB())
+        //        {
+        //            db.BeginTransaction();
+        //            TestCommon.CreateTempTable01(db);
 
-                    var sql = PetaPoco.Sql.Builder
-                        .Append("UPDATE pt_table01")
-                        .Append("  SET col_varchar = @0", "1234567890123456789012345")
-                        .Append(" WHERE key01 = @0", "11");
-                    db.Execute(sql);
-                    _output.WriteLine(db.LastCommand);
-                }
-            });
-            _output.WriteLine(ex.ToString());
-            Assert.Equal("22001", ex.SqlState);
-        }
+        //            var sql = PetaPoco.Sql.Builder
+        //                .Append("UPDATE PtTable01")
+        //                .Append("   SET ColVarchar = @0", "1234567890123456789012345")
+        //                .Append(" WHERE Key01 = @0", "11");
+        //            db.Execute(sql);
+        //            _output.WriteLine(db.LastCommand);
+        //        }
+        //    });
+        //    _output.WriteLine(ex.ToString());
+        //    _output.WriteLine(ex.Number.ToString());
+        //    Assert.Equal(0, ex.Number);
+        //}
 
-        [Fact]
-        public void PT006_カラムサイズオーバーエラー_Entity利用()
-        {
-            // Npgsql.PostgresExceptionが発生したらOK
-            var ex = Assert.Throws<Npgsql.PostgresException>(() =>
-            {
-                using (var db = new DB())
-                {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
+        //[Fact]
+        //public void PT006_カラムサイズオーバーエラー_Entity利用()
+        //{
+        //    // MySqlExceptionが発生したらOK
+        //    var ex = Assert.Throws<MySqlException>(() =>
+        //    {
+        //        using (var db = new DB())
+        //        {
+        //            db.BeginTransaction();
+        //            TestCommon.CreateTempTable01(db);
 
-                    var rec = db.SingleById<PtTable01>("11");
-                    rec.ColVarchar = "1234567890123456789012345";
-                    db.Update(rec);
-                    _output.WriteLine(db.LastCommand);
-                }
-            });
-            _output.WriteLine(ex.ToString());
-            Assert.Equal("22001", ex.SqlState);
-        }
+        //            var rec = db.SingleById<PtTable01>("11");
+        //            rec.ColVarchar = "1234567890123456789012345";
+        //            db.Update(rec);
+        //            _output.WriteLine(db.LastCommand);
+        //        }
+        //    });
+        //    _output.WriteLine(ex.ToString());
+        //    _output.WriteLine(ex.Number.ToString());
+        //    Assert.Equal(0, ex.Number);
+        //}
 
-        [Fact]
-        public void PT005_カラムサイズオーバーエラー_INT()
-        {
-            // Npgsql.PostgresExceptionが発生したらOK
-            var ex = Assert.Throws<Npgsql.PostgresException>(() =>
-            {
-                using (var db = new DB())
-                {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
+        //[Fact]
+        //public void PT005_カラムサイズオーバーエラー_INT()
+        //{
+        //    // MySqlExceptionが発生したらOK
+        //    var ex = Assert.Throws<MySqlException>(() =>
+        //    {
+        //        using (var db = new DB())
+        //        {
+        //            db.BeginTransaction();
+        //            TestCommon.CreateTempTable01(db);
 
-                    var sql = PetaPoco.Sql.Builder
-                        .Append("UPDATE pt_table01")
-                        .Append("  SET col_int = @0", 1234567890123456789012345m)
-                        .Append(" WHERE key01 = @0", "11");
-                    db.Execute(sql);
-                    _output.WriteLine(db.LastCommand);
-                }
-            });
-            // 22003: integerの範囲外です
-            _output.WriteLine(ex.ToString());
-            Assert.Equal("22003", ex.SqlState);
-        }
+        //            var sql = PetaPoco.Sql.Builder
+        //                .Append("UPDATE PtTable01")
+        //                .Append("   SET ColInt = @0", 1234567890123456789012345m)
+        //                .Append(" WHERE Key01 = @0", "11");
+        //            db.Execute(sql);
+        //            _output.WriteLine(db.LastCommand);
+        //        }
+        //    });
+        //    _output.WriteLine(ex.ToString());
+        //    _output.WriteLine(ex.Number.ToString());
+        //    Assert.Equal(0, ex.Number);
+        //}
 
         [Fact]
         public void PT006_NULL制約エラー()
         {
-            // Npgsql.PostgresExceptionが発生したらOK
-            var ex = Assert.Throws<Npgsql.PostgresException>(() =>
+            var ex = Assert.Throws<MySqlException>(() =>
             {
                 using (var db = new DB())
                 {
@@ -208,16 +210,16 @@ namespace PetaPoco4Core.Test.PostgreSql
                     TestCommon.CreateTempTable01(db);
 
                     var sql = PetaPoco.Sql.Builder
-                        .Append("UPDATE pt_table01")
-                        .Append("  SET create_by = NULL")
-                        .Append(" WHERE key01 = @0", "11");
+                        .Append("UPDATE PtTable01")
+                        .Append("   SET CreateBy = NULL")
+                        .Append(" WHERE Key01 = @0", "11");
                     db.Execute(sql);
                     _output.WriteLine(db.LastCommand);
                 }
             });
-            // 23502: 列"create_by"内のNULL値はNOT NULL制約違反です
             _output.WriteLine(ex.ToString());
-            Assert.Equal("23502", ex.SqlState);
+            _output.WriteLine(ex.Number.ToString());
+            Assert.Equal(0, ex.Number);
         }
 
         [Fact]
@@ -238,14 +240,15 @@ namespace PetaPoco4Core.Test.PostgreSql
                 var sql = db.LastSQL;
 
                 // これは含まれるべき文字列
-                Assert.Contains("col_varchar", sql);
+                Assert.Contains("ColVarchar", sql);
 
                 // これ以降は含まれてはいけない文字列
-                Assert.DoesNotContain("col_bool", sql);
-                Assert.DoesNotContain("col_int", sql);
-                Assert.DoesNotContain("col_dec", sql);
-                Assert.DoesNotContain("create_by", sql);
-                Assert.DoesNotContain("update_dt", sql);
+                Assert.DoesNotContain("ColBool", sql);
+                Assert.DoesNotContain("ColInt", sql);
+                Assert.DoesNotContain("ColDec", sql);
+                Assert.DoesNotContain("CreateBy", sql);
+                Assert.DoesNotContain("UpdateDt", sql);
+
             }
         }
 
@@ -266,8 +269,8 @@ namespace PetaPoco4Core.Test.PostgreSql
                 // PK
                 var pk = new
                 {
-                    key01 = "13",
-                    key02 = 13,
+                    Key01 = "13",
+                    Key02 = 13,
                 };
 
                 var cnt = db.Update(rec, pk);   // PKを指定するメソッド
@@ -278,14 +281,14 @@ namespace PetaPoco4Core.Test.PostgreSql
                 var sql = db.LastSQL;
 
                 // これは含まれるべき文字列
-                Assert.Contains("col_varchar", sql);
+                Assert.Contains("ColVarchar", sql);
 
                 // これ以降は含まれてはいけない文字列
-                Assert.DoesNotContain("col_bool", sql);
-                Assert.DoesNotContain("col_int", sql);
-                Assert.DoesNotContain("col_dec", sql);
-                Assert.DoesNotContain("create_by", sql);
-                Assert.DoesNotContain("update_dt", sql);
+                Assert.DoesNotContain("ColBool", sql);
+                Assert.DoesNotContain("ColInt", sql);
+                Assert.DoesNotContain("ColDec", sql);
+                Assert.DoesNotContain("CreateBy", sql);
+                Assert.DoesNotContain("UpdateDt", sql);
             }
         }
 
@@ -313,14 +316,14 @@ namespace PetaPoco4Core.Test.PostgreSql
                 var sql = db.LastSQL;
 
                 // これは含まれるべき文字列
-                Assert.Contains("col_varchar", sql);
+                Assert.Contains("ColVarchar", sql);
 
                 // これ以降は含まれてはいけない文字列
-                Assert.DoesNotContain("col_bool", sql);
-                Assert.DoesNotContain("col_int", sql);
-                Assert.DoesNotContain("col_dec", sql);
-                Assert.DoesNotContain("create_by", sql);
-                Assert.DoesNotContain("update_dt", sql);
+                Assert.DoesNotContain("ColBool", sql);
+                Assert.DoesNotContain("ColInt", sql);
+                Assert.DoesNotContain("ColDec", sql);
+                Assert.DoesNotContain("CreateBy", sql);
+                Assert.DoesNotContain("UpdateDt", sql);
             }
         }
 
@@ -333,11 +336,11 @@ namespace PetaPoco4Core.Test.PostgreSql
         //        TestCommon.CreateTempTable01(db);
         //        TestCommon.CreateTempTable02(db);
 
-        //        // pt_table02 の key01=12 を取得して確保する
+        //        // PtTable02 の Key01=12 を取得して確保する
         //        var pk = new
         //        {
-        //            key01 = "12",
-        //            key02 = 12,
+        //            Key01 = "12",
+        //            Key02 = 12,
         //        };
         //        var recbefore = db.SingleById<PtTable02>(pk);
         //        Assert.Equal("千葉県", recbefore.ColVarchar);
@@ -350,14 +353,14 @@ namespace PetaPoco4Core.Test.PostgreSql
         //        recafter.ColVarchar = "Update-Commitテスト";
         //        db.Update(recafter);
 
-        //        // pt_table02 の key01=12 を取得して内容を確認する
+        //        // PtTable02 の Key01=12 を取得して内容を確認する
         //        var rec_03 = db.SingleById<PtTable02>(pk);
         //        Assert.Equal(rec_03.ColVarchar, "Update-Commitテスト");
 
         //        //// TransactionをCommitする
         //        //db.CompleteTransaction();
 
-        //        // pt_table02 の key01=12 を取得して内容を確認する
+        //        // PtTable02 の Key01=12 を取得して内容を確認する
         //        var rec_04 = db.SingleById<PtTable02>(pk);
         //        Assert.Equal(rec_03.ColVarchar, "Update-Commitテスト");
         //    }
@@ -372,11 +375,11 @@ namespace PetaPoco4Core.Test.PostgreSql
         //        TestCommon.CreateTempTable01(db);
         //        TestCommon.CreateTempTable02(db);
 
-        //        // pt_table02 の key01=13 を取得して確保する
+        //        // PtTable02 の Key01=13 を取得して確保する
         //        var pk = new
         //        {
-        //            key01 = "13",
-        //            key02 = 13,
+        //            Key01 = "13",
+        //            Key02 = 13,
         //        };
         //        var recbefore = db.SingleById<PtTable02>(pk);
         //        string before_char = recbefore.ColVarchar;
@@ -389,14 +392,14 @@ namespace PetaPoco4Core.Test.PostgreSql
         //        recafter.ColVarchar = "Update-Rollbackテスト";
         //        db.Update(recafter);
 
-        //        // pt_table02 の key01=13 を取得して内容を確認する
+        //        // PtTable02 の Key01=13 を取得して内容を確認する
         //        var rec_03 = db.SingleById<PtTable02>(pk);
         //        Assert.Equal(rec_03.ColVarchar, "Update-Rollbackテスト");
 
         //        // TransactionをRollbackする
         //        db.AbortTransaction();
 
-        //        // pt_table02 の key01=12 を取得して内容を確認する
+        //        // PtTable02 の Key01=12 を取得して内容を確認する
         //        var rec_04 = db.SingleById<PtTable02>(pk);
         //        Assert.Equal(rec_04.ColVarchar, before_char);
         //    }

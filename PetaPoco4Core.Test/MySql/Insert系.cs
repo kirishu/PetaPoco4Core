@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using MySql.Data.MySqlClient;
 
-namespace PetaPoco4Core.Test.PostgreSql
+namespace PetaPoco4Core.Test.MySql
 {
     public class Insert系: TestBase
     {
@@ -18,7 +18,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 db.BeginTransaction();
                 TestCommon.CreateTempTable01(db);
 
-                var cnt = db.Execute("INSERT INTO pt_table01 values ('91',true, 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
+                var cnt = db.Execute("INSERT INTO PtTable01 values ('91',true, 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
 
                 Assert.Equal(1, cnt);
 
@@ -68,25 +68,24 @@ namespace PetaPoco4Core.Test.PostgreSql
         [Fact]
         public void PT003_Execute_キー重複エラーDDL()
         {
-            // Npgsql.PostgresExceptionが発生したらOK
-            var ex = Assert.Throws<Npgsql.PostgresException>(() =>
+            var ex = Assert.Throws<MySqlException>(() =>
             {
                 using (var db = new DB())
                 {
                     db.BeginTransaction();
                     TestCommon.CreateTempTable01(db);
 
-                    var cnt = db.Execute("INSERT INTO pt_table01 values ('01',true, 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
+                    var cnt = db.Execute("INSERT INTO PtTable01 values ('01',true, 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
                 }
             });
-            Assert.Equal("23505", ex.SqlState);
+            _output.WriteLine(ex.ToString());
+            Assert.Equal(1062, ex.Number);
         }
 
         [Fact]
         public void PT004_Insert_キー重複エラーEntity()
         {
-            // Npgsql.PostgresExceptionが発生したらOK
-            var ex = Assert.Throws<Npgsql.PostgresException>(() =>
+            var ex = Assert.Throws<MySqlException>(() =>
             {
                 using (var db = new DB())
                 {
@@ -108,32 +107,33 @@ namespace PetaPoco4Core.Test.PostgreSql
                     db.Insert(rec);
                 }
             });
-            Assert.Equal("23505", ex.SqlState);
+            _output.WriteLine(ex.ToString());
+            Assert.Equal(1062, ex.Number);
         }
 
 
         [Fact]
         public void PT005_Execute_サイズオーバーエラーDDL()
         {
-            // Npgsql.PostgresExceptionが発生したらOK
-            var ex = Assert.Throws<Npgsql.PostgresException>(() =>
+            var ex = Assert.Throws<MySqlException>(() =>
             {
                 using (var db = new DB())
                 {
                     db.BeginTransaction();
                     TestCommon.CreateTempTable01(db);
 
-                    var cnt = db.Execute("INSERT INTO pt_table01 values ('93',true, 123,9999.99, '12345678901234567890123', 'pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
+                    var cnt = db.Execute("INSERT INTO PtTable01 values ('93',true, 123,9999.99, '123456789012345678901233456789012334567890123345678901233456789012334567890123345678901233456789012334567890123', 'pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
                 }
             });
-            Assert.Equal("22001", ex.SqlState);
+            _output.WriteLine(ex.ToString());
+            _output.WriteLine(ex.Number.ToString());
+            //Assert.Equal("22001", ex.SqlState);
         }
 
         [Fact]
         public void PT006_Insert_サイズオーバーエラーEntity()
         {
-            // Npgsql.PostgresExceptionが発生したらOK
-            var ex = Assert.Throws<Npgsql.PostgresException>(() =>
+            var ex = Assert.Throws<MySqlException>(() =>
             {
                 using (var db = new DB())
                 {
@@ -155,7 +155,10 @@ namespace PetaPoco4Core.Test.PostgreSql
                     db.Insert(rec);
                 }
             });
-            Assert.Equal("22001", ex.SqlState);
+            _output.WriteLine(ex.ToString());
+            //Assert.Equal("22001", ex.SqlState);
+            _output.WriteLine(ex.Number.ToString());
+
         }
 
         [Fact]

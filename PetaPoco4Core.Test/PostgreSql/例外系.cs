@@ -24,9 +24,8 @@ namespace PetaPoco4Core.Test.PostgreSql
                     var rec = db.SingleOrDefault<PtTable01>("WEHEREWHERE key01 = 1");
                 }
             });
-            ex.SqlState.Equals("42601");
-            ex.Message.Contains("Npgsql.PostgresException: 42601: syntax error").Equals(true);
             _output.WriteLine(ex.ToString());
+            Assert.Equal("42601", ex.SqlState);
 
             /*
                 Message: Test method DevSupport.Tests.Database.例外テスト系.PT2_001_SyntacError threw exception:
@@ -47,9 +46,8 @@ namespace PetaPoco4Core.Test.PostgreSql
                     var rec = db.SingleOrDefault<PtTable01>("SELECT * FROM pt_table123123 WHERE key01 = 1");
                 }
             });
-            ex.SqlState.Equals("42P01");
-            ex.Message.Contains("Npgsql.PostgresException: 42P01:").Equals(true);
             _output.WriteLine(ex.ToString());
+            Assert.Equal("42P01", ex.SqlState);
             /*
                 Message: Test method DevSupport.Tests.Database.例外テスト系.PT2_002_オブジェクト無し threw exception:
                 Npgsql.PostgresException: 42P01: relation "pt_table123123" does not exist
@@ -70,8 +68,8 @@ namespace PetaPoco4Core.Test.PostgreSql
                     var cnt = db.Execute("INSERT INTO pt_table01 values ('01',true, 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
                 }
             });
-            ex.SqlState.Equals("23505");
             _output.WriteLine(ex.ToString());
+            Assert.Equal("23505", ex.SqlState);
 
             /*
                 Message: Test method DevSupport.Tests.Database.例外テスト系.PT2_003_DuplicateInsert threw exception:
@@ -134,7 +132,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             var ex = Assert.Throws<System.TimeoutException>(() =>
             {
-                var constr = "Server=8.8.8.8;Port=5432;Timeout=10;Database=dev_support;Encoding=UTF8;User Id=dev_support;Password=dev_support;";
+                var constr = "Server=8.8.8.8;Port=5432;Timeout=10;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
                 using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSQL))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
@@ -152,7 +150,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             var ex = Assert.Throws<System.Net.Sockets.SocketException>(() =>
             {
-                var constr = "Server=8.8.8.8;Port=5432;Timeout=30;Database=dev_support;Encoding=UTF8;User Id=dev_support;Password=dev_support;";
+                var constr = "Server=8.8.8.8;Port=5432;Timeout=30;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
                 using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSQL))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
@@ -204,8 +202,8 @@ namespace PetaPoco4Core.Test.PostgreSql
                     //_output.WriteLine(db.LastCommand);
                 }
             });
-            ex.SqlState.Equals("42883");
             _output.WriteLine(ex.ToString());
+            Assert.Equal("42883", ex.SqlState);
         }
 
         [Fact]
@@ -228,7 +226,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         [Fact]
         public void PT004_接続文字列_サービスダウンサーバ()
         {
-            var constr = "Server=localhost;Port=5432;Database=dev_support;Encoding=UTF8;User Id=dev_support;Password=dev_support;";
+            var constr = "Server=localhost;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
 
             var ex = Assert.Throws<System.Net.Sockets.SocketException>(() =>
             {
@@ -237,8 +235,8 @@ namespace PetaPoco4Core.Test.PostgreSql
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
             });
-            ex.ErrorCode.Equals("10061");       // 対象のコンピューターによって拒否されたため、接続できませんでした。
             _output.WriteLine(ex.ToString());
+            Assert.Equal(10061, ex.ErrorCode);        // 対象のコンピューターによって拒否されたため、接続できませんでした。
         }
 
         [Fact]
@@ -254,8 +252,9 @@ namespace PetaPoco4Core.Test.PostgreSql
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
             });
-            ex.SqlState.Equals("28P01");
             _output.WriteLine(ex.ToString());
+            Assert.Equal("28P01", ex.SqlState);
+
         }
 
 

@@ -16,8 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.0.16" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.5.1" />
-    <PackageReference Include="Npgsql" Version="4.0.7" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.5.2" />
+    <PackageReference Include="Npgsql" Version="4.0.8" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
@@ -27,6 +27,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PetaPoco4Core\PetaPoco4Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MySql\" />
   </ItemGroup>
 
 </Project>

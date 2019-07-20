@@ -8,8 +8,7 @@ namespace PetaPoco4Core.Test.PostgreSql
     /// </summary>
     public class DB : PetaPoco.DatabaseExtension
     {
-        //public static readonly string Constr = "Server=centosdb;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testman;";
-        public static readonly string Constr = "Server=10.234.154.69;Database=dev_support;Encoding=UTF8;User Id=dev_support;Password=dev_support;";
+        public static readonly string Constr = "Server=centosdb;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testman;";
 
         /// <summary>
         /// employees Database Object
