@@ -8,9 +8,9 @@
  * and Adam Schroder (@schotime) for lots of suggestions, improvements and Oracle support
  */
 /*
-* 元々はPetaPoco本体ファイルに含まれていたけど、3階層C/SのDTOライブラリのために、
-* Attribute部分だけをこのファイルに移しました。
-*/
+ * 元々はPetaPoco本体ファイルに含まれていたけど、3階層C/SのDTOライブラリのために、
+ * Attribute部分だけをこのファイルに移しました。
+ */
 
 using System;
 using System.Collections.Generic;

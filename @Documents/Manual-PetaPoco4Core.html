@@ -788,22 +788,20 @@ var results = db.PageWithHaving&lt;SalaryDto&gt;(2, 50, PetaPoco.Sql.Builder
     );
 </pre>
 
-        <!--
-    <h4>Dictionaryで受け取る</h4>
-    <pre class="prettyprint lang-cs">
-    var results = db.Dictionary&lt;int, string&gt;(PetaPoco.Sql.Builder
-        .Append("SELECT emp_no")
-        .Append("     , last_name")
-        .Append("  FROM employees")
-    );
-    </pre>
-    <pre class="note">
-    クエリ結果をDictionary&lt;K,V&gt;で受け取れます。
-    単純な結果の場合なら、いちいちクラスを作んなくてもOK。
-    ※ Dictionaryには、重複したキーの挿入はできません。
-      またList&lt;T&gt;と違って、配列の順番は保証されません。
-    </pre>
-    -->
+<h4>Dictionaryで受け取る</h4>
+<pre class="prettyprint lang-cs">
+var results = db.Dictionary&lt;int, string&gt;(PetaPoco.Sql.Builder
+    .Append("SELECT emp_no")
+    .Append("     , last_name")
+    .Append("  FROM employees")
+);
+</pre>
+<pre class="note">
+クエリ結果をDictionary&lt;K,V&gt;で受け取れます。
+単純な結果の場合なら、いちいちクラスを作んなくてもOK。
+※ Dictionaryには、重複したキーの挿入はできません。
+  またList&lt;T&gt;と違って、配列の順番は保証されません。
+</pre>
 
         <h4>dynamicで受け取る</h4>
 <pre class="prettyprint lang-cs">
@@ -816,11 +814,11 @@ var results = db.Fetch&lt;dynamic&gt;(PetaPoco.Sql.Builder
         .Append("  FROM employees")
     );
 
-    foreach (var rec in results)
-    {
-        System.Diagnostics.Debug.WriteLine("名：{0}", rec.first_name);
-        System.Diagnostics.Debug.WriteLine("姓：{0}", rec.last_name);
-    }
+foreach (var rec in results)
+{
+    System.Diagnostics.Debug.WriteLine("名：{0}", rec.first_name);
+    System.Diagnostics.Debug.WriteLine("姓：{0}", rec.last_name);
+}
 </pre>
 <pre class="note">
 クエリ結果を動的型（List&lt;dynamic&gt;）で受け取れます。
@@ -870,14 +868,13 @@ ADO.NETを素で使わない。思想が古い。OOP理念に反している。L
 
         <h3>Inserts, Updates and Deletes</h3>
         <h4>Insert</h4>
-<pre class="prettyprint lang-cs">
-var rec = new Database.Employees.M_Master
+        <pre class="prettyprint lang-cs">
+var rec = new Database.Employees.Title
 {
-    Col01 = 10,
-    NameA = "hoge",
-    Col02 = 99,
-    NameB = "fugafuga",
-    UpdateDm = DateTime.Now,
+    EmpNo = 10,
+    Title = "hoge",
+    FromDate = DateTime.Now,
+    ToDate = DateTime.Now,
 };
 db.Insert(rec);
 </pre>

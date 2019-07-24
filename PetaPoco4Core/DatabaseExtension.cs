@@ -1,5 +1,5 @@
 ﻿/*
- * DatabaseExtension v1.1.0
+ * DatabaseExtension v2.0.0
  * PetaPoco.Database 拡張クラス
  */
 #region 変更履歴
@@ -40,6 +40,9 @@ namespace PetaPoco
         /// <summary> SQL文実行時の時間 </summary>
         private static DateTime _execTime = DateTime.MinValue;
 
+        /// <summary> デバッグ出力にA5Mk2のSetParameter構文を使用する </summary>
+        private readonly bool _useA5Mk2Params;
+
         /// <summary>
         /// constractor
         /// </summary>s
@@ -54,6 +57,8 @@ namespace PetaPoco
             _logger.Debug("[New Instance] {0}", connectionString);
 #endif
             base.CommandTimeout = 30;    // default 30sec
+
+            _useA5Mk2Params = (dbType == DBType.PostgreSQL);
         }
 
         /// <summary>
@@ -64,9 +69,8 @@ namespace PetaPoco
         {
 #if DEBUG
             var text = cmd.CommandText;
-            if (this._dbType == DBType.PostgreSQL)
+            if (_useA5Mk2Params)
             {
-                // PostgreSQLの場合
                 var regex = new Regex("@([0-9]+)");
                 while (regex.IsMatch(text))
                 {
@@ -99,24 +103,17 @@ namespace PetaPoco
             var log = new StringBuilder();
             foreach (IDataParameter param in parameters)
             {
-                if (this._dbType == DBType.PostgreSQL)
+                if (_useA5Mk2Params)
                 {
-                    // PostgreSQLの場合
                     log.Append("SetParameter ");
                     log.Append(param.ParameterName.Replace(this.ParamPrefix, "p"));      // "@"を"p"に変更する
                     log.Append(' ');
                     log.Append(GetLogQuotedParameterValue(param.Value));
-                    if (param.DbType == DbType.Date
-                        || param.DbType == DbType.DateTime
-                        || param.DbType == DbType.Time)
-                    {
-                        log.Append(' ');
-                        log.Append(GetLogParameterType(param));
-                    }
+                    log.Append(' ');
+                    log.Append(GetLogParameterType(param));
                 }
                 else
                 {
-                    // PostgreSQL以外の場合
                     if (this._dbType == DBType.SqlServer)
                     {
                         log.Append("DECLARE ");
@@ -134,7 +131,7 @@ namespace PetaPoco
                 log.AppendLine();
             }
 
-            if (this._dbType == DBType.PostgreSQL)
+            if (_useA5Mk2Params)
             {
                 log.Insert(0, "/**\n");
                 log.Append("*/");
@@ -274,81 +271,69 @@ namespace PetaPoco
         /// <returns></returns>
         private string GetLogParameterType(System.Data.IDataParameter param)
         {
-            var log = new StringBuilder();
+            string dbtype = string.Empty;
 
             switch (param.DbType)
             {
-                // nvarchar(4000)
                 case DbType.AnsiString:
                 case DbType.AnsiStringFixedLength:
                 case DbType.String:
                 case DbType.StringFixedLength:
-                    log.Append("NVARCHAR(4000)");
+                    dbtype = _useA5Mk2Params ? "String" : "NVARCHAR(4000)";
                     break;
                 case DbType.Boolean:
-                    log.Append("BIT");
+                    dbtype = _useA5Mk2Params ? "Boolean" : "BOOLEAN";
                     break;
                 case DbType.Byte:
-                    log.Append("TINYINT");
+                    dbtype = _useA5Mk2Params ? "Integer" : "TINYINT";
                     break;
                 case DbType.Int16:
                 case DbType.SByte:
-                    log.Append("SMALLINT");
+                    dbtype = _useA5Mk2Params ? "Integer" : "SMALLINT";
                     break;
                 case DbType.Int32:
                 case DbType.UInt16:
-                    log.Append("INT");
+                    dbtype = _useA5Mk2Params ? "Integer" : "INT";
                     break;
                 case DbType.Int64:
                 case DbType.UInt32:
-                    log.Append("BIGINT");
+                    dbtype = _useA5Mk2Params ? "Integer" : "BIGINT";
                     break;
                 case DbType.UInt64:
                 case DbType.Currency:
                 case DbType.Decimal:
                 case DbType.VarNumeric:
-                    log.Append("DECIMAL");
+                    dbtype = _useA5Mk2Params ? "Currency" : "DECIMAL";
                     break;
                 case DbType.Single:
-                    log.Append("DECIMAL");
+                    dbtype = _useA5Mk2Params ? "Float" : "FLOAT";
                     break;
                 case DbType.Double:
-                    log.Append("REAL");
+                    dbtype = _useA5Mk2Params ? "Float" : "REAL";
                     break;
                 case DbType.Time:
-                    log.Append("TIME");
+                    dbtype = _useA5Mk2Params ? "Time" : "TIME";
                     break;
                 case DbType.Date:
-                    log.Append("DATE");
+                    dbtype = _useA5Mk2Params ? "Date" : "DATE";
                     break;
                 case DbType.DateTime:
                 case DbType.DateTime2:
                 case DbType.DateTimeOffset:
-                    {
-                        log.Append("DATETIME");
-                    }
+                    dbtype = _useA5Mk2Params ? "DateTime" : "DATETIME";
                     break;
-                // バイナリ
                 case DbType.Binary:
                 case DbType.Guid:
                 case DbType.Object:
                 case DbType.Xml:
-                    {
-                        // そのまま返す
-                        log.Append(param.DbType.ToString().ToUpper());
-                    }
+                    // バイナリ
+                    dbtype = _useA5Mk2Params ? "String" : param.DbType.ToString().ToUpper();      // そのまま返す
                     break;
-                // なんだかわかんないもの
                 default:
-                    {
-                        log.Append("/* UNKNOWN DATATYPE: ");
-                        log.Append(param.DbType.ToString().ToUpper());
-                        log.Append(" *" + "/ ");
-                        log.Append(param.DbType.ToString().ToUpper());
-                    }
+                    // なんだかわかんないもの
                     break;
             }
-            return log.ToString();
+            return dbtype;
         }
         #endregion
 
