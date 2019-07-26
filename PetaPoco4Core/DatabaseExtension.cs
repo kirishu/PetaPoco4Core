@@ -38,7 +38,7 @@ namespace PetaPoco
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary> SQL文実行時の時間 </summary>
-        private static DateTime _execTime = DateTime.MinValue;
+        private DateTime _execTime = DateTime.MinValue;
 
         /// <summary> デバッグ出力にA5Mk2のSetParameter構文を使用する </summary>
         private readonly bool _useA5Mk2Params;
