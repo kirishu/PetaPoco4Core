@@ -253,8 +253,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 }
             });
             _output.WriteLine(ex.ToString());
-            Assert.Equal("28P01", ex.SqlState);
-
+            Assert.Equal("42P01", ex.SqlState);
         }
 
 

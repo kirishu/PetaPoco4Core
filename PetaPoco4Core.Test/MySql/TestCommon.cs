@@ -35,7 +35,6 @@ namespace PetaPoco4Core.Test.MySql
                 // PtTable02の作成
                 CreateTempTable02(db);
             }
-
         }
 
         /// <summary>

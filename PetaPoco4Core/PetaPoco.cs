@@ -11,8 +11,10 @@
 // 29-Oct-2015 [Database.AddParam]バイナリ列へのnullセット対応
 // 01-Mar-2017 [Sql.Where]WhereメソッドにSqlオブジェクトを引数に持つoverloadを追加
 // 24-Jun-2019 .NET Standard 2.0 に対応
-//                  Databaseのコンストラクタは1種類だけにしました
+//             Databaseのコンストラクタは1種類だけにしました
 #endregion
+
+#pragma warning disable CS1591    // CS1591: Missing XML comment for publicly visible type or member
 
 using System;
 using System.Collections.Generic;
@@ -28,6 +30,7 @@ using System.Threading;
 
 namespace PetaPoco
 {
+
     /// <summary>
     /// Holds the results of a paged request.
     /// </summary>
@@ -121,7 +124,10 @@ namespace PetaPoco
         }
     }
 
-    // Optionally provide an implementation of this to Database.Mapper
+    /// <summary>
+    /// IMapper provides a way to hook into PetaPoco's Database to POCO mapping mechanism to either
+    /// customize or completely replace it.
+    /// </summary>
     public interface IMapper
     {
         void GetTableInfo(Type t, TableInfo ti);
@@ -130,12 +136,9 @@ namespace PetaPoco
         Func<object, object> GetToDbConverter(Type SourceType);
     }
 
-    //// This will be merged with IMapper in the next major version
-    //public interface IMapper2 : IMapper
-    //{
-    //    Func<object, object> GetFromDbConverter(Type DestType, Type SourceType);
-    //}
-
+    /// <summary>
+    /// the default implementation of IMapper used by PetaPoco
+    /// </summary>
     public class DefaultMapper: IMapper
     {
         public virtual void GetTableInfo(Type t, TableInfo ti) { }
@@ -157,6 +160,9 @@ namespace PetaPoco
         }
     }
 
+    /// <summary>
+    /// Specifies the database queries.
+    /// </summary>
     public interface IDatabaseQuery
     {
         void OpenSharedConnection();
@@ -421,17 +427,28 @@ namespace PetaPoco
         /// </summary>
         public void Dispose()
         {
+            this.Dispose(true);
+        }
+
+        /// <summary>
+        /// Automatically close one open shared connection
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
             // Automatically close one open connection reference
             //  (Works with KeepConnectionAlive and manually opening a shared connection)
             // added kiri@syncnoah.com
-            if (_transaction == null)
+            if (disposing)
             {
-                CloseSharedConnection();
-            }
-            else
-            {
-                _transactionCancelled = true;
-                CleanupTransaction();
+                if (_transaction == null)
+                {
+                    CloseSharedConnection();
+                }
+                else
+                {
+                    _transactionCancelled = true;
+                    CleanupTransaction();
+                }
             }
         }
 
@@ -746,6 +763,7 @@ namespace PetaPoco
         static Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
         // kiri@syncnoah.com このメソッドをprivate からprotectedに変更
         // IDbCommand CreateCommand(IDbConnection connection, string sql, params object[] args)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         protected IDbCommand CreateCommand(IDbConnection connection, string sql, params object[] args)
         {
             // Perform parameter prefix replacements
@@ -1657,6 +1675,7 @@ namespace PetaPoco
         // Insert a poco into a table.  If the poco has a property with the same name 
         // as the primary key the id of the new record is assigned to it.  Either way,
         // the new id is returned.
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco)
         {
             try
@@ -2840,8 +2859,18 @@ namespace PetaPoco
 
         public void Dispose()
         {
-            if (_db != null)
-                _db.AbortTransaction();
+            this.Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_db != null)
+                {
+                    _db.AbortTransaction();
+                }
+            }
         }
 
         Database _db;

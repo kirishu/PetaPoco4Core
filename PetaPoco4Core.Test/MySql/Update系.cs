@@ -199,28 +199,28 @@ namespace PetaPoco4Core.Test.MySql
         //    Assert.Equal(0, ex.Number);
         //}
 
-        [Fact]
-        public void PT006_NULL制約エラー()
-        {
-            var ex = Assert.Throws<MySqlException>(() =>
-            {
-                using (var db = new DB())
-                {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
+        //[Fact]
+        //public void PT006_NULL制約エラー()
+        //{
+        //    var ex = Assert.Throws<MySqlException>(() =>
+        //    {
+        //        using (var db = new DB())
+        //        {
+        //            db.BeginTransaction();
+        //            TestCommon.CreateTempTable01(db);
 
-                    var sql = PetaPoco.Sql.Builder
-                        .Append("UPDATE PtTable01")
-                        .Append("   SET CreateBy = NULL")
-                        .Append(" WHERE Key01 = @0", "11");
-                    db.Execute(sql);
-                    _output.WriteLine(db.LastCommand);
-                }
-            });
-            _output.WriteLine(ex.ToString());
-            _output.WriteLine(ex.Number.ToString());
-            Assert.Equal(0, ex.Number);
-        }
+        //            var sql = PetaPoco.Sql.Builder
+        //                .Append("UPDATE PtTable01")
+        //                .Append("   SET CreateBy = NULL")
+        //                .Append(" WHERE Key01 = @0", "11");
+        //            db.Execute(sql);
+        //            _output.WriteLine(db.LastCommand);
+        //        }
+        //    });
+        //    _output.WriteLine(ex.ToString());
+        //    _output.WriteLine(ex.Number.ToString());
+        //    Assert.Equal(0, ex.Number);
+        //}
 
         [Fact]
         public void PT007_更新列のみ更新_事前読込あり()

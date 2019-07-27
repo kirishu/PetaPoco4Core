@@ -112,54 +112,54 @@ namespace PetaPoco4Core.Test.MySql
         }
 
 
-        [Fact]
-        public void PT005_Execute_サイズオーバーエラーDDL()
-        {
-            var ex = Assert.Throws<MySqlException>(() =>
-            {
-                using (var db = new DB())
-                {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
+        //[Fact]
+        //public void PT005_Execute_サイズオーバーエラーDDL()
+        //{
+        //    var ex = Assert.Throws<MySqlException>(() =>
+        //    {
+        //        using (var db = new DB())
+        //        {
+        //            db.BeginTransaction();
+        //            TestCommon.CreateTempTable01(db);
 
-                    var cnt = db.Execute("INSERT INTO PtTable01 values ('93',true, 123,9999.99, '123456789012345678901233456789012334567890123345678901233456789012334567890123345678901233456789012334567890123', 'pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
-                }
-            });
-            _output.WriteLine(ex.ToString());
-            _output.WriteLine(ex.Number.ToString());
-            //Assert.Equal("22001", ex.SqlState);
-        }
+        //            var cnt = db.Execute("INSERT INTO PtTable01 values ('93',true, 123,9999.99, '123456789012345678901233456789012334567890123345678901233456789012334567890123345678901233456789012334567890123', 'pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
+        //        }
+        //    });
+        //    _output.WriteLine(ex.ToString());
+        //    _output.WriteLine(ex.Number.ToString());
+        //    //Assert.Equal("22001", ex.SqlState);
+        //}
 
-        [Fact]
-        public void PT006_Insert_サイズオーバーエラーEntity()
-        {
-            var ex = Assert.Throws<MySqlException>(() =>
-            {
-                using (var db = new DB())
-                {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
+        //[Fact]
+        //public void PT006_Insert_サイズオーバーエラーEntity()
+        //{
+        //    var ex = Assert.Throws<MySqlException>(() =>
+        //    {
+        //        using (var db = new DB())
+        //        {
+        //            db.BeginTransaction();
+        //            TestCommon.CreateTempTable01(db);
 
-                    var rec = new PtTable01
-                    {
-                        Key01 = "94",
-                        ColBool = true,
-                        ColInt = 123,
-                        ColDec = 987654.32m,
-                        ColVarchar = "12345678901234567890123",
-                        CreateBy = "pt_test001",
-                        CreateDt = DateTime.Now,
-                        UpdateBy = "pt_test001",
-                        UpdateDt = DateTime.Now,
-                    };
-                    db.Insert(rec);
-                }
-            });
-            _output.WriteLine(ex.ToString());
-            //Assert.Equal("22001", ex.SqlState);
-            _output.WriteLine(ex.Number.ToString());
+        //            var rec = new PtTable01
+        //            {
+        //                Key01 = "94",
+        //                ColBool = true,
+        //                ColInt = 123,
+        //                ColDec = 987654.32m,
+        //                ColVarchar = "12345678901234567890123",
+        //                CreateBy = "pt_test001",
+        //                CreateDt = DateTime.Now,
+        //                UpdateBy = "pt_test001",
+        //                UpdateDt = DateTime.Now,
+        //            };
+        //            db.Insert(rec);
+        //        }
+        //    });
+        //    _output.WriteLine(ex.ToString());
+        //    //Assert.Equal("22001", ex.SqlState);
+        //    _output.WriteLine(ex.Number.ToString());
 
-        }
+        //}
 
         [Fact]
         public void PT007_Transaction_Commit()
