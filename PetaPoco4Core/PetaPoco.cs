@@ -425,10 +425,7 @@ namespace PetaPoco
         /// <summary>
         /// Automatically close one open shared connection
         /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
+        public void Dispose() => this.Dispose(true);
 
         /// <summary>
         /// Automatically close one open shared connection
@@ -590,9 +587,9 @@ namespace PetaPoco
 
         // Helper to handle named parameters from object properties
         static Regex rxParams = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
-        public static string ProcessParams(string _sql, object[] args_src, List<object> args_dest)
+        public static string ProcessParams(string sql, object[] argsSrc, List<object> argsDest)
         {
-            return rxParams.Replace(_sql, m =>
+            return rxParams.Replace(sql, m =>
             {
                 string param = m.Value.Substring(1);
 
@@ -601,16 +598,16 @@ namespace PetaPoco
                 if (int.TryParse(param, out int paramIndex))
                 {
                     // Numbered parameter
-                    if (paramIndex < 0 || paramIndex >= args_src.Length)
-                        throw new ArgumentOutOfRangeException(string.Format("Parameter '@{0}' specified but only {1} parameters supplied (in `{2}`)", paramIndex, args_src.Length, _sql));
-                    arg_val = args_src[paramIndex];
+                    if (paramIndex < 0 || paramIndex >= argsSrc.Length)
+                        throw new ArgumentOutOfRangeException(string.Format("Parameter '@{0}' specified but only {1} parameters supplied (in `{2}`)", paramIndex, argsSrc.Length, sql));
+                    arg_val = argsSrc[paramIndex];
                 }
                 else
                 {
                     // Look for a property on one of the arguments with this name
                     bool found = false;
                     arg_val = null;
-                    foreach (var o in args_src)
+                    foreach (var o in argsSrc)
                     {
                         var pi = o.GetType().GetProperty(param);
                         if (pi != null)
@@ -622,7 +619,7 @@ namespace PetaPoco
                     }
 
                     if (!found)
-                        throw new ArgumentException(string.Format("Parameter '@{0}' specified but none of the passed arguments have a property with this name (in '{1}')", param, _sql));
+                        throw new ArgumentException(string.Format("Parameter '@{0}' specified but none of the passed arguments have a property with this name (in '{1}')", param, sql));
                 }
 
                 // Expand collections to parameter lists
@@ -633,15 +630,15 @@ namespace PetaPoco
                     var sb = new StringBuilder();
                     foreach (var i in arg_val as System.Collections.IEnumerable)
                     {
-                        var indexOfExistingValue = args_dest.IndexOf(i);
+                        var indexOfExistingValue = argsDest.IndexOf(i);
                         if (indexOfExistingValue >= 0)
                         {
                             sb.Append((sb.Length == 0 ? "@" : ",@") + indexOfExistingValue);
                         }
                         else
                         {
-                            sb.Append((sb.Length == 0 ? "@" : ",@") + args_dest.Count);
-                            args_dest.Add(i);
+                            sb.Append((sb.Length == 0 ? "@" : ",@") + argsDest.Count);
+                            argsDest.Add(i);
                         }
                     }
                     if (sb.Length == 0)
@@ -652,12 +649,12 @@ namespace PetaPoco
                 }
                 else
                 {
-                    var indexOfExistingValue = args_dest.IndexOf(arg_val);
+                    var indexOfExistingValue = argsDest.IndexOf(arg_val);
                     if (indexOfExistingValue >= 0)
                         return "@" + indexOfExistingValue;
 
-                    args_dest.Add(arg_val);
-                    return "@" + (args_dest.Count - 1).ToString();
+                    argsDest.Add(arg_val);
+                    return "@" + (argsDest.Count - 1).ToString();
                 }
             }
             );
@@ -2843,6 +2840,8 @@ namespace PetaPoco
     /// </summary>
     public class Transaction : IDisposable
     {
+        protected Database _db;
+
         public Transaction(Database db) : this(db, null) { }
 
         public Transaction(Database db, IsolationLevel? isolationLevel)
@@ -2872,8 +2871,6 @@ namespace PetaPoco
                 }
             }
         }
-
-        Database _db;
     }
 
     /// <summary>
