@@ -389,5 +389,45 @@ namespace PetaPoco4Core.Test.Unit
             Assert.Equal("SELECT field FROM myTable WHERE (id = @0)", sqlCapture3.Replace("\n", " "));
         }
 
+        [Fact]
+        public void 別インスタンスSQLの結合()
+        {
+            var sqlSelect = PetaPoco.Sql.Builder.Append("SELECT * ");
+            var sqlFrom = PetaPoco.Sql.Builder.Append("FROM employees");
+            var sqlWhere = PetaPoco.Sql.Builder
+                .Where("emp_no = @0", 10023)
+                .Where("birth_date >= @0 AND birth_date <= @1", DateTime.Parse("1953/01/01"), DateTime.Parse("1953/12/31"))
+                .Where("first_name = @0", "Bojan");
+
+
+            _sql = PetaPoco.Sql.Builder
+                .Append(sqlSelect.SQL)
+                .Append(sqlFrom.SQL)
+                .Append(new PetaPoco.Sql(sqlWhere.SQL, sqlWhere.Arguments));
+
+            _output.WriteLine(_sql.SQL);
+
+            Assert.Equal(4, _sql.Arguments.Length);
+        }
+
+        [Fact]
+        public void Clone()
+        {
+            var where = PetaPoco.Sql.Builder
+                .Where("emp_no = @0", 10023)
+                .Where("birth_date >= @0 AND birth_date <= @1", DateTime.Parse("1953/01/01"), DateTime.Parse("1953/12/31"))
+                .Where("first_name = @0", "Bojan");
+
+
+            _sql = where.Clone();
+
+            _sql.Where("last_name = @0", "Montemayor");
+
+            _output.WriteLine(_sql.SQL);
+
+            Assert.Equal(4, where.Arguments.Length);
+            Assert.Equal(5, _sql.Arguments.Length);
+        }
+
     }
 }

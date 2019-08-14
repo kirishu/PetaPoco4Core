@@ -477,24 +477,9 @@ namespace PetaPoco
         /// <typeparam name="T"></typeparam>
         /// <param name="poco"></param>
         /// <returns></returns>
-        public int Update<T>(IPetaPocoRecord<T> poco)
+        public int Update<T>(PetaPoco.IPetaPocoRecord<T> poco)
         {
             return base.Update(poco, null, poco.GetModifiedColumns());
-        }
-
-        /// <summary>
-        /// 変更した列だけを更新するUpdateメソッド
-        /// （正確には列プロパティへsetが実行された列）
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="poco"></param>
-        /// <param name="primaryKeyValue">PK</param>
-        /// <returns></returns>
-        public int Update<T>(IPetaPocoRecord<T> poco, object primaryKeyValue)
-        {
-            var rtnval = base.Update(poco, primaryKeyValue, poco.GetModifiedColumns());
-            poco.ClearModifiedColumns();
-            return rtnval;
         }
 
         /// <summary>

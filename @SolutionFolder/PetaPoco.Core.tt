@@ -387,24 +387,39 @@ class SqlServerSchemaReader : SchemaReader
         var cmd=_factory.CreateCommand();
         cmd.Connection=connection;
         cmd.CommandText=
-            @"SELECT *
-                FROM INFORMATION_SCHEMA.TABLES
-               WHERE TABLE_TYPE='BASE TABLE' OR TABLE_TYPE='VIEW'";
+            @"SELECT tbl.name AS 'TableName'
+                    , scm.name AS 'SchemaName'
+                    , eps.value AS 'Comment'
+                    , 0 AS TableType
+                 FROM sys.tables AS tbl
+                 LEFT JOIN sys.schemas AS scm ON tbl.schema_id = scm.schema_id
+                 LEFT JOIN sys.extended_properties eps ON tbl.object_id = eps.major_id AND eps.minor_id = 0
+                WHERE tbl.type = 'U'
+               UNION
+               SELECT tbl.name AS 'TableName'
+                    , scm.name AS 'SchemaName'
+                    , eps.value AS 'Comment'
+                    , 10 AS TableType
+                 FROM sys.views AS tbl
+                 LEFT JOIN sys.schemas AS scm ON tbl.schema_id = scm.schema_id
+                 LEFT JOIN sys.extended_properties eps ON tbl.object_id = eps.major_id AND eps.minor_id = 0
+                WHERE tbl.type = 'V'
+               ORDER BY TableType, TableName";
 
         //pull the tables in a reader
         using(cmd)
         {
-
             using (var rdr=cmd.ExecuteReader())
             {
                 while(rdr.Read())
                 {
                     Table tbl=new Table();
-                    tbl.Name=rdr["TABLE_NAME"].ToString();
-                    tbl.Schema=rdr["TABLE_SCHEMA"].ToString();
-                    tbl.IsView=string.Compare(rdr["TABLE_TYPE"].ToString(), "View", true)==0;
+                    tbl.Name=rdr["TableName"].ToString();
+                    tbl.Schema=rdr["SchemaName"].ToString();
+                    tbl.IsView=string.Compare(rdr["TableType"].ToString(), "10", true)==0;
                     tbl.CleanName=CleanUp(tbl.Name);
                     tbl.ClassName=Inflector.MakeSingular(tbl.CleanName);
+                    tbl.Comment = (rdr["Comment"].ToString() == "") ? rdr["TableName"].ToString() : rdr["Comment"].ToString();
 
                     result.Add(tbl);
                 }
@@ -1368,7 +1383,7 @@ public static class Inflector {
         AddPluralRule("(alias|status)$", "$1es");
         AddPluralRule("(bu)s$", "$1ses");
         AddPluralRule("(buffal|tomat)o$", "$1oes");
-        AddPluralRule("([ti])um$", "$1a");
+        //***AddPluralRule("([ti])um$", "$1a");
         AddPluralRule("sis$", "ses");
         AddPluralRule("(?:([^f])fe|([lr])f)$", "$1$2ves");
         AddPluralRule("(hive)$", "$1s");
@@ -1382,7 +1397,7 @@ public static class Inflector {
         AddSingularRule("s$", String.Empty);
         AddSingularRule("ss$", "ss");
         AddSingularRule("(n)ews$", "$1ews");
-        AddSingularRule("([ti])a$", "$1um");
+        //***AddSingularRule("([ti])a$", "$1um");
         AddSingularRule("((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$", "$1$2sis");
         AddSingularRule("(^analy)ses$", "$1sis");
         AddSingularRule("([^f])ves$", "$1fe");

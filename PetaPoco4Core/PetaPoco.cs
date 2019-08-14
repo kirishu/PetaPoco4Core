@@ -2876,7 +2876,7 @@ namespace PetaPoco
     /// <summary>
     /// A simple helper class for build SQL statements
     /// </summary>
-    public class Sql
+    public class Sql : ICloneable
     {
         private string _sql;
         private object[] _args;
@@ -3038,6 +3038,41 @@ namespace PetaPoco
             if (_rhs != null)
                 _rhs.Build(sb, args, this);
         }
+
+        // added by kiri@syncnoah.com
+        // ディープコピーメソッドを追加しました
+        #region ICloneable Member
+        object ICloneable.Clone()
+        {
+            return Clone();
+        }
+
+        /// <summary>
+        /// ディープコピーを返します
+        /// </summary>
+        /// <returns>Sqlオブジェクトの複製</returns>
+        public Sql Clone()
+        {
+            Sql cloned = (Sql)MemberwiseClone();
+            // 参照型フィールドの複製を作成する
+            if (_args != null)
+            {
+                cloned._args = (object[])_args.Clone();
+            }
+            if (_rhs != null)
+            {
+                cloned._rhs = (Sql)_rhs.Clone();
+            }
+            if (_argsFinal != null)
+            {
+                cloned._argsFinal = (object[])_argsFinal.Clone();
+            }
+            cloned._sql = _sql;
+            cloned._sqlFinal = _sqlFinal;
+            return cloned;
+        }
+        #endregion
+
 
         /// <summary>
         /// Appends an SQL WHERE clause to this SQL builder

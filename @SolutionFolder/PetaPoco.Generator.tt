@@ -154,6 +154,7 @@ foreach(Table tbl in from t in tables where !t.Ignore orderby t.Name ascending s
 <# } //**[I]** #>
     [ExplicitColumns]
     public class <#=tbl.ClassName#><# if (GenerateOperations) { #>: <#=RepoName#>.Record<<#=tbl.ClassName#>> <# } #><# if (!GenerateOperations && TrackModifiedColumns) { #>: PetaPoco.PetaPocoRecord<<#=tbl.ClassName#>> <# } #>
+    
     {
 <#
 foreach(Column col in from c in tbl.Columns where !c.Ignore select c)
