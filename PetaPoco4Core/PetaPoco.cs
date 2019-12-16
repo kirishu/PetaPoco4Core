@@ -2455,7 +2455,7 @@ namespace PetaPoco
 
                             if (ForceDateTimesToUtc && converter == null && srcType == typeof(DateTime))
                             {
-                                converter = delegate (object src) 
+                                converter = delegate (object src)
                                 {
                                     return new DateTime(((DateTime)src).Ticks, DateTimeKind.Utc);
                                 };

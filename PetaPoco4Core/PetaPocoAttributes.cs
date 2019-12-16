@@ -18,17 +18,17 @@ using System.Collections.Generic;
 namespace PetaPoco
 {
     /// <summary>
-    ///     Represents the attribute which decorates a poco class to state all columns must be explicitly mapped using either a
-    ///     <seealso cref="ColumnAttribute" /> or <seealso cref="ResultColumnAttribute" />.
+    /// Represents the attribute which decorates a poco class to state all columns must be explicitly mapped using either a
     /// </summary>
+    /// <seealso cref="ColumnAttribute" /> or <seealso cref="ResultColumnAttribute" />.
     [AttributeUsage(AttributeTargets.Class)]
     public class ExplicitColumnsAttribute : Attribute
     {
     }
 
     /// <summary>
-    ///     Represents an attribute which can decorate a Poco property to ensure PetaPoco does not map column, and therefore
-    ///     ignores the column.
+    /// Represents an attribute which can decorate a Poco property to ensure PetaPoco does not map column, and therefore
+    /// ignores the column.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class IgnoreAttribute : Attribute
@@ -36,8 +36,8 @@ namespace PetaPoco
     }
 
     /// <summary>
-    ///     Represents an attribute which can decorate a Poco property to mark the property as a column. It may also optionally
-    ///     supply the DB column name.
+    /// Represents an attribute which can decorate a Poco property to mark the property as a column. It may also optionally
+    /// supply the DB column name.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class ColumnAttribute : Attribute
@@ -48,8 +48,8 @@ namespace PetaPoco
     }
 
     /// <summary>
-    ///     Represents an attribute which can decorate a poco property as a result only column. A result only column is a
-    ///     column that is only populated in queries and is not used for updates or inserts operations.
+    /// Represents an attribute which can decorate a poco property as a result only column. A result only column is a
+    /// column that is only populated in queries and is not used for updates or inserts operations.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class ResultColumnAttribute : ColumnAttribute
