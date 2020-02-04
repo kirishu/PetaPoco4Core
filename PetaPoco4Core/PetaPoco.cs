@@ -249,7 +249,7 @@ namespace PetaPoco
     {
         //void Dispose();
         IDbConnection Connection { get; }
-        IDbTransaction Transaction { get; }
+        IDbTransaction DbTransaction { get; }
         IDataParameter CreateParameter();
         Transaction GetTransaction();
         Transaction GetTransaction(IsolationLevel? isolationLevel);
@@ -276,8 +276,8 @@ namespace PetaPoco
         int Delete<T>(string sql, params object[] args);
         int Delete<T>(Sql sql);
         int Delete<T>(object pocoOrPrimaryKey);
-        void Save(string tableName, string primaryKeyName, object poco);
-        void Save(object poco);
+        //void Save(string tableName, string primaryKeyName, object poco);
+        //void Save(object poco);
     }
 
 
@@ -391,7 +391,9 @@ namespace PetaPoco
             //}
             _factory = GetFactory(assemblyName);
 
-            if (_dbType == DBType.MySql && _connectionString != null && _connectionString.IndexOf("Allow User Variables=true") >= 0)
+            if (_dbType == DBType.MySql
+                && _connectionString != null
+                && _connectionString.IndexOf("Allow User Variables=true", StringComparison.CurrentCulture) >= 0)
             {
                 ParamPrefix = "?";
             }
@@ -430,7 +432,11 @@ namespace PetaPoco
         /// <summary>
         /// Automatically close one open shared connection
         /// </summary>
-        public void Dispose() => this.Dispose(true);
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
         /// <summary>
         /// Automatically close one open shared connection
@@ -509,7 +515,7 @@ namespace PetaPoco
             get { return _sharedConnection; }
         }
 
-        public IDbTransaction Transaction
+        public IDbTransaction DbTransaction
         {
             get { return _transaction; }
         }
@@ -890,7 +896,7 @@ namespace PetaPoco
         static Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         string AddSelectClause<T>(string sql)
         {
-            if (sql.StartsWith(";"))
+            if (sql.StartsWith(";", StringComparison.CurrentCulture))
                 return sql.Substring(1);
 
             if (!rxSelect.IsMatch(sql))
@@ -968,7 +974,7 @@ namespace PetaPoco
             // Split the SQL into the bits we need
             if (!SplitSqlForPaging(sql, out sqlCount, out string sqlSelectRemoved, out string sqlOrderBy))
                 throw new Exception("Unable to parse SQL statement for paged query");
-            if (_dbType == DBType.Oracle && sqlSelectRemoved.StartsWith("*"))
+            if (_dbType == DBType.Oracle && sqlSelectRemoved.StartsWith("*", StringComparison.CurrentCulture))
                 throw new Exception("Query must alias '*' when performing a paged query.\neg. select t.* from table t order by t.id");
 
             // Build the SQL for the actual final result
@@ -1236,7 +1242,7 @@ namespace PetaPoco
                     {
                         // Find the property
                         var candidates = from p in types[j].GetProperties() where p.PropertyType == types[i] select p;
-                        if (candidates.Count() == 0)
+                        if (!candidates.Any())
                             continue;
                         if (candidates.Count() > 1)
                             throw new InvalidOperationException(string.Format("Can't auto join {0} as {1} has more than one property of type {0}", types[i], types[j]));
@@ -1699,7 +1705,9 @@ namespace PetaPoco
                             continue;
 
                         // Don't insert the primary key (except under oracle where we need bring in the next sequence value)
-                        if (autoIncrement && primaryKeyName != null && string.Compare(i.Key, primaryKeyName, true) == 0)
+                        if (autoIncrement
+                            && primaryKeyName != null
+                            && string.Compare(i.Key, primaryKeyName, true, System.Globalization.CultureInfo.CurrentCulture) == 0)
                         {
                             if (_dbType == DBType.Oracle && !string.IsNullOrEmpty(pd.TableInfo.SequenceName))
                             {
@@ -1903,8 +1911,12 @@ namespace PetaPoco
                 if (i.Value.ResultColumn)
                     continue;
 
-                if (!i.Value.VersionColumn && columns != null && !columns.Contains(i.Value.ColumnName, StringComparer.OrdinalIgnoreCase))
+                if (!i.Value.VersionColumn
+                    && columns != null
+                    && !columns.Contains(i.Value.ColumnName, StringComparer.OrdinalIgnoreCase))
+                {
                     continue;
+                }
 
                 object value = i.Value.GetValue(poco);
 
@@ -1924,7 +1936,7 @@ namespace PetaPoco
             }
 
             if (columns != null && columns.Any() && sb.Length == 0)
-                throw new ArgumentException("There were no columns in the columns list that matched your table", "columns");
+                throw new ArgumentException("There were no columns in the columns list that matched your table", nameof(columns));
 
             var sql = string.Format("UPDATE {0} SET {1} WHERE {2}", EscapeTableName(tableName), sb, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
 
@@ -2080,83 +2092,83 @@ namespace PetaPoco
             return Execute(new Sql(string.Format("DELETE FROM {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
         }
 
-        // Check if a poco represents a new record
-        public bool IsNew(string primaryKeyName, object poco)
-        {
-            var pd = PocoData.ForObject(poco, primaryKeyName);
-            object pk;
-            if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc))
-            {
-                pk = pc.GetValue(poco);
-            }
-            else if (poco.GetType() == typeof(System.Dynamic.ExpandoObject))
-            {
-                return true;
-            }
-            else
-            {
-                var pi = poco.GetType().GetProperty(primaryKeyName);
-                if (pi == null)
-                    throw new ArgumentException(string.Format("The object doesn't have a property matching the primary key column name '{0}'", primaryKeyName));
-                pk = pi.GetValue(poco, null);
-            }
+        //// Check if a poco represents a new record
+        //public bool IsNew(string primaryKeyName, object poco)
+        //{
+        //    var pd = PocoData.ForObject(poco, primaryKeyName);
+        //    object pk;
+        //    if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc))
+        //    {
+        //        pk = pc.GetValue(poco);
+        //    }
+        //    else if (poco.GetType() == typeof(System.Dynamic.ExpandoObject))
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        var pi = poco.GetType().GetProperty(primaryKeyName);
+        //        if (pi == null)
+        //            throw new ArgumentException(string.Format("The object doesn't have a property matching the primary key column name '{0}'", primaryKeyName));
+        //        pk = pi.GetValue(poco, null);
+        //    }
 
-            if (pk == null)
-            {
-                return true;
-            }
+        //    if (pk == null)
+        //    {
+        //        return true;
+        //    }
 
-            var type = pk.GetType();
+        //    var type = pk.GetType();
 
-            if (type.IsValueType)
-            {
-                // Common primary key types
-                if (type == typeof(long))
-                    return (long)pk == default(long);
-                else if (type == typeof(ulong))
-                    return (ulong)pk == default(ulong);
-                else if (type == typeof(int))
-                    return (int)pk == default(int);
-                else if (type == typeof(uint))
-                    return (uint)pk == default(uint);
-                else if (type == typeof(Guid))
-                    return (Guid)pk == default(Guid);
+        //    if (type.IsValueType)
+        //    {
+        //        // Common primary key types
+        //        if (type == typeof(long))
+        //            return (long)pk == default(long);
+        //        else if (type == typeof(ulong))
+        //            return (ulong)pk == default(ulong);
+        //        else if (type == typeof(int))
+        //            return (int)pk == default(int);
+        //        else if (type == typeof(uint))
+        //            return (uint)pk == default(uint);
+        //        else if (type == typeof(Guid))
+        //            return (Guid)pk == default(Guid);
 
-                // Create a default instance and compare
-                return pk == Activator.CreateInstance(pk.GetType());
-            }
-            else
-            {
-                return pk == null;
-            }
-        }
+        //        // Create a default instance and compare
+        //        return pk == Activator.CreateInstance(pk.GetType());
+        //    }
+        //    else
+        //    {
+        //        return pk == null;
+        //    }
+        //}
 
-        public bool IsNew(object poco)
-        {
-            var pd = PocoData.ForType(poco.GetType());
-            if (!pd.TableInfo.AutoIncrement)
-                throw new InvalidOperationException("IsNew() and Save() are only supported on tables with auto-increment/identity primary key columns");
-            return IsNew(pd.TableInfo.PrimaryKey, poco);
-        }
+        //public bool IsNew(object poco)
+        //{
+        //    var pd = PocoData.ForType(poco.GetType());
+        //    if (!pd.TableInfo.AutoIncrement)
+        //        throw new InvalidOperationException("IsNew() and Save() are only supported on tables with auto-increment/identity primary key columns");
+        //    return IsNew(pd.TableInfo.PrimaryKey, poco);
+        //}
 
-        // Insert new record or Update existing record
-        public void Save(string tableName, string primaryKeyName, object poco)
-        {
-            if (IsNew(primaryKeyName, poco))
-            {
-                Insert(tableName, primaryKeyName, true, poco);
-            }
-            else
-            {
-                Update(tableName, primaryKeyName, poco);
-            }
-        }
+        //// Insert new record or Update existing record
+        //public void Save(string tableName, string primaryKeyName, object poco)
+        //{
+        //    if (IsNew(primaryKeyName, poco))
+        //    {
+        //        Insert(tableName, primaryKeyName, true, poco);
+        //    }
+        //    else
+        //    {
+        //        Update(tableName, primaryKeyName, poco);
+        //    }
+        //}
 
-        public void Save(object poco)
-        {
-            var pd = PocoData.ForType(poco.GetType());
-            Save(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco);
-        }
+        //public void Save(object poco)
+        //{
+        //    var pd = PocoData.ForType(poco.GetType());
+        //    Save(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco);
+        //}
 
         void DoPreExecute(IDbCommand cmd)
         {
@@ -2864,6 +2876,7 @@ namespace PetaPoco
         public void Dispose()
         {
             this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)

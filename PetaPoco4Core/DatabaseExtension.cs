@@ -235,13 +235,14 @@ namespace PetaPoco
                     }
                 }
             }
+            //catch (Exception ex)
+            //{
+            //    log.AppendLine("/* Exception occurred while converting parameter: ");
+            //    log.AppendLine(ex.ToString());
+            //    log.AppendLine("*/");
+            //}
+            finally { }
 
-            catch (Exception ex)
-            {
-                log.AppendLine("/* Exception occurred while converting parameter: ");
-                log.AppendLine(ex.ToString());
-                log.AppendLine("*/");
-            }
             return log.ToString();
         }
 
@@ -256,7 +257,7 @@ namespace PetaPoco
                     System.Reflection.BindingFlags.Public |
                     System.Reflection.BindingFlags.Instance |
                     System.Reflection.BindingFlags.InvokeMethod,
-                    null, value, null);
+                    null, value, null, System.Globalization.CultureInfo.CurrentCulture);
             }
             else
             {
@@ -327,7 +328,7 @@ namespace PetaPoco
                 case DbType.Object:
                 case DbType.Xml:
                     // バイナリ
-                    dbtype = _useA5Mk2Params ? "String" : param.DbType.ToString().ToUpper();      // そのまま返す
+                    dbtype = _useA5Mk2Params ? "String" : param.DbType.ToString().ToUpper(System.Globalization.CultureInfo.CurrentCulture);
                     break;
                 default:
                     // なんだかわかんないもの
@@ -429,35 +430,38 @@ namespace PetaPoco
             try
             {
                 // sp_columnsから列情報を読み取ってCREATE TABLE文を発行する
-                var dt = GetDataTable(string.Format("sp_columns '{0}'", sourcename));
                 var sb = new StringBuilder();
-                foreach (DataRow dr in dt.Rows)
+                using (var dt = GetDataTable(string.Format("sp_columns '{0}'", sourcename)))
                 {
-                    if (sb.Length > 0)
+                    foreach (DataRow dr in dt.Rows)
                     {
-                        sb.Append(" , ");
-                    }
-
-                    // カラム名
-                    sb.AppendFormat(" {0} ", dr["COLUMN_NAME"].ToString());
-                    // 型名
-                    sb.AppendFormat(" {0} ", dr["TYPE_NAME"].ToString().ToLower().Replace("identity", ""));
-                    // サイズ
-                    if (dr["RADIX"] == null || dr["RADIX"].Equals(DBNull.Value))
-                    {
-                        // RADIXがnullなら数値以外
-                        if (dr["SCALE"] == null || dr["SCALE"].Equals(DBNull.Value))
+                        if (sb.Length > 0)
                         {
-                            // 文字列
-                            if (dr["PRECISION"].ToString().Trim().Length < 5)
+                            sb.Append(" , ");
+                        }
+
+                        // カラム名
+                        sb.AppendFormat(" {0} ", dr["COLUMN_NAME"].ToString());
+                        // 型名
+                        sb.AppendFormat(" {0} ", dr["TYPE_NAME"].ToString().ToLower(System.Globalization.CultureInfo.CurrentCulture).Replace("identity", ""));
+                        // サイズ
+                        if (dr["RADIX"] == null || dr["RADIX"].Equals(DBNull.Value))
+                        {
+                            // RADIXがnullなら数値以外
+                            if (dr["SCALE"] == null || dr["SCALE"].Equals(DBNull.Value))
                             {
-                                sb.AppendFormat(" ({0}) ", dr["PRECISION"].ToString());
+                                // 文字列
+                                if (dr["PRECISION"].ToString().Trim().Length < 5)
+                                {
+                                    sb.AppendFormat(" ({0}) ", dr["PRECISION"].ToString());
+                                }
                             }
                         }
+                        // nullの可否
+                        sb.AppendFormat(" {0} ", (dr["NULLABLE"].ToString().Trim() == "0") ? "not null" : "null");
                     }
-                    // nullの可否
-                    sb.AppendFormat(" {0} ", (dr["NULLABLE"].ToString().Trim() == "0") ? "not null" : "null");
                 }
+
                 sb.Insert(0, "CREATE TABLE " + tempname + " ( ");
                 sb.Append(" ) ");
 

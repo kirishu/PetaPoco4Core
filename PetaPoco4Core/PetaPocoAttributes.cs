@@ -142,12 +142,12 @@ namespace PetaPoco
         /// <summary>
         /// 変更フラッグをセットする
         /// </summary>
-        /// <param name="column_name">Column name</param>
-        protected void MarkColumnModified(string column_name)
+        /// <param name="columnName">Column name</param>
+        protected void MarkColumnModified(string columnName)
         {
             if (modifiedColumns != null)
             {
-                modifiedColumns[column_name] = true;
+                modifiedColumns[columnName] = true;
             }
         }
 
