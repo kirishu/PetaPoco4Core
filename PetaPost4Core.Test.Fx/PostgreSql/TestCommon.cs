@@ -1,7 +1,7 @@
 ﻿using System;
 using PetaPoco;
 
-namespace PetaPoco4Core.Test.PostgreSql
+namespace PetaPoco4Core.Test.Fx.PostgreSql
 {
     /// <summary>
     /// Database Object
@@ -18,73 +18,56 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
     }
 
-    /// <summary>
-    /// テスト共通
-    /// </summary>
-    public sealed class TestCommon: ITestCommon
+    public class TestCommon
     {
-        // singleton instance
-        private static readonly TestCommon _instance = new TestCommon();
-
-        public static TestCommon Instance {  get { return _instance; } }
-
-        private TestCommon() { }
+        private TestCommon () { }
 
         /// <summary>
         /// 初期処理
         /// </summary>
-        public void Initialize()
+        public static void Initialize()
         {
             // DB接続
             using (var db = new DB())
             {
                 // pt_table01の作成
-                CreateTable01(db);
+                CreateTempTable01(db);
                 // pt_table02の作成
-                CreateTable02(db);
+                CreateTempTable02(db);
             }
+
         }
 
         /// <summary>
         /// 終了処理
         /// </summary>
-        public void Cleanup()
+        public static void Cleanup()
         {
-            // DB接続
-            using (var db = new DB())
-            {
-                // 存在していたらDROP
-                db.Execute("DROP TABLE IF EXISTS pt_table01");
-                db.Execute("DROP TABLE IF EXISTS pt_table02");
-                //var checktable01 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table01");
-                //if (!string.IsNullOrWhiteSpace(checktable01))
-                //{
-                //    db.Execute("DROP TABLE pt_table01");
-                //}
+            //// DB接続
+            //using (var db = new DB())
+            //{
+            //    var checktable01 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table01");
+            //    if (!string.IsNullOrWhiteSpace(checktable01))
+            //    {
+            //        db.Execute("DROP TABLE pt_table01");
+            //    }
 
-                //var checktable02 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table02");
-                //if (!string.IsNullOrWhiteSpace(checktable02))
-                //{
-                //    db.Execute("DROP TABLE pt_table02");
-                //}
-            }
+            //    var checktable02 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table02");
+            //    if (!string.IsNullOrWhiteSpace(checktable02))
+            //    {
+            //        db.Execute("DROP TABLE pt_table02");
+            //    }
+            //}
         }
 
-        private void CreateTable01(DB db)
+        public static void CreateTempTable01(DB db)
         {
             //// 存在していたらDROP
             //db.Execute("DROP TABLE IF EXISTS pt_table01");
 
-            // 存在していたら作成しない
-            var tablenm = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table01");
-            if (!string.IsNullOrWhiteSpace(tablenm))
-            {
-                return;
-            }
-
             // CREATE
             var sql = PetaPoco.Sql.Builder
-                .Append("CREATE TABLE pt_table01 (")
+                .Append("CREATE TEMP TABLE pt_table01 (")
                 .Append("      key01                  VARCHAR(2)        NOT NULL")
                 .Append("    , col_bool               bool              NOT NULL")
                 .Append("    , col_int                int")
@@ -95,7 +78,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 .Append("    , update_by              VARCHAR(30)       NOT NULL")
                 .Append("    , update_dt              TIMESTAMP(3)      NOT NULL")
                 .Append("    , CONSTRAINT PK_pt_table01 PRIMARY KEY (key01)")
-                .Append(");");
+                .Append(") ON COMMIT DROP;");
             db.Execute(sql);
 
             // データINSERT
@@ -117,21 +100,14 @@ namespace PetaPoco4Core.Test.PostgreSql
 
         }
 
-        private void CreateTable02(DB db)
+        public static void CreateTempTable02(DB db)
         {
             //// 存在していたらDROP
             //db.Execute("DROP TABLE IF EXISTS pt_table02");
 
-            // 存在していたら作成しない
-            var tablenm = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table02");
-            if (!string.IsNullOrWhiteSpace(tablenm))
-            {
-                return;
-            }
-
             // CREATE
             var sql = PetaPoco.Sql.Builder
-                .Append("CREATE TABLE pt_table02 (")
+                .Append("CREATE TEMP TABLE pt_table02 (")
                 .Append("      key01                  VARCHAR(2)        NOT NULL")
                 .Append("    , key02                  int               NOT NULL")
                 .Append("    , col_bool               bool              NOT NULL")
@@ -143,7 +119,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 .Append("    , update_by              VARCHAR(30)       NOT NULL")
                 .Append("    , update_dt              TIMESTAMP(3)      NOT NULL")
                 .Append("    , CONSTRAINT PK_pt_table02 PRIMARY KEY (key01, key02)")
-                .Append(");");
+                .Append(") ON COMMIT DROP;");
             db.Execute(sql);
 
             // データINSERT

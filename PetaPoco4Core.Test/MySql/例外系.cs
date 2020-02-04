@@ -7,7 +7,7 @@ namespace PetaPoco4Core.Test.MySql
 {
     public class 例外系: TestBase
     {
-        public 例外系(ITestOutputHelper output): base(output) { }
+        public 例外系(ITestOutputHelper output): base(output, TestCommon.Instance) { }
 
 
         [Fact]
@@ -19,9 +19,6 @@ namespace PetaPoco4Core.Test.MySql
                 // DB接続
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var rec = db.SingleOrDefault<PtTable01>("WEHEREWHERE Key01 = 1");
                 }
             });
@@ -37,9 +34,6 @@ namespace PetaPoco4Core.Test.MySql
             {
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var rec = db.SingleOrDefault<PtTable01>("SELECT * FROM pt_table123123 WHERE Key01 = 1");
                 }
             });
@@ -56,7 +50,6 @@ namespace PetaPoco4Core.Test.MySql
                 using (var db = new DB())
                 {
                     db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
 
                     var cnt = db.Execute("INSERT INTO PtTable01 values ('01',true, 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
                 }
@@ -137,9 +130,6 @@ namespace PetaPoco4Core.Test.MySql
             {
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var rec = db.SingleOrDefault<PtTable01>("SELECT Key01, 'STRING' AS col_dec FROM PtTable01 WHERE Key01 = '01'");
                 }
             });
@@ -153,9 +143,6 @@ namespace PetaPoco4Core.Test.MySql
             {
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var recs = db.Fetch<PtTable01>(PetaPoco.Sql.Builder
                         .Append("WHERE col_int = @0", "0 OR 1 = 1")
                         );
@@ -172,9 +159,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var recs = db.Fetch<PtTable01>(PetaPoco.Sql.Builder
                     .Append("WHERE Key01 = @0", "01' OR 'A' = 'A")
                     );

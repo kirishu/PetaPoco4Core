@@ -17,6 +17,10 @@ MySQL公式で紹介されているテストデータベース「employees」の
     $ cd test_db-master
     $ mysql -u [username] -p -t < employees.sql
 
+	※Windows版の場合
+	{解凍したパス}> "C:\Program Files\MariaDB 10.5\bin\mysql" -uroot -p -t < employees.sql
+
+
 3.  ユーザと権限を付与する
     
     $ mysql -u [username] -p

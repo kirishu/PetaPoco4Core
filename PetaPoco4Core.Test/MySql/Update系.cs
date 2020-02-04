@@ -7,7 +7,7 @@ namespace PetaPoco4Core.Test.MySql
 {
     public class Update系: TestBase
     {
-        public Update系(ITestOutputHelper output) : base(output) { }
+        public Update系(ITestOutputHelper output) : base(output, TestCommon.Instance) { }
 
 
         [Fact]
@@ -16,7 +16,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
 
                 var recbefore = db.SingleById<PtTable01>("10");
 
@@ -53,7 +52,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
 
                 var recbefore = db.SingleById<PtTable01>("11");
 
@@ -87,7 +85,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
 
                 var sql = PetaPoco.Sql.Builder
                     .Append("UPDATE PtTable01")
@@ -113,7 +110,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
 
                 var sql = PetaPoco.Sql.Builder
                     .Append("UPDATE PtTable01")
@@ -138,7 +134,6 @@ namespace PetaPoco4Core.Test.MySql
         //        using (var db = new DB())
         //        {
         //            db.BeginTransaction();
-        //            TestCommon.CreateTempTable01(db);
 
         //            var sql = PetaPoco.Sql.Builder
         //                .Append("UPDATE PtTable01")
@@ -162,7 +157,6 @@ namespace PetaPoco4Core.Test.MySql
         //        using (var db = new DB())
         //        {
         //            db.BeginTransaction();
-        //            TestCommon.CreateTempTable01(db);
 
         //            var rec = db.SingleById<PtTable01>("11");
         //            rec.ColVarchar = "1234567890123456789012345";
@@ -184,7 +178,6 @@ namespace PetaPoco4Core.Test.MySql
         //        using (var db = new DB())
         //        {
         //            db.BeginTransaction();
-        //            TestCommon.CreateTempTable01(db);
 
         //            var sql = PetaPoco.Sql.Builder
         //                .Append("UPDATE PtTable01")
@@ -199,28 +192,27 @@ namespace PetaPoco4Core.Test.MySql
         //    Assert.Equal(0, ex.Number);
         //}
 
-        //[Fact]
-        //public void PT006_NULL制約エラー()
-        //{
-        //    var ex = Assert.Throws<MySqlException>(() =>
-        //    {
-        //        using (var db = new DB())
-        //        {
-        //            db.BeginTransaction();
-        //            TestCommon.CreateTempTable01(db);
+        [Fact]
+        public void PT006_NULL制約エラー()
+        {
+            var ex = Assert.Throws<MySqlException>(() =>
+            {
+                using (var db = new DB())
+                {
+                    db.BeginTransaction();
 
-        //            var sql = PetaPoco.Sql.Builder
-        //                .Append("UPDATE PtTable01")
-        //                .Append("   SET CreateBy = NULL")
-        //                .Append(" WHERE Key01 = @0", "11");
-        //            db.Execute(sql);
-        //            _output.WriteLine(db.LastCommand);
-        //        }
-        //    });
-        //    _output.WriteLine(ex.ToString());
-        //    _output.WriteLine(ex.Number.ToString());
-        //    Assert.Equal(0, ex.Number);
-        //}
+                    var sql = PetaPoco.Sql.Builder
+                        .Append("UPDATE PtTable01")
+                        .Append("   SET CreateBy = NULL")
+                        .Append(" WHERE Key01 = @0", "11");
+                    db.Execute(sql);
+                    _output.WriteLine(db.LastCommand);
+                }
+            });
+            _output.WriteLine(ex.ToString());
+            _output.WriteLine(ex.Number.ToString());
+            Assert.Equal(1048, ex.Number);
+        }
 
         [Fact]
         public void PT007_更新列のみ更新_事前読込あり()
@@ -228,7 +220,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
 
                 var rec = db.SingleById<PtTable01>("11");
                 rec.ColVarchar = "1234567890";
@@ -258,7 +249,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
 
                 // 更新する値
                 var rec = new PtTable02
@@ -298,7 +288,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
 
                 // レコード内にPK値も持つ
                 var rec = new PtTable02
@@ -327,83 +316,75 @@ namespace PetaPoco4Core.Test.MySql
             }
         }
 
-        //[Fact]
-        //public void PT008_Transaction_Commit()
-        //{
-        //    using (var db = new DB())
-        //    {
-        //        db.BeginTransaction();
-        //        TestCommon.CreateTempTable01(db);
-        //        TestCommon.CreateTempTable02(db);
+        [Fact]
+        public void PT008_Transaction_Commit()
+        {
+            using (var db = new DB())
+            {
+                // PtTable02 の Key01=12 を取得して確保する
+                var pk = new
+                {
+                    Key01 = "12",
+                    Key02 = 12,
+                };
+                var recbefore = db.SingleById<PtTable02>(pk);
+                Assert.Equal("千葉県", recbefore.ColVarchar);
 
-        //        // PtTable02 の Key01=12 を取得して確保する
-        //        var pk = new
-        //        {
-        //            Key01 = "12",
-        //            Key02 = 12,
-        //        };
-        //        var recbefore = db.SingleById<PtTable02>(pk);
-        //        Assert.Equal("千葉県", recbefore.ColVarchar);
+                // Transactionを開始する
+                db.BeginTransaction();
 
-        //        //// Transactionを開始する
-        //        //db.BeginTransaction();
+                // 下記Updateを実行する
+                var recafter = db.SingleById<PtTable02>(pk);
+                recafter.ColVarchar = "Update-Commitテスト";
+                db.Update(recafter);
 
-        //        // 下記Updateを実行する
-        //        var recafter = db.SingleById<PtTable02>(pk);
-        //        recafter.ColVarchar = "Update-Commitテスト";
-        //        db.Update(recafter);
+                // PtTable02 の Key01=12 を取得して内容を確認する
+                var rec_03 = db.SingleById<PtTable02>(pk);
+                Assert.Equal("Update-Commitテスト", rec_03.ColVarchar);
 
-        //        // PtTable02 の Key01=12 を取得して内容を確認する
-        //        var rec_03 = db.SingleById<PtTable02>(pk);
-        //        Assert.Equal(rec_03.ColVarchar, "Update-Commitテスト");
+                // TransactionをCommitする
+                db.CompleteTransaction();
 
-        //        //// TransactionをCommitする
-        //        //db.CompleteTransaction();
+                // PtTable02 の Key01=12 を取得して内容を確認する
+                var rec_04 = db.SingleById<PtTable02>(pk);
+                Assert.Equal("Update-Commitテスト", rec_03.ColVarchar);
+            }
+        }
 
-        //        // PtTable02 の Key01=12 を取得して内容を確認する
-        //        var rec_04 = db.SingleById<PtTable02>(pk);
-        //        Assert.Equal(rec_03.ColVarchar, "Update-Commitテスト");
-        //    }
-        //}
+        [Fact]
+        public void PT009_Transaction_Rollback()
+        {
+            using (var db = new DB())
+            {
+                // PtTable02 の Key01=13 を取得して確保する
+                var pk = new
+                {
+                    Key01 = "13",
+                    Key02 = 13,
+                };
+                var recbefore = db.SingleById<PtTable02>(pk);
+                string before_char = recbefore.ColVarchar;
 
-        //[Fact]
-        //public void PT009_Transaction_Rollback()
-        //{
-        //    using (var db = new DB())
-        //    {
-        //        db.BeginTransaction();
-        //        TestCommon.CreateTempTable01(db);
-        //        TestCommon.CreateTempTable02(db);
+                // Transactionを開始する
+                db.BeginTransaction();
 
-        //        // PtTable02 の Key01=13 を取得して確保する
-        //        var pk = new
-        //        {
-        //            Key01 = "13",
-        //            Key02 = 13,
-        //        };
-        //        var recbefore = db.SingleById<PtTable02>(pk);
-        //        string before_char = recbefore.ColVarchar;
+                // 下記Updateを実行する
+                var recafter = db.SingleById<PtTable02>(pk);
+                recafter.ColVarchar = "Update-Rollbackテスト";
+                db.Update(recafter);
 
-        //        // Transactionを開始する
-        //        db.BeginTransaction();
+                // PtTable02 の Key01=13 を取得して内容を確認する
+                var rec_03 = db.SingleById<PtTable02>(pk);
+                Assert.Equal("Update-Rollbackテスト", rec_03.ColVarchar);
 
-        //        // 下記Updateを実行する
-        //        var recafter = db.SingleById<PtTable02>(pk);
-        //        recafter.ColVarchar = "Update-Rollbackテスト";
-        //        db.Update(recafter);
+                // TransactionをRollbackする
+                db.AbortTransaction();
 
-        //        // PtTable02 の Key01=13 を取得して内容を確認する
-        //        var rec_03 = db.SingleById<PtTable02>(pk);
-        //        Assert.Equal(rec_03.ColVarchar, "Update-Rollbackテスト");
-
-        //        // TransactionをRollbackする
-        //        db.AbortTransaction();
-
-        //        // PtTable02 の Key01=12 を取得して内容を確認する
-        //        var rec_04 = db.SingleById<PtTable02>(pk);
-        //        Assert.Equal(rec_04.ColVarchar, before_char);
-        //    }
-        //}
+                // PtTable02 の Key01=12 を取得して内容を確認する
+                var rec_04 = db.SingleById<PtTable02>(pk);
+                Assert.Equal(rec_04.ColVarchar, before_char);
+            }
+        }
 
     }
 }

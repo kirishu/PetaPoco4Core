@@ -8,7 +8,7 @@ namespace PetaPoco4Core.Test.MySql
     /// </summary>
     public class DB : PetaPoco.DatabaseExtension
     {
-        public static readonly string Constr = "Server=centosdb;Database=employees;uid=testman;pwd=testman;SslMode=None;";
+        public static readonly string Constr = "Server=localhost;Database=employees;uid=testman;pwd=testpwd;SslMode=None;";
 
         /// <summary>
         /// employees Database Object
@@ -18,55 +18,62 @@ namespace PetaPoco4Core.Test.MySql
         }
     }
 
-    public class TestCommon
+    public class TestCommon: ITestCommon
     {
-        private TestCommon () { }
+        // singleton instance
+        private static readonly TestCommon _instance = new TestCommon();
+
+        public static TestCommon Instance {  get { return _instance; } }
+
+        private TestCommon() { }
 
         /// <summary>
         /// 初期処理
         /// </summary>
-        public static void Initialize()
+        public void Initialize()
         {
             // DB接続
             using (var db = new DB())
             {
                 // PtTable01の作成
-                CreateTempTable01(db);
+                CreateTable01(db);
                 // PtTable02の作成
-                CreateTempTable02(db);
+                CreateTable02(db);
             }
         }
 
         /// <summary>
         /// 終了処理
         /// </summary>
-        public static void Cleanup()
+        public void Cleanup()
         {
-            //// DB接続
-            //using (var db = new DB())
-            //{
-            //    var checktable01 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "PtTable01");
-            //    if (!string.IsNullOrWhiteSpace(checktable01))
-            //    {
-            //        db.Execute("DROP TABLE PtTable01");
-            //    }
+            // DB接続
+            using (var db = new DB())
+            {
+                //var checktable01 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "PtTable01");
+                //if (!string.IsNullOrWhiteSpace(checktable01))
+                //{
+                //    db.Execute("DROP TABLE PtTable01");
+                //}
 
-            //    var checktable02 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "PtTable02");
-            //    if (!string.IsNullOrWhiteSpace(checktable02))
-            //    {
-            //        db.Execute("DROP TABLE PtTable02");
-            //    }
-            //}
+                //var checktable02 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "PtTable02");
+                //if (!string.IsNullOrWhiteSpace(checktable02))
+                //{
+                //    db.Execute("DROP TABLE PtTable02");
+                //}
+                db.Execute("DROP TABLE IF EXISTS PtTable01");
+                db.Execute("DROP TABLE IF EXISTS PtTable02");
+            }
         }
 
-        public static void CreateTempTable01(DB db)
+        private  void CreateTable01(DB db)
         {
             //// 存在していたらDROP
             //db.Execute("DROP TABLE IF EXISTS PtTable01");
 
             // CREATE
             var sql = PetaPoco.Sql.Builder
-                .Append("CREATE TEMPORARY TABLE IF NOT EXISTS PtTable01 (")
+                .Append("CREATE TABLE IF NOT EXISTS PtTable01 (")
                 .Append("      Key01                 VARCHAR(2)        NOT NULL")
                 .Append("    , ColBool               bool              NOT NULL")
                 .Append("    , ColInt                int")
@@ -99,14 +106,14 @@ namespace PetaPoco4Core.Test.MySql
 
         }
 
-        public static void CreateTempTable02(DB db)
+        private void CreateTable02(DB db)
         {
-            //// 存在していたらDROP
-            //db.Execute("DROP TABLE IF EXISTS PtTable02");
+            // 存在していたらDROP
+            db.Execute("DROP TABLE IF EXISTS PtTable02");
 
             // CREATE
             var sql = PetaPoco.Sql.Builder
-                .Append("CREATE TEMPORARY TABLE IF NOT EXISTS PtTable02 (")
+                .Append("CREATE TABLE IF NOT EXISTS PtTable02 (")
                 .Append("      Key01                 VARCHAR(2)        NOT NULL")
                 .Append("    , Key02                 int               NOT NULL")
                 .Append("    , ColBool               bool              NOT NULL")

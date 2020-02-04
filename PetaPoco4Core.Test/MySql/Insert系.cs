@@ -7,7 +7,7 @@ namespace PetaPoco4Core.Test.MySql
 {
     public class Insert系: TestBase
     {
-        public Insert系(ITestOutputHelper output) : base(output) { }
+        public Insert系(ITestOutputHelper output) : base(output, TestCommon.Instance) { }
 
 
         [Fact]
@@ -16,7 +16,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
 
                 var cnt = db.Execute("INSERT INTO PtTable01 values ('91',true, 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
 
@@ -38,7 +37,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
 
                 var rec = new PtTable01
                 {
@@ -73,7 +71,6 @@ namespace PetaPoco4Core.Test.MySql
                 using (var db = new DB())
                 {
                     db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
 
                     var cnt = db.Execute("INSERT INTO PtTable01 values ('01',true, 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
                 }
@@ -90,7 +87,6 @@ namespace PetaPoco4Core.Test.MySql
                 using (var db = new DB())
                 {
                     db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
 
                     var rec = new PtTable01
                     {
@@ -120,7 +116,6 @@ namespace PetaPoco4Core.Test.MySql
         //        using (var db = new DB())
         //        {
         //            db.BeginTransaction();
-        //            TestCommon.CreateTempTable01(db);
 
         //            var cnt = db.Execute("INSERT INTO PtTable01 values ('93',true, 123,9999.99, '123456789012345678901233456789012334567890123345678901233456789012334567890123345678901233456789012334567890123', 'pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
         //        }
@@ -138,7 +133,6 @@ namespace PetaPoco4Core.Test.MySql
         //        using (var db = new DB())
         //        {
         //            db.BeginTransaction();
-        //            TestCommon.CreateTempTable01(db);
 
         //            var rec = new PtTable01
         //            {
@@ -167,7 +161,6 @@ namespace PetaPoco4Core.Test.MySql
             using (var db = new DB())
             {
                 db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
 
                 var rec = new PtTable01
                 {
@@ -194,35 +187,33 @@ namespace PetaPoco4Core.Test.MySql
             }
         }
 
-        //[Fact]
-        //public void PT008_Transaction_Rollback()
-        //{
-        //    using (var db = new DB())
-        //    {
-        //        db.BeginTransaction();
-        //        TestCommon.CreateTempTable01(db);
-        //        TestCommon.CreateTempTable02(db);
+        [Fact]
+        public void PT008_Transaction_Rollback()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
 
-        //        var rec = new PtTable01
-        //        {
-        //            Key01 = "96",
-        //            ColBool = true,
-        //            ColInt = 123,
-        //            ColDec = 987654.32m,
-        //            ColVarchar = "Transactionテスト",
-        //            CreateBy = "pt_test001",
-        //            CreateDt = DateTime.Parse("2018/12/18 18:00:00"),
-        //            UpdateBy = "pt_test001",
-        //            UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
-        //        };
-        //        db.Insert(rec);
+                var rec = new PtTable01
+                {
+                    Key01 = "96",
+                    ColBool = true,
+                    ColInt = 123,
+                    ColDec = 987654.32m,
+                    ColVarchar = "Transactionテスト",
+                    CreateBy = "pt_test001",
+                    CreateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    UpdateBy = "pt_test001",
+                    UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                };
+                db.Insert(rec);
 
-        //        db.AbortTransaction();
+                db.AbortTransaction();
 
-        //        var rec2 = db.SingleOrDefaultById<PtTable01>("96");
-        //        Assert.IsNull(rec2);
-        //    }
-        //}
+                var rec2 = db.SingleOrDefaultById<PtTable01>("96");
+                Assert.Null(rec2);
+            }
+        }
 
 
 

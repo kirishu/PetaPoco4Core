@@ -308,7 +308,6 @@ namespace PetaPoco
 
         // Member variables
         private string _connectionString;
-        private readonly string[] _assemblyName;
         private DbProviderFactory _factory;
         private IDbConnection _sharedConnection;
         private IDbTransaction _transaction;
@@ -337,43 +336,49 @@ namespace PetaPoco
 
             _connectionString = connectionString;
 
+            string[] assemblyName;
+
             if (dbType == DBType.SqlServer)
             {
-                _assemblyName = new string[] {
+                assemblyName = new string[] {
                     "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 };
             }
             else if (dbType == DBType.MySql)
             {
-                _assemblyName = new string[] {
+                assemblyName = new string[] {
                     "MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Culture=neutral, PublicKeyToken=c5687fc88969c44d",
                 };
             }
             else if (dbType == DBType.Oracle)
             {
-                _assemblyName = new string[] {
+                assemblyName = new string[] {
                     "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess, Culture=neutral, PublicKeyToken=89b483f429c47342",
                     "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess",
                 };
             }
             else if (dbType == DBType.PostgreSQL)
             {
-                _assemblyName = new string[] {
+                assemblyName = new string[] {
                     "Npgsql.NpgsqlFactory, Npgsql, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
                 };
             }
             else if (dbType == DBType.SqlServerCE)
             {
-                _assemblyName = new string[] {
+                assemblyName = new string[] {
                     "System.Data.SqlServerCe.SqlCeProviderFactory, System.Data.SqlServerCe, Culture=neutral, PublicKeyToken=89845dcd8080cc91",
                 };
             }
             else if (dbType == DBType.SQLite)
             {
-                _assemblyName = new string[] {
+                assemblyName = new string[] {
                     "System.Data.SQLite.SQLiteFactory, System.Data.SQLite",
                     "Microsoft.Data.Sqlite.SqliteFactory, Microsoft.Data.Sqlite",
                 };
+            }
+            else
+            {
+                throw new ArgumentException("DBType is not exist");
             }
 
             _transactionDepth = 0;
@@ -384,7 +389,7 @@ namespace PetaPoco
             //{
             //    _factory = GetFactory(_providerName);
             //}
-            _factory = GetFactory(_assemblyName);
+            _factory = GetFactory(assemblyName);
 
             if (_dbType == DBType.MySql && _connectionString != null && _connectionString.IndexOf("Allow User Variables=true") >= 0)
             {

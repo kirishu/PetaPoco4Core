@@ -6,6 +6,14 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CodeAnalysisRuleSet />
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Unit\StandardMapperTests.cs" />
   </ItemGroup>
@@ -27,10 +35,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PetaPoco4Core\PetaPoco4Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="MySql\" />
   </ItemGroup>
 
 </Project>

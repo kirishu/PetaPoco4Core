@@ -7,7 +7,11 @@ namespace PetaPoco4Core.Test.PostgreSql
 {
     public class Select系: TestBase
     {
-        public Select系(ITestOutputHelper output) : base(output) { }
+        /// <summary>
+        /// constractor
+        /// </summary>
+        /// <param name="output"></param>
+        public Select系(ITestOutputHelper output) : base(output, TestCommon.Instance) { }
 
 
         [Fact]
@@ -15,9 +19,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.SingleById<PtTable01>("03");
                 _output.WriteLine(db.LastCommand);
 
@@ -39,9 +40,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var pk = new
                 {
                     key01 = "03",
@@ -73,9 +71,6 @@ namespace PetaPoco4Core.Test.PostgreSql
             {
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var rec = db.SingleById<PtTable01>("999");
                 }
             });
@@ -91,9 +86,6 @@ namespace PetaPoco4Core.Test.PostgreSql
                 // InvalidOperationExceptionが発生したらOK
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable02(db);
-
                     var pk = new
                     {
                         key01 = "999",
@@ -110,9 +102,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.SingleOrDefaultById<PtTable01>("04");
                 _output.WriteLine(db.LastCommand);
 
@@ -131,9 +120,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var pk = new
                 {
                     key01 = "04",
@@ -158,9 +144,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 // 0件でOK
                 var rec = db.SingleOrDefaultById<PtTable01>("999");
                 _output.WriteLine(db.LastCommand);
@@ -174,9 +157,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var pk = new
                 {
                     key01 = "999",
@@ -194,9 +174,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.Single<PtTable01>("WHERE key01 = @0", "03");
                 _output.WriteLine(db.LastCommand);
 
@@ -215,9 +192,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var rec = db.Single<PtTable02>("WHERE key01=@0 AND key02=@1", "03", 3);
                 _output.WriteLine(db.LastCommand);
 
@@ -239,9 +213,6 @@ namespace PetaPoco4Core.Test.PostgreSql
             {
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var rec = db.Single<PtTable01>("WHERE key01 = @0", "999");
                     _output.WriteLine(db.LastCommand);
                 }
@@ -255,9 +226,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.SingleOrDefault<PtTable01>("WHERE key01 = @0", "03");
                 _output.WriteLine(db.LastCommand);
 
@@ -276,9 +244,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var rec = db.SingleOrDefault<PtTable02>("WHERE key01=@0 AND key02=@1", "03", 3);
                 _output.WriteLine(db.LastCommand);
 
@@ -297,9 +262,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.SingleOrDefault<PtTable01>("WHERE key01 = @0", "999");
                 _output.WriteLine(db.LastCommand);
 
@@ -315,9 +277,6 @@ namespace PetaPoco4Core.Test.PostgreSql
                 // InvalidOperationExceptionが発生したらOK
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var rec = db.SingleOrDefault<PtTable01>("WHERE create_by = @0", "system");
                     _output.WriteLine(db.LastCommand);
 
@@ -332,9 +291,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.First<PtTable01>("WHERE key01 < @0 ORDER BY key01 DESC", "06");
                 _output.WriteLine(db.LastCommand);
 
@@ -356,9 +312,6 @@ namespace PetaPoco4Core.Test.PostgreSql
                 // InvalidOperationExceptionが発生したらOK
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     db.First<PtTable01>("WHERE key01 > @0 ORDER BY key01 DESC", "9999");
                     _output.WriteLine(db.LastCommand);
 
@@ -372,9 +325,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.FirstOrDefault<PtTable01>("WHERE key01 < @0 ORDER BY key01 DESC", "06");
                 _output.WriteLine(db.LastCommand);
 
@@ -393,9 +343,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.FirstOrDefault<PtTable01>("WHERE key01 > @0 ORDER BY key01 DESC", "9999");
                 _output.WriteLine(db.LastCommand);
 
@@ -408,9 +355,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var res = db.ExecuteScalar<string>("SELECT col_varchar FROM pt_table01 WHERE key01 = @0", "05");
                 _output.WriteLine(db.LastCommand);
 
@@ -423,9 +367,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var res = db.ExecuteScalar<int>("SELECT COUNT(*) FROM pt_table01");
                 Assert.Equal(15, res);
                 _output.WriteLine(db.LastCommand);
@@ -439,9 +380,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var res = db.ExecuteScalar<DateTime>("SELECT update_dt FROM pt_table01 WHERE key01 = @0", "05");
                 _output.WriteLine(db.LastCommand);
 
@@ -455,10 +393,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-                TestCommon.CreateTempTable02(db);
-
                 var rec = db.Single<JoinTest>(PetaPoco.Sql.Builder
                     .Append("SELECT  t01.key01 AS Key01")
                     .Append("       ,t01.col_varchar AS ColVarchar")
@@ -490,10 +424,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-                TestCommon.CreateTempTable02(db);
-
                 var rec = db.Single<JoinTest>(PetaPoco.Sql.Builder
                     .Append("SELECT  t01.key01 AS Key01")
                     .Append("       ,t01.col_varchar AS ColVarchar")
@@ -523,9 +453,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var recs = db.Fetch<PtTable01>("ORDER BY key01");
                 _output.WriteLine(db.LastCommand);
 
@@ -542,9 +469,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var recs = db.Fetch<PtTable01>("WHERE key01 = @0 ORDER BY key01", "999");
                 _output.WriteLine(db.LastCommand);
 
@@ -558,10 +482,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-                TestCommon.CreateTempTable02(db);
-
                 var recs = db.Fetch<JoinTest>(PetaPoco.Sql.Builder
                     .Append("SELECT  t02.key01 AS Key01")
                     .Append("       ,t02.col_varchar AS ColVarchar")
@@ -588,9 +508,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var recs = db.Dictionary<string, string>("SELECT key01, col_varchar FROM pt_table01 ORDER BY key01");
 
                 _output.WriteLine(db.LastCommand);

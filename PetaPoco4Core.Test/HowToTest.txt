@@ -1,0 +1,13 @@
+--------------------------------------------------------
+【ターミナルから実施する場合】
+
+> cd PetaPoco4Core.Test
+
+# フォルダ内のテストを全て実行する場合（~を付ける）
+> dotnet test --no-build --logger:"console;verbosity=detailed" --filter "FullyQualifiedName~PetaPoco4Core.Test.PostgreSql.Select系"
+
+# テストメソッド1つだけ実行する場合（=を付ける）
+> dotnet test --no-build --logger:"console;verbosity=detailed" --filter "FullyQualifiedName=PetaPoco4Core.Test.PostgreSql.Update系.PT001_Execute_1件更新DDL"
+
+--------------------------------------------------------
+拡張機能で「.NET Core Test Explorer」を入れる

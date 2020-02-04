@@ -8,7 +8,11 @@ namespace PetaPoco4Core.Test.MySql
     [RequiresCleanUp]
     public class Select系: TestBase
     {
-        public Select系(ITestOutputHelper output) : base(output) { }
+        /// <summary>
+        /// constractor
+        /// </summary>
+        /// <param name="output"></param>
+        public Select系(ITestOutputHelper output) : base(output, TestCommon.Instance) { }
 
 
         [Fact]
@@ -16,9 +20,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.SingleById<PtTable01>("03");
                 _output.WriteLine(db.LastCommand);
 
@@ -40,9 +41,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var pk = new
                 {
                     Key01 = "03",
@@ -74,9 +72,6 @@ namespace PetaPoco4Core.Test.MySql
             {
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var rec = db.SingleById<PtTable01>("999");
                 }
             });
@@ -92,9 +87,6 @@ namespace PetaPoco4Core.Test.MySql
                 // InvalidOperationExceptionが発生したらOK
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable02(db);
-
                     var pk = new
                     {
                         Key01 = "999",
@@ -111,9 +103,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.SingleOrDefaultById<PtTable01>("04");
                 _output.WriteLine(db.LastCommand);
 
@@ -132,9 +121,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var pk = new
                 {
                     Key01 = "04",
@@ -159,9 +145,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 // 0件でOK
                 var rec = db.SingleOrDefaultById<PtTable01>("999");
                 _output.WriteLine(db.LastCommand);
@@ -175,9 +158,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var pk = new
                 {
                     Key01 = "999",
@@ -195,9 +175,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.Single<PtTable01>("WHERE Key01 = @0", "03");
                 _output.WriteLine(db.LastCommand);
 
@@ -216,9 +193,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var rec = db.Single<PtTable02>("WHERE Key01=@0 AND Key02=@1", "03", 3);
                 _output.WriteLine(db.LastCommand);
 
@@ -240,9 +214,6 @@ namespace PetaPoco4Core.Test.MySql
             {
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var rec = db.Single<PtTable01>("WHERE Key01 = @0", "999");
                     _output.WriteLine(db.LastCommand);
                 }
@@ -256,9 +227,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.SingleOrDefault<PtTable01>("WHERE Key01 = @0", "03");
                 _output.WriteLine(db.LastCommand);
 
@@ -277,9 +245,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable02(db);
-
                 var rec = db.SingleOrDefault<PtTable02>("WHERE Key01=@0 AND Key02=@1", "03", 3);
                 _output.WriteLine(db.LastCommand);
 
@@ -298,9 +263,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.SingleOrDefault<PtTable01>("WHERE Key01 = @0", "999");
                 _output.WriteLine(db.LastCommand);
 
@@ -316,9 +278,6 @@ namespace PetaPoco4Core.Test.MySql
                 // InvalidOperationExceptionが発生したらOK
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     var rec = db.SingleOrDefault<PtTable01>("WHERE CreateBy = @0", "system");
                     _output.WriteLine(db.LastCommand);
 
@@ -333,9 +292,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.First<PtTable01>("WHERE Key01 < @0 ORDER BY Key01 DESC", "06");
                 _output.WriteLine(db.LastCommand);
 
@@ -357,9 +313,6 @@ namespace PetaPoco4Core.Test.MySql
                 // InvalidOperationExceptionが発生したらOK
                 using (var db = new DB())
                 {
-                    db.BeginTransaction();
-                    TestCommon.CreateTempTable01(db);
-
                     db.First<PtTable01>("WHERE Key01 > @0 ORDER BY Key01 DESC", "9999");
                     _output.WriteLine(db.LastCommand);
 
@@ -373,9 +326,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.FirstOrDefault<PtTable01>("WHERE Key01 < @0 ORDER BY Key01 DESC", "06");
                 _output.WriteLine(db.LastCommand);
 
@@ -394,9 +344,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var rec = db.FirstOrDefault<PtTable01>("WHERE Key01 > @0 ORDER BY Key01 DESC", "9999");
                 _output.WriteLine(db.LastCommand);
 
@@ -409,9 +356,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var res = db.ExecuteScalar<string>("SELECT ColVarchar FROM PtTable01 WHERE Key01 = @0", "05");
                 _output.WriteLine(db.LastCommand);
 
@@ -424,9 +368,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var res = db.ExecuteScalar<int>("SELECT COUNT(*) FROM PtTable01");
                 Assert.Equal(15, res);
                 _output.WriteLine(db.LastCommand);
@@ -440,9 +381,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var res = db.ExecuteScalar<DateTime>("SELECT UpdateDt FROM PtTable01 WHERE Key01 = @0", "05");
                 _output.WriteLine(db.LastCommand);
 
@@ -456,10 +394,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-                TestCommon.CreateTempTable02(db);
-
                 var rec = db.Single<JoinTest>(PetaPoco.Sql.Builder
                     .Append("SELECT  t01.Key01")
                     .Append("       ,t01.ColVarchar")
@@ -491,10 +425,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-                TestCommon.CreateTempTable02(db);
-
                 var rec = db.Single<JoinTest>(PetaPoco.Sql.Builder
                     .Append("SELECT  t01.Key01")
                     .Append("       ,t01.ColVarchar")
@@ -524,9 +454,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var recs = db.Fetch<PtTable01>("ORDER BY Key01");
                 _output.WriteLine(db.LastCommand);
 
@@ -543,9 +470,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var recs = db.Fetch<PtTable01>("WHERE Key01 = @0 ORDER BY Key01", "999");
                 _output.WriteLine(db.LastCommand);
 
@@ -559,10 +483,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-                TestCommon.CreateTempTable02(db);
-
                 var recs = db.Fetch<JoinTest>(PetaPoco.Sql.Builder
                     .Append("SELECT  t02.Key01")
                     .Append("       ,t02.ColVarchar")
@@ -589,9 +509,6 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-                TestCommon.CreateTempTable01(db);
-
                 var recs = db.Dictionary<string, string>("SELECT Key01, ColVarchar FROM PtTable01 ORDER BY Key01");
 
                 _output.WriteLine(db.LastCommand);
