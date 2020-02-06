@@ -385,5 +385,26 @@ namespace PetaPoco4Core.Test.PostgreSql
             }
         }
 
+        //[Fact]
+        //public void PT010_不完全なPocoEntity()
+        //{
+        //    using (var db = new DB())
+        //    {
+        //        var rec = new PtTableDefective
+        //        {
+        //            ColVarchar = "HogeHoge",
+        //            ColInt = 100,
+        //        };
+        //        var pk = new
+        //        {
+        //            key01 = "13",
+        //            key02 = 13,
+        //        };
+
+        //        var i = db.Update(rec, pk);
+        //        Assert.Equal(0, i);
+        //    }
+        //}
+
     }
 }
