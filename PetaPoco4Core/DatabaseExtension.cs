@@ -139,7 +139,7 @@ namespace PetaPoco
             return log.ToString();
         }
 
-        const string DATETIME_FORMAT_ROUNDTRIP = "o";
+        //const string DATETIME_FORMAT_ROUNDTRIP = "o";
         private string GetLogQuotedParameterValue(object value)
         {
             var log = new StringBuilder();
@@ -246,7 +246,7 @@ namespace PetaPoco
             return log.ToString();
         }
 
-        private object UnboxNullable(object value)
+        private static object UnboxNullable(object value)
         {
             var typeOriginal = value.GetType();
             if (typeOriginal.IsGenericType

@@ -260,12 +260,12 @@ namespace PetaPoco
         object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco);
         object Insert(string tableName, string primaryKeyName, object poco);
         object Insert(object poco);
-        int Update<T>(IPetaPocoRecord<T> poco);
-        int Update<T>(IPetaPocoRecord<T> poco, object primaryKey);
-        int Update<T>(IPetaPocoRecord<T> poco, IEnumerable<string> columns);
-        int Update<T>(IPetaPocoRecord<T> poco, object primaryKey, IEnumerable<string> columns);
-        int Update<T>(string sql, params object[] args);
-        int Update<T>(Sql sql);
+        int Update<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>;
+        int Update<T>(IPetaPocoRecord<T> poco, object primaryKey) where T : IPetaPocoRecord<T>;
+        int Update<T>(IPetaPocoRecord<T> poco, IEnumerable<string> columns) where T : IPetaPocoRecord<T>;
+        int Update<T>(IPetaPocoRecord<T> poco, object primaryKey, IEnumerable<string> columns) where T : IPetaPocoRecord<T>;
+        int Update<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>;
+        int Update<T>(Sql sql) where T : IPetaPocoRecord<T>;
         int Delete(string tableName, string primaryKeyName, object poco);
         int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue);
         int Delete(object poco);
@@ -2020,17 +2020,17 @@ namespace PetaPoco
         #endregion
 
 
-        public int Update<T>(IPetaPocoRecord<T> poco)
+        public int Update<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>
         {
             return Update<T>(poco, null, null);
         }
 
-        public int Update<T>(IPetaPocoRecord<T> poco, object primaryKey)
+        public int Update<T>(IPetaPocoRecord<T> poco, object primaryKey) where T : IPetaPocoRecord<T>
         {
             return Update<T>(poco, primaryKey, null);
         }
 
-        public int Update<T>(IPetaPocoRecord<T> poco, IEnumerable<string> columns)
+        public int Update<T>(IPetaPocoRecord<T> poco, IEnumerable<string> columns) where T : IPetaPocoRecord<T>
         {
             return Update(poco, null, columns);
         }
@@ -2056,7 +2056,7 @@ namespace PetaPoco
         ///     int cnt = db.Update(rec, pk);
         /// ]]>
         /// </example>
-        public int Update<T>(IPetaPocoRecord<T> poco, object primaryKey, IEnumerable<string> columns)
+        public int Update<T>(IPetaPocoRecord<T> poco, object primaryKey, IEnumerable<string> columns) where T: IPetaPocoRecord<T>
         {
             if (poco == null) { throw new ArgumentNullException(nameof(poco)); }
             if (columns != null && !columns.Any()) { return 0; }
@@ -2161,13 +2161,13 @@ namespace PetaPoco
             return result;
         }
 
-        public int Update<T>(string sql, params object[] args)
+        public int Update<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("UPDATE {0} {1}", EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
-        public int Update<T>(Sql sql)
+        public int Update<T>(Sql sql) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(typeof(T));
             return Execute(new Sql(string.Format("UPDATE {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
