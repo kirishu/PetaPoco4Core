@@ -11,7 +11,7 @@ namespace PetaPoco4Core.Test.MySql
 
 
         [Fact]
-        public void PT001_Execute_1件更新DDL()
+        public void UDP001_Execute_1件更新DDL()
         {
             using (var db = new DB())
             {
@@ -47,7 +47,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT002_Execute_1件更新Entity()
+        public void UDP002_Execute_1件更新Entity()
         {
             using (var db = new DB())
             {
@@ -80,7 +80,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT003_Execute_5件更新DDL()
+        public void UDP003_Execute_5件更新DDL()
         {
             using (var db = new DB())
             {
@@ -105,7 +105,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT004_更新対象無し_DDL発行()
+        public void UDP004_更新対象無し_DDL発行()
         {
             using (var db = new DB())
             {
@@ -126,7 +126,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         //[Fact]
-        //public void PT005_カラムサイズオーバーエラー_DDL発行()
+        //public void UDP005_カラムサイズオーバーエラー_DDL発行()
         //{
         //    // MySqlExceptionが発生したらOK
         //    var ex = Assert.Throws<MySqlException>(() =>
@@ -149,7 +149,7 @@ namespace PetaPoco4Core.Test.MySql
         //}
 
         //[Fact]
-        //public void PT006_カラムサイズオーバーエラー_Entity利用()
+        //public void UDP006_カラムサイズオーバーエラー_Entity利用()
         //{
         //    // MySqlExceptionが発生したらOK
         //    var ex = Assert.Throws<MySqlException>(() =>
@@ -170,7 +170,7 @@ namespace PetaPoco4Core.Test.MySql
         //}
 
         //[Fact]
-        //public void PT005_カラムサイズオーバーエラー_INT()
+        //public void UDP007_カラムサイズオーバーエラー_INT()
         //{
         //    // MySqlExceptionが発生したらOK
         //    var ex = Assert.Throws<MySqlException>(() =>
@@ -193,7 +193,7 @@ namespace PetaPoco4Core.Test.MySql
         //}
 
         [Fact]
-        public void PT006_NULL制約エラー()
+        public void UDP008_NULL制約エラー()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -215,7 +215,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT007_更新列のみ更新_事前読込あり()
+        public void UDP009_更新列のみ更新_事前読込あり()
         {
             using (var db = new DB())
             {
@@ -244,7 +244,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT007_変更列のみ更新_事前読込なし()
+        public void UDP010_変更列のみ更新_事前読込なし()
         {
             using (var db = new DB())
             {
@@ -283,7 +283,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT007_変更列のみ更新_事前読込なし_2()
+        public void UDP011_変更列のみ更新_事前読込なし_2()
         {
             using (var db = new DB())
             {
@@ -317,7 +317,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT008_Transaction_Commit()
+        public void UDP012_Transaction_Commit()
         {
             using (var db = new DB())
             {
@@ -352,7 +352,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT009_Transaction_Rollback()
+        public void UDP013_Transaction_Rollback()
         {
             using (var db = new DB())
             {

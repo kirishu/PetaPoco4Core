@@ -18,6 +18,11 @@ namespace PetaPoco4Core.Test
             _output = output;
         }
 
+        /// <summary>
+        /// テストクラスの初期処理
+        /// </summary>
+        /// <param name="output"></param>
+        /// <param name="testCommon"></param>
         public TestBase(ITestOutputHelper output, ITestCommon testCommon)
         {
             _output = output;
@@ -26,6 +31,9 @@ namespace PetaPoco4Core.Test
             _testCommon.Initialize();
         }
 
+        /// <summary>
+        /// テストクラスの終了処理
+        /// </summary>
         public void Dispose()
         {
             // teardown
