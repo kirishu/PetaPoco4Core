@@ -268,10 +268,9 @@ namespace PetaPoco
         int Update<T>(Sql sql) where T : IPetaPocoRecord<T>;
         int Delete(string tableName, string primaryKeyName, object poco);
         int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue);
-        int Delete(object poco);
-        int Delete<T>(string sql, params object[] args);
-        int Delete<T>(Sql sql);
-        int Delete<T>(object pocoOrPrimaryKey);
+        int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>;
+        int Delete<T>(Sql sql) where T : IPetaPocoRecord<T>;
+        int Delete<T>(object primaryKey) where T : IPetaPocoRecord<T>;
     }
 
 
@@ -2173,11 +2172,18 @@ namespace PetaPoco
             return Execute(new Sql(string.Format("UPDATE {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
         }
 
+        #region Obsolete Update Methods
+        // 下記のメソッド（テーブル名を指定するものや、PKのキー名を取るもの）は使用禁止にします
+        //  （ここまで書くならDMLでいいだろう）
+        //      int Delete(string tableName, string primaryKeyName, object poco);
+        //      int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
+        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
         public int Delete(string tableName, string primaryKeyName, object poco)
         {
             return Delete(tableName, primaryKeyName, poco, null);
         }
 
+        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
         public int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
             var primaryKeyValuePairs = GetPrimaryKeyValues(primaryKeyName, primaryKeyValue);
@@ -2200,27 +2206,30 @@ namespace PetaPoco
             return Execute(sql, primaryKeyValuePairs.Select(x => x.Value).ToArray());
         }
 
-        public int Delete(object poco)
-        {
-            var pd = PocoData.ForType(poco.GetType());
-            return Delete(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco);
-        }
+        #endregion
 
-        public int Delete<T>(object pocoOrPrimaryKey)
+
+        public int Delete<T>(object primaryKey) where T : IPetaPocoRecord<T>
         {
-            if (pocoOrPrimaryKey.GetType() == typeof(T))
-                return Delete(pocoOrPrimaryKey);
+            if (primaryKey == null) { throw new ArgumentNullException(nameof(primaryKey)); }
+
             var pd = PocoData.ForType(typeof(T));
-            return Delete(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
+            string tableName = pd.TableInfo.TableName;
+            string pkName = pd.TableInfo.PrimaryKey;
+            Dictionary<string, object> primaryKeyValuePairs = GetPrimaryKeyValues(pkName, primaryKey);
+
+            int index = 0;
+            var sql = string.Format("DELETE FROM {0} WHERE {1}", EscapeTableName(tableName), BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
+            return Execute(sql);
         }
 
-        public int Delete<T>(string sql, params object[] args)
+        public int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("DELETE FROM {0} {1}", EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
-        public int Delete<T>(Sql sql)
+        public int Delete<T>(Sql sql) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(typeof(T));
             return Execute(new Sql(string.Format("DELETE FROM {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
