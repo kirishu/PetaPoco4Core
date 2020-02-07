@@ -3,23 +3,23 @@
     // ******** 設定ここから *********
     
     DatabaseName = "employees";
-    ConnectionString = @"server=192.168.1.10;uid=testman;pwd=testman;database=employees;SslMode=None;";
+    ConnectionString = @"server=localhost;uid=testman;pwd=testman;database=employees;SslMode=None;";
     ProviderName = "MySql.Data.MySqlClient";
     Namespace = "PetaPoco4Core.Database.Employees";
 
     ConvertPascalCase = true;       // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
     
-    GeneratePocos = true;           // Pocoオブジェクトを作る
-    GenerateCommon = true;          // Databaseオブジェクトを作る
     RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
     
-    GenerateOperations = false;     // Pocoオブジェクト自身にメソッドを追加するならtrue（false推奨）
-    TrackModifiedColumns = true;    // 更新列自動追跡機能を使うならtrue（true推奨）
     IncludeViews = false;           // Viewも対象にするならtrue
     
     ClassPrefix = "";
     ClassSuffix = "";
     // ******** 設定ここまで *********
+
+    GeneratePocos = true;           // Pocoオブジェクトを作る
+    GenerateCommon = true;          // Databaseオブジェクトを作る
+    TrackModifiedColumns = true;    // 更新列自動追跡機能を使うならtrue（true推奨）
     
     // Read schema
     var tables = LoadTables();

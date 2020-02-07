@@ -80,7 +80,6 @@
  rights and limitations under the License.
 */
 
-
 //***string ConnectionStringName = "";
 string DatabaseName = "";
 string ConnectionString = "";
@@ -91,7 +90,6 @@ string ClassPrefix = "";
 string ClassSuffix = "";
 string SchemaName = null;
 bool IncludeViews = false;
-bool GenerateOperations = false;
 bool GenerateCommon = true;
 bool GeneratePocos = true;
 bool TrackModifiedColumns = false;
@@ -203,16 +201,10 @@ string CheckNullable(Column col)
     return result;
 }
 
-// added by kiri@syncnoah.com
 // ColumnAttributeの記述文字列を返す
 string GetColumnAttribute(Column col)
 {
-    string rtn = "Column";
-    if (col.Name!=col.PropertyName)
-    {
-        rtn = rtn + "(Name=\"" + col.Name + "\")";
-    }
-    return rtn;
+	return "Column"	+ ((col.Name != col.PropertyName) ? "(\"" + col.Name + "\")" : "");
 }
 
 string GetPrimaryKeys(List<Column> cols)
@@ -795,10 +787,23 @@ class PostgreSqlSchemaReader : SchemaReader
     // SchemaReader.ReadSchema
     public override Tables ReadSchema(DbConnection connection, DbProviderFactory factory)
     {
-        var result=new Tables();
-
         _connection=connection;
         _factory=factory;
+
+		// デフォルトスキーマの取得
+		string defaultSchema = string.Empty;
+        var cmdSchema=_factory.CreateCommand();
+		cmdSchema.Connection=connection;
+		cmdSchema.CommandText="SELECT current_schema();";
+        using (var rdr=cmdSchema.ExecuteReader())
+        {
+			if (rdr.Read())
+            {
+				defaultSchema = rdr[0].ToString();
+            }
+		}
+
+        var result=new Tables();
 
         var cmd=_factory.CreateCommand();
         cmd.Connection=connection;
@@ -811,12 +816,12 @@ class PostgreSqlSchemaReader : SchemaReader
             {
                 while(rdr.Read())
                 {
-                    Table tbl=new Table();
-                    tbl.Name=rdr["table_name"].ToString();
-                    tbl.Schema=rdr["table_schema"].ToString();
-                    tbl.IsView=string.Compare(rdr["table_type"].ToString(), "View", true)==0;
-                    tbl.CleanName=CleanUp(tbl.Name);
-                    tbl.ClassName=Inflector.MakeSingular(tbl.CleanName);
+                    Table tbl = new Table();
+                    tbl.Name = rdr["table_name"].ToString();
+                    tbl.Schema = (rdr["table_schema"].ToString() == defaultSchema) ? "" : rdr["table_schema"].ToString();	// デフォルトスキーマと同じだったら省略する
+                    tbl.IsView = string.Compare(rdr["table_type"].ToString(), "View", true)==0;
+                    tbl.CleanName = CleanUp(tbl.Name);
+                    tbl.ClassName = (string.IsNullOrEmpty(tbl.Schema) ? "" : tbl.Schema + ".") + Inflector.MakeSingular(tbl.CleanName);
                     tbl.Comment = Inflector.ConvertHtmlEscape(rdr["table_comment"].ToString());
                     result.Add(tbl);
                 }
@@ -993,8 +998,10 @@ class PostgreSqlSchemaReader : SchemaReader
                                             AND pd.objsubid = 0
                              ) cmnt
                            ON ifsm.table_name = cmnt.table_name
-             WHERE ifsm.table_schema = (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
-               AND ifsm.table_type IN ('BASE TABLE', 'VIEW');
+             WHERE ifsm.table_type IN ('BASE TABLE', 'VIEW')
+		       AND ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
+             ORDER BY ifsm.table_schema
+		            , ifsm.table_name;
             ";
 
     // カラム一覧抽出SQL
@@ -1015,7 +1022,7 @@ class PostgreSqlSchemaReader : SchemaReader
                    LEFT JOIN pg_stat_all_tables psat
                           ON ifsm.table_schema = psat.schemaname
                          AND ifsm.table_name = psat.relname
-             WHERE ifsm.table_schema = (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
+             WHERE ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
                AND ifsm.table_name = @tableName;
              ";
 }
