@@ -45,7 +45,7 @@ namespace PetaPoco4Core.Test.Unit
             var ti = new PetaPoco.Database.PocoData(typeof(Models.ExaEntity)).TableInfo;
             Assert.Equal("ExaEntity", ti.TableName);
             Assert.Equal("ID", ti.PrimaryKey);      // 勝手に"ID"という列がPK・・・としちゃう（ver5と違う）
-            Assert.True(ti.AutoIncrement);          // 勝手にAutoIncrementがtrueとなる
+            Assert.False(ti.AutoIncrement);          // AutoIncrementはfalse
             Assert.Null(ti.SequenceName);
         }
 

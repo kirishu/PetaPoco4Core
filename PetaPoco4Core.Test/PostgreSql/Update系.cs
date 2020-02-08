@@ -318,8 +318,6 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             using (var db = new DB())
             {
-                db.BeginTransaction();
-
                 // pt_table02 の key01=12 を取得して確保する
                 var pk = new
                 {

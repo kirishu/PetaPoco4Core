@@ -270,7 +270,7 @@ namespace PetaPoco
         int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue);
         int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>;
         int Delete<T>(Sql sql) where T : IPetaPocoRecord<T>;
-        int Delete<T>(object primaryKey) where T : IPetaPocoRecord<T>;
+        int DeleteById<T>(object primaryKey) where T : IPetaPocoRecord<T>;
     }
 
 
@@ -2208,21 +2208,6 @@ namespace PetaPoco
 
         #endregion
 
-
-        public int Delete<T>(object primaryKey) where T : IPetaPocoRecord<T>
-        {
-            if (primaryKey == null) { throw new ArgumentNullException(nameof(primaryKey)); }
-
-            var pd = PocoData.ForType(typeof(T));
-            string tableName = pd.TableInfo.TableName;
-            string pkName = pd.TableInfo.PrimaryKey;
-            Dictionary<string, object> primaryKeyValuePairs = GetPrimaryKeyValues(pkName, primaryKey);
-
-            int index = 0;
-            var sql = string.Format("DELETE FROM {0} WHERE {1}", EscapeTableName(tableName), BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
-            return Execute(sql);
-        }
-
         public int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(typeof(T));
@@ -2233,6 +2218,33 @@ namespace PetaPoco
         {
             var pd = PocoData.ForType(typeof(T));
             return Execute(new Sql(string.Format("DELETE FROM {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
+        }
+
+        /// <summary>
+        /// PK指定して1件だけ削除
+        /// 追加メソッド
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="primaryKey"></param>
+        /// <returns>Count of deleteed record.</returns>
+        /// <example>
+        /// <![CDATA[
+        ///     var pk = new {
+        ///         UserId = "A001",
+        ///     };
+        ///     int cnt = db.DeleteById<Database.MUser>(pk);
+        /// ]]>
+        public int DeleteById<T>(object primaryKey) where T : IPetaPocoRecord<T>
+        {
+            if (primaryKey == null) { throw new ArgumentNullException(nameof(primaryKey)); }
+
+            var pd = PocoData.ForType(typeof(T));
+            string tableName = pd.TableInfo.TableName;
+            var primaryKeyValuePairs = GetPrimaryKeyValues(pd.TableInfo.PrimaryKey, primaryKey);
+
+            var index = 0;
+            var sql = string.Format("DELETE FROM {0} WHERE {1}", tableName, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
+            return Execute(sql, primaryKeyValuePairs.Select(x => x.Value).ToArray());
         }
 
         void DoPreExecute(IDbCommand cmd)

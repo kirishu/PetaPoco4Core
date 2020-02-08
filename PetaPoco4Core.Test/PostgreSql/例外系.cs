@@ -232,6 +232,23 @@ namespace PetaPoco4Core.Test.PostgreSql
         [Fact]
         public void PT005_接続文字列_認証不可アカウント()
         {
+            var rx = new Regex(";(User Id)=(.*?);", RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase);
+            var constr = rx.Replace(DB.Constr, ";$1=**zapped**;");
+
+            var ex = Assert.Throws<Npgsql.PostgresException>(() =>
+            {
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSQL))
+                {
+                    var rec = db.SingleOrDefaultById<PtTable01>("01");
+                }
+            });
+            _output.WriteLine(ex.ToString());
+            Assert.Equal("28P01", ex.SqlState);     // ユーザ"**zapped**"のパスワード認証に失敗しました
+        }
+
+        [Fact]
+        public void PT006_接続文字列_パスワード誤り()
+        {
             var rx = new Regex(";(pwd|password)=(.*?);", RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase);
             var constr = rx.Replace(DB.Constr, ";$1=**zapped**;");
 
@@ -243,7 +260,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 }
             });
             _output.WriteLine(ex.ToString());
-            Assert.Equal("42P01", ex.SqlState);
+            Assert.Equal("28P01", ex.SqlState);     // ユーザ"testman"のパスワード認証に失敗しました
         }
 
 
