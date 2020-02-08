@@ -13,6 +13,9 @@
 // 21-Jun-2019 .NET Standard 2.0 に対応
 #endregion
 
+#pragma warning disable CA1305 // IFormatProvider を指定します
+#pragma warning disable CA1303 // ローカライズされるパラメーターとしてリテラルを渡さない
+
 using System;
 using System.Data;
 using System.Text;
@@ -67,6 +70,8 @@ namespace PetaPoco
         /// <param name="cmd"></param>
         public override void OnExecutingCommand(IDbCommand cmd)
         {
+            if (cmd == null) { throw new ArgumentNullException(nameof(cmd)); }
+
 #if DEBUG
             var text = cmd.CommandText;
             if (_useA5Mk2Params)
@@ -406,6 +411,7 @@ namespace PetaPoco
         /// <returns>SELECT文の結果</returns>
         public DataTable GetDataTable(PetaPoco.Sql sql)
         {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
             return GetDataTable(sql.SQL, sql.Arguments);
         }
 
@@ -424,7 +430,8 @@ namespace PetaPoco
         {
             if (_dbType != DBType.SqlServer)
             {
-                throw new ApplicationException("SQL Serverのみです");
+                const string message = "SQL Serverのみです";
+                throw new ArgumentException(message);
             }
 
             try
@@ -538,6 +545,7 @@ namespace PetaPoco
         /// </summary>
         public Page<T> PageWithHaving<T>(long page, long itemsPerPage, Sql sql)
         {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
             return PageWithHaving<T>(page, itemsPerPage, sql.SQL, sql.Arguments);
         }
 

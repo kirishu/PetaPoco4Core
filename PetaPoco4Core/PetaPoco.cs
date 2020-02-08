@@ -7,14 +7,24 @@
  * use of Subsonic's T4 templates, Rob Sullivan (@DataChomp) for hard core DBA advice
  * and Adam Schroder (@schotime) for lots of suggestions, improvements and Oracle support
  */
-#region 変更履歴
-// 29-Oct-2015 [Database.AddParam]バイナリ列へのnullセット対応
-// 01-Mar-2017 [Sql.Where]WhereメソッドにSqlオブジェクトを引数に持つoverloadを追加
-// 24-Jun-2019 .NET Standard 2.0 に対応
-//             Databaseのコンストラクタは1種類だけにしました
-#endregion
+/* Modified by kirishu (zapshu@gmail.com)
+ * https://github.com/kirishu/PetaPoco4Core
+*/
 
-#pragma warning disable CS1591    // CS1591: Missing XML comment for publicly visible type or member
+#region Suppressions
+#pragma warning disable CS1591 // CS1591: Missing XML comment for publicly visible type or member
+#pragma warning disable CA1303 // ローカライズされるパラメーターとしてリテラルを渡さない
+#pragma warning disable CA1305 // IFormatProvider を指定します
+#pragma warning disable CA1034 // 入れ子にされた型を参照可能にすることはできません
+#pragma warning disable CA1051 // 参照可能なインスタンス フィールドを宣言しません
+#pragma warning disable CA1062 // パブリック メソッドの引数の検証
+#pragma warning disable CA2211 // 非定数フィールドは表示されません
+#pragma warning disable CA2227 // コレクション プロパティは読み取り専用でなければなりません
+#pragma warning disable CA1716 // 識別子はキーワードと同一にすることはできません
+#pragma warning disable CA1720 // 識別子に型名が含まれます
+#pragma warning disable CA1819 // プロパティは配列を返すことはできません
+#pragma warning disable CA1825 // 長さ 0 の配列の割り当てを避けます。
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -259,7 +269,7 @@ namespace PetaPoco
         void CompleteTransaction();
         object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco);
         object Insert(string tableName, string primaryKeyName, object poco);
-        object Insert(object poco);
+        object Insert<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>;
         int Update<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>;
         int Update<T>(IPetaPocoRecord<T> poco, object primaryKey) where T : IPetaPocoRecord<T>;
         int Update<T>(IPetaPocoRecord<T> poco, IEnumerable<string> columns) where T : IPetaPocoRecord<T>;
@@ -1668,6 +1678,12 @@ namespace PetaPoco
             }
         }
 
+        #region Obsolete Update Methods
+        // 下記のメソッド（テーブル名を指定するもの）は使用禁止にします
+        //      object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco);
+        //      object Insert(string tableName, string primaryKeyName, object poco);
+
+        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
         public object Insert(string tableName, string primaryKeyName, object poco)
         {
             return Insert(tableName, primaryKeyName, true, poco);
@@ -1676,8 +1692,21 @@ namespace PetaPoco
         // Insert a poco into a table.  If the poco has a property with the same name 
         // as the primary key the id of the new record is assigned to it.  Either way,
         // the new id is returned.
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
         public object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco)
+        {
+            return this.InsertExecute(tableName, primaryKeyName, autoIncrement, poco);
+        }
+        #endregion
+
+        // Insert an annotated poco object
+        public object Insert<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>
+        {
+            var pd = PocoData.ForType(poco.GetType());
+            return this.InsertExecute(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
+        }
+
+        private object InsertExecute(string tableName, string primaryKeyName, bool autoIncrement, object poco)
         {
             try
             {
@@ -1862,13 +1891,6 @@ namespace PetaPoco
                 OnException(x);
                 throw;
             }
-        }
-
-        // Insert an annotated poco object
-        public object Insert(object poco)
-        {
-            var pd = PocoData.ForType(poco.GetType());
-            return Insert(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
 
         private string BuildPrimaryKeySql(Dictionary<string, object> primaryKeyValuePair, ref int index)

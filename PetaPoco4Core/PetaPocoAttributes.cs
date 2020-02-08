@@ -7,9 +7,8 @@
  * use of Subsonic's T4 templates, Rob Sullivan (@DataChomp) for hard core DBA advice
  * and Adam Schroder (@schotime) for lots of suggestions, improvements and Oracle support
  */
-/*
-* 元々はPetaPoco本体ファイルに含まれていたけど、3階層C/SのDTOライブラリのために、
-* Attribute部分だけをこのファイルに移しました。
+/* Modified by kirishu (zapshu@gmail.com)
+* https://github.com/kirishu/PetaPoco4Core
 */
 
 using System;
@@ -123,21 +122,23 @@ namespace PetaPoco
     public abstract class PetaPocoRecord<T> : IPetaPocoRecord<T>
     {
         /// <summary>変更追跡列コレクション</summary>
-        protected Dictionary<string, bool> modifiedColumns = new Dictionary<string, bool>();
+        private Dictionary<string, bool> _modifiedColumns { get; set; } = new Dictionary<string, bool>();
 
-        /// <summary>
-        /// On Loaded event
-        /// </summary>
-        /// <remarks>
-        /// PetaPoco.Core.PetaDataで実装されているDynamicMethodを使った動的メソッド
-        ///
-        ///     IL生成メソッドdelegate
-        ///     キャッシュ処理をやっているけど、大量レコードを格納すると遅くなるので注意
-        /// </remarks>
-        protected void OnLoaded()
-        {
-            modifiedColumns = new Dictionary<string, bool>();
-        }
+        #region On Loaded event memo
+        ///// <summary>
+        ///// On Loaded event
+        ///// </summary>
+        ///// <remarks>
+        ///// PetaPoco.Core.PetaDataで実装されているDynamicMethodを使った動的メソッド
+        /////
+        /////     IL生成メソッドdelegate
+        /////     キャッシュ処理をやっているけど、大量レコードを格納すると遅くなるので注意
+        ///// </remarks>
+        //protected void OnLoaded()
+        //{
+        //    _modifiedColumns = new Dictionary<string, bool>();
+        //}
+        #endregion
 
         /// <summary>
         /// 変更フラッグをセットする
@@ -145,9 +146,9 @@ namespace PetaPoco
         /// <param name="columnName">Column name</param>
         protected void MarkColumnModified(string columnName)
         {
-            if (modifiedColumns != null)
+            if (_modifiedColumns != null)
             {
-                modifiedColumns[columnName] = true;
+                _modifiedColumns[columnName] = true;
             }
         }
 
@@ -157,19 +158,19 @@ namespace PetaPoco
         /// <returns></returns>
         public IEnumerable<string> GetModifiedColumns()
         {
-            if (modifiedColumns == null)
+            if (_modifiedColumns == null)
             {
                 return null;
             }
-            return modifiedColumns.Keys;
+            return _modifiedColumns.Keys;
         }
 
         /// <summary>変更追跡列コレクションをクリア</summary>
         public void ClearModifiedColumns()
         {
-            if (modifiedColumns != null)
+            if (_modifiedColumns != null)
             {
-                modifiedColumns.Clear();
+                _modifiedColumns.Clear();
             }
         }
     }
