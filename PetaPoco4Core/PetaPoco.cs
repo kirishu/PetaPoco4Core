@@ -339,22 +339,26 @@ namespace PetaPoco
 
             _connectionString = connectionString;
 
+            string providerName = string.Empty;
             string[] assemblyName;
 
             if (dbType == DBType.SqlServer)
             {
+                providerName = "System.Data.SqlClient";
                 assemblyName = new string[] {
                     "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 };
             }
             else if (dbType == DBType.MySql)
             {
+                providerName = "MySql.Data.MySqlClient";
                 assemblyName = new string[] {
                     "MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Culture=neutral, PublicKeyToken=c5687fc88969c44d",
                 };
             }
             else if (dbType == DBType.Oracle)
             {
+                providerName = "System.Data.OracleClient";
                 assemblyName = new string[] {
                     "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess, Culture=neutral, PublicKeyToken=89b483f429c47342",
                     "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess",
@@ -362,18 +366,21 @@ namespace PetaPoco
             }
             else if (dbType == DBType.PostgreSQL)
             {
+                providerName = "Npgsql";
                 assemblyName = new string[] {
                     "Npgsql.NpgsqlFactory, Npgsql, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
                 };
             }
             else if (dbType == DBType.SqlServerCE)
             {
+                providerName = "System.Data.SqlServerCe.3.5";
                 assemblyName = new string[] {
                     "System.Data.SqlServerCe.SqlCeProviderFactory, System.Data.SqlServerCe, Culture=neutral, PublicKeyToken=89845dcd8080cc91",
                 };
             }
             else if (dbType == DBType.SQLite)
             {
+                providerName = "System.Data.SQLite";
                 assemblyName = new string[] {
                     "System.Data.SQLite.SQLiteFactory, System.Data.SQLite",
                     "Microsoft.Data.Sqlite.SqliteFactory, Microsoft.Data.Sqlite",
@@ -388,11 +395,14 @@ namespace PetaPoco
             ForceDateTimesToUtc = true;
             EnableAutoSelect = true;
 
-            //if (_providerName != null)
-            //{
-            //    _factory = GetFactory(_providerName);
-            //}
-            _factory = GetFactory(assemblyName);
+            // DB factoryの取得
+#if (NETSTANDARD || NETCOREAPP)
+            // .NET Core または .NET Standardのとき
+            _factory = GetFactoryCoreStandard(assemblyName);
+#else
+            // .NET Frameworkのとき
+            _factory = GetFactoryNetFramework(providerName);
+#endif
 
             if (_dbType == DBType.MySql
                 && _connectionString != null
@@ -406,13 +416,14 @@ namespace PetaPoco
             }
         }
 
+#if (NETSTANDARD || NETCOREAPP)
         /// <summary>
         /// Returns the .net standard conforming DbProviderFactory.
         /// </summary>
         /// <param name="assemblyQualifiedNames">The assembly qualified name of the provider factory.</param>
         /// <returns>The db provider factory.</returns>
         /// <exception cref="ArgumentException">Thrown when <paramref name="assemblyQualifiedNames" /> does not match a type.</exception>
-        protected DbProviderFactory GetFactory(params string[] assemblyQualifiedNames)
+        protected DbProviderFactory GetFactoryCoreStandard(params string[] assemblyQualifiedNames)
         {
             Type ft = null;
             foreach (var assemblyName in assemblyQualifiedNames)
@@ -431,6 +442,24 @@ namespace PetaPoco
 
             return (DbProviderFactory)ft.GetField("Instance").GetValue(null);
         }
+
+#else
+        /// <summary>
+        /// Returns the .net framework conforming DbProviderFactory.
+        /// </summary>
+        /// <param name="providerName">The assembly qualified name of the provider factory.</param>
+        /// <returns>The db provider factory.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="providerName" /> does not match a type.</exception>
+        protected DbProviderFactory GetFactoryNetFramework(string providerName)
+        {
+            if (string.IsNullOrEmpty(providerName))
+            {
+                throw new ArgumentException("Could not load the " + providerName + " DbProviderFactory.");
+            }
+
+            return DbProviderFactories.GetFactory(providerName);
+        }
+#endif
 
         /// <summary>
         /// Automatically close one open shared connection
@@ -1678,7 +1707,7 @@ namespace PetaPoco
             }
         }
 
-        #region Obsolete Update Methods
+#region Obsolete Update Methods
         // 下記のメソッド（テーブル名を指定するもの）は使用禁止にします
         //      object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco);
         //      object Insert(string tableName, string primaryKeyName, object poco);
@@ -1697,7 +1726,7 @@ namespace PetaPoco
         {
             return this.InsertExecute(tableName, primaryKeyName, autoIncrement, poco);
         }
-        #endregion
+#endregion
 
         // Insert an annotated poco object
         public object Insert<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>
@@ -1923,7 +1952,7 @@ namespace PetaPoco
         }
 
 
-        #region Obsolete Update Methods
+#region Obsolete Update Methods
         // 下記のメソッド（テーブル名を指定するものや、PKのキー名を取るもの）は使用禁止にします
         //      int Update(string tableName, string primaryKeyName, object poco, object primaryKeyValue);
         //      int Update(string tableName, string primaryKeyName, object poco);
@@ -2038,7 +2067,7 @@ namespace PetaPoco
         //{
         //    return Update(poco, null, null);
         //}
-        #endregion
+#endregion
 
 
         public int Update<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>
@@ -2194,7 +2223,7 @@ namespace PetaPoco
             return Execute(new Sql(string.Format("UPDATE {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
         }
 
-        #region Obsolete Update Methods
+#region Obsolete Update Methods
         // 下記のメソッド（テーブル名を指定するものや、PKのキー名を取るもの）は使用禁止にします
         //  （ここまで書くならDMLでいいだろう）
         //      int Delete(string tableName, string primaryKeyName, object poco);
@@ -2228,7 +2257,7 @@ namespace PetaPoco
             return Execute(sql, primaryKeyValuePairs.Select(x => x.Value).ToArray());
         }
 
-        #endregion
+#endregion
 
         public int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>
         {
@@ -2256,6 +2285,7 @@ namespace PetaPoco
         ///     };
         ///     int cnt = db.DeleteById<Database.MUser>(pk);
         /// ]]>
+        /// </example>
         public int DeleteById<T>(object primaryKey) where T : IPetaPocoRecord<T>
         {
             if (primaryKey == null) { throw new ArgumentNullException(nameof(primaryKey)); }
@@ -3158,7 +3188,7 @@ namespace PetaPoco
 
         // added by kiri@syncnoah.com
         // ディープコピーメソッドを追加しました
-        #region ICloneable Member
+#region ICloneable Member
         object ICloneable.Clone()
         {
             return Clone();
@@ -3188,7 +3218,7 @@ namespace PetaPoco
             cloned._sqlFinal = _sqlFinal;
             return cloned;
         }
-        #endregion
+#endregion
 
 
         /// <summary>

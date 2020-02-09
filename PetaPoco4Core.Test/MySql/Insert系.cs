@@ -11,7 +11,7 @@ namespace PetaPoco4Core.Test.MySql
 
 
         [Fact]
-        public void PT001_Execute_1件挿入DDL()
+        public void INS001_Execute_1件挿入DDL()
         {
             using (var db = new DB())
             {
@@ -32,7 +32,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT002_Insert_1件挿入Entity()
+        public void INS002_Insert_1件挿入Entity()
         {
             using (var db = new DB())
             {
@@ -64,7 +64,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT003_Execute_キー重複エラーDDL()
+        public void INS003_Execute_キー重複エラーDDL()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -80,7 +80,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT004_Insert_キー重複エラーEntity()
+        public void INS004_Insert_キー重複エラーEntity()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -109,7 +109,7 @@ namespace PetaPoco4Core.Test.MySql
 
 
         //[Fact]
-        //public void PT005_Execute_サイズオーバーエラーDDL()
+        //public void INS005_Execute_サイズオーバーエラーDDL()
         //{
         //    var ex = Assert.Throws<MySqlException>(() =>
         //    {
@@ -126,7 +126,7 @@ namespace PetaPoco4Core.Test.MySql
         //}
 
         //[Fact]
-        //public void PT006_Insert_サイズオーバーエラーEntity()
+        //public void INS006_Insert_サイズオーバーエラーEntity()
         //{
         //    var ex = Assert.Throws<MySqlException>(() =>
         //    {
@@ -156,7 +156,7 @@ namespace PetaPoco4Core.Test.MySql
         //}
 
         [Fact]
-        public void PT007_Transaction_Commit()
+        public void INS007_Transaction_Commit()
         {
             using (var db = new DB())
             {
@@ -188,7 +188,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT008_Transaction_Rollback()
+        public void INS008_Transaction_Rollback()
         {
             using (var db = new DB())
             {
@@ -215,6 +215,43 @@ namespace PetaPoco4Core.Test.MySql
             }
         }
 
+
+        [Fact]
+        public void INS009_AutoInclementKey()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                var rec = new PtTable03
+                {
+                    Key03 = 100,        // キー値をわざと指定しても、INSERT文には含まれない・・・というテスト
+                    ColBool = true,
+                    ColInt = 123,
+                    ColDec = 987654.32m,
+                    ColVarchar = "AutoIncrementテスト",
+                    CreateBy = "pt_test001",
+                    CreateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    UpdateBy = "pt_test001",
+                    UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                };
+                var newkey = db.Insert(rec);
+                var sql = db.LastSQL;
+                _output.WriteLine(sql);
+                _output.WriteLine(newkey.ToString());
+
+                Assert.NotNull(newkey);
+
+
+                // SQLに含まれてはいけない文字列
+                Assert.DoesNotContain("Key03", sql);
+
+
+                var recafter = db.SingleOrDefaultById<PtTable03>(newkey);
+                Assert.Equal("AutoIncrementテスト", recafter.ColVarchar);
+
+            }
+        }
 
 
     }

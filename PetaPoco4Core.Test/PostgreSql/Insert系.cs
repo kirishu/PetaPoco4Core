@@ -15,7 +15,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void PT001_Execute_1件挿入DDL()
+        public void INS001_Execute_1件挿入DDL()
         {
             using (var db = new DB())
             {
@@ -36,7 +36,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT002_Insert_1件挿入Entity()
+        public void INS002_Insert_1件挿入Entity()
         {
             using (var db = new DB())
             {
@@ -68,7 +68,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT003_Execute_キー重複エラーDDL()
+        public void INS003_Execute_キー重複エラーDDL()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -84,7 +84,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT004_Insert_キー重複エラーEntity()
+        public void INS004_Insert_キー重複エラーEntity()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -113,7 +113,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void PT005_Execute_サイズオーバーエラーDDL()
+        public void INS005_Execute_サイズオーバーエラーDDL()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -129,7 +129,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT006_Insert_サイズオーバーエラーEntity()
+        public void INS006_Insert_サイズオーバーエラーEntity()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -157,7 +157,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT007_Transaction_Commit()
+        public void INS007_Transaction_Commit()
         {
             using (var db = new DB())
             {
@@ -189,7 +189,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT008_Transaction_Rollback()
+        public void INS008_Transaction_Rollback()
         {
             using (var db = new DB())
             {

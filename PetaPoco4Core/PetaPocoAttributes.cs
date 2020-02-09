@@ -125,19 +125,19 @@ namespace PetaPoco
         private Dictionary<string, bool> _modifiedColumns { get; set; } = new Dictionary<string, bool>();
 
         #region On Loaded event memo
-        ///// <summary>
-        ///// On Loaded event
-        ///// </summary>
-        ///// <remarks>
-        ///// PetaPoco.Core.PetaDataで実装されているDynamicMethodを使った動的メソッド
-        /////
-        /////     IL生成メソッドdelegate
-        /////     キャッシュ処理をやっているけど、大量レコードを格納すると遅くなるので注意
-        ///// </remarks>
-        //protected void OnLoaded()
-        //{
-        //    _modifiedColumns = new Dictionary<string, bool>();
-        //}
+        /// <summary>
+        /// On Loaded event
+        /// </summary>
+        /// <remarks>
+        /// PetaPoco.Core.PetaDataで実装されているDynamicMethodを使った動的メソッド
+        ///
+        ///     IL生成メソッドdelegate
+        ///     キャッシュ処理をやっているけど、大量レコードを格納すると遅くなるので注意
+        /// </remarks>
+        protected void OnLoaded()
+        {
+            _modifiedColumns = new Dictionary<string, bool>();
+        }
         #endregion
 
         /// <summary>

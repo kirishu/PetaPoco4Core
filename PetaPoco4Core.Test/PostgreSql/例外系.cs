@@ -10,7 +10,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void PT2_001_SyntacError()
+        public void XCP001_SyntacError()
         {
 
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -31,7 +31,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT2_002_オブジェクト無し()
+        public void XCP002_オブジェクト無し()
         {
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
             {
@@ -49,7 +49,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT2_003_DuplicateInsert()
+        public void XCP003_DuplicateInsert()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -101,7 +101,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         ////[TestMethod]
         ////[ExpectedException(typeof(Npgsql.NpgsqlException))]
         //[Fact]
-        //public void PT2_004_クエリタイムアウト_Timeout30秒()
+        //public void XCP004_クエリタイムアウト_Timeout30秒()
         //{
         //    // DB接続
         //    using (var db = new DB())
@@ -121,7 +121,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         //}
 
         [Fact]
-        public void PT2_005_接続タイムアウト_Timeout10秒()
+        public void XCP005_接続タイムアウト_Timeout10秒()
         {
             var ex = Assert.Throws<System.TimeoutException>(() =>
             {
@@ -139,7 +139,7 @@ namespace PetaPoco4Core.Test.PostgreSql
             * */
         }
         [Fact]
-        public void PT2_005_接続タイムアウト_Timeout30秒()
+        public void XCP005_接続タイムアウト_Timeout30秒()
         {
             var ex = Assert.Throws<System.Net.Sockets.SocketException>(() =>
             {
@@ -158,7 +158,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT2_006_マッピング型エラー()
+        public void XCP006_マッピング型エラー()
         {
             var ex = Assert.Throws<System.InvalidCastException>(() =>
             {

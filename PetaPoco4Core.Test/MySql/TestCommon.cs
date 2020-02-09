@@ -36,6 +36,8 @@
                 CreateTable01(db);
                 // PtTable02の作成
                 CreateTable02(db);
+                // PtTable03の作成
+                CreateTable03(db);
             }
         }
 
@@ -60,13 +62,14 @@
                 //}
                 db.Execute("DROP TABLE IF EXISTS PtTable01");
                 db.Execute("DROP TABLE IF EXISTS PtTable02");
+                db.Execute("DROP TABLE IF EXISTS PtTable03");   // AutoIncrement PK
             }
         }
 
         private  void CreateTable01(DB db)
         {
-            //// 存在していたらDROP
-            //db.Execute("DROP TABLE IF EXISTS PtTable01");
+            // 存在していたらDROP
+            db.Execute("DROP TABLE IF EXISTS PtTable01");
 
             // CREATE
             var sql = PetaPoco.Sql.Builder
@@ -144,6 +147,28 @@
 
         }
 
+        private void CreateTable03(DB db)
+        {
+            // 存在していたらDROP
+            db.Execute("DROP TABLE IF EXISTS PtTable03");
+
+            // CREATE
+            var sql = PetaPoco.Sql.Builder
+                .Append("CREATE TABLE IF NOT EXISTS PtTable03 (")
+                .Append("      Key03                 int               NOT NULL AUTO_INCREMENT")
+                .Append("    , ColBool               bool              NOT NULL")
+                .Append("    , ColInt                int")
+                .Append("    , ColDec                decimal(10,2)")
+                .Append("    , ColVarchar            VARCHAR(20)")
+                .Append("    , CreateBy              VARCHAR(30)       NOT NULL")
+                .Append("    , CreateDt              DATETIME          NOT NULL")
+                .Append("    , UpdateBy              VARCHAR(30)       NOT NULL")
+                .Append("    , UpdateDt              DATETIME          NOT NULL")
+                .Append("    , CONSTRAINT PK_PtTable03 PRIMARY KEY (Key03)")
+                .Append(");");
+            db.Execute(sql);
+
+        }
 
     }
 

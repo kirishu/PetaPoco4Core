@@ -15,7 +15,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void PT001_SingleById_PK1列()
+        public void SEL001_SingleById_PK1列()
         {
             using (var db = new DB())
             {
@@ -36,7 +36,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT002_SingleById_PK2列()
+        public void SEL002_SingleById_PK2列()
         {
             using (var db = new DB())
             {
@@ -64,7 +64,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void PT003_SingleById_PK1列ヒットなし()
+        public void SEL003_SingleById_PK1列ヒットなし()
         {
             // InvalidOperationExceptionが発生したらOK
             var ex = Assert.Throws<InvalidOperationException>(() =>
@@ -79,7 +79,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT004_SingleById_PK2列ヒットなし()
+        public void SEL004_SingleById_PK2列ヒットなし()
         {
             var ex = Assert.Throws<InvalidOperationException>(() =>
             {
@@ -98,7 +98,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT005_SingleOrDefaultById_PK1列()
+        public void SEL005_SingleOrDefaultById_PK1列()
         {
             using (var db = new DB())
             {
@@ -116,7 +116,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT006_SingleOrDefaultById_PK2列()
+        public void SEL006_SingleOrDefaultById_PK2列()
         {
             using (var db = new DB())
             {
@@ -140,7 +140,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT007_SingleOrDefaultById_PK1列ヒットなし()
+        public void SEL007_SingleOrDefaultById_PK1列ヒットなし()
         {
             using (var db = new DB())
             {
@@ -153,7 +153,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT008_SingleOrDefaultById_PK2列ヒットなし()
+        public void SEL008_SingleOrDefaultById_PK2列ヒットなし()
         {
             using (var db = new DB())
             {
@@ -170,7 +170,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT009_Single_条件1つを指定して1件取得()
+        public void SEL009_Single_条件1つを指定して1件取得()
         {
             using (var db = new DB())
             {
@@ -188,7 +188,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT010_Single_条件2つを指定して1件取得()
+        public void SEL010_Single_条件2つを指定して1件取得()
         {
             using (var db = new DB())
             {
@@ -206,7 +206,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT011_Single_条件を指定してヒットなしエラー()
+        public void SEL011_Single_条件を指定してヒットなしエラー()
         {
             // InvalidOperationExceptionが発生したらOK
             var ex = Assert.Throws<InvalidOperationException>(() =>
@@ -222,7 +222,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void PT012_SingleOrDefault_条件1つを指定して1件取得()
+        public void SEL012_SingleOrDefault_条件1つを指定して1件取得()
         {
             using (var db = new DB())
             {
@@ -240,7 +240,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT013_SingleOrDefault_条件2つを指定して1件取得()
+        public void SEL013_SingleOrDefault_条件2つを指定して1件取得()
         {
             using (var db = new DB())
             {
@@ -258,7 +258,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT014_SingleOrDefault_条件を指定して1件ヒットなし()
+        public void SEL014_SingleOrDefault_条件を指定して1件ヒットなし()
         {
             using (var db = new DB())
             {
@@ -270,7 +270,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT015_SingleOrDefault_複数ヒットエラー()
+        public void SEL015_SingleOrDefault_複数ヒットエラー()
         {
             var ex = Assert.Throws<InvalidOperationException>(() =>
             {
@@ -287,7 +287,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void PT016_First_該当する先頭行を取得()
+        public void SEL016_First_該当する先頭行を取得()
         {
             using (var db = new DB())
             {
@@ -305,7 +305,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT017_First_ヒットなしエラー()
+        public void SEL017_First_ヒットなしエラー()
         {
             var ex = Assert.Throws<InvalidOperationException>(() =>
             {
@@ -321,7 +321,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT018_FirstOrDefault_該当する先頭行を取得()
+        public void SEL018_FirstOrDefault_該当する先頭行を取得()
         {
             using (var db = new DB())
             {
@@ -339,7 +339,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT019_FirstOrDefault_ヒットなし()
+        public void SEL019_FirstOrDefault_ヒットなし()
         {
             using (var db = new DB())
             {
@@ -351,7 +351,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT020_ExecuteScalar_string型()
+        public void SEL020_ExecuteScalar_string型()
         {
             using (var db = new DB())
             {
@@ -363,7 +363,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT021_ExecuteScalar_int型()
+        public void SEL021_ExecuteScalar_int型()
         {
             using (var db = new DB())
             {
@@ -376,7 +376,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void PT022_ExecuteScalar_DateTime型()
+        public void SEL022_ExecuteScalar_DateTime型()
         {
             using (var db = new DB())
             {
@@ -389,7 +389,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void PT023_Single_内部結合クエリ()
+        public void SEL023_Single_内部結合クエリ()
         {
             using (var db = new DB())
             {
@@ -420,7 +420,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT024_Single_外部結合クエリ()
+        public void SEL024_Single_外部結合クエリ()
         {
             using (var db = new DB())
             {
@@ -449,7 +449,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT025_Fetch_単一テーブルヒットあり()
+        public void SEL025_Fetch_単一テーブルヒットあり()
         {
             using (var db = new DB())
             {
@@ -465,7 +465,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT026_Fetch_単一テーブルヒットなし()
+        public void SEL026_Fetch_単一テーブルヒットなし()
         {
             using (var db = new DB())
             {
@@ -478,7 +478,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT027_Fetch_外部結合クエリ()
+        public void SEL027_Fetch_外部結合クエリ()
         {
             using (var db = new DB())
             {
@@ -504,7 +504,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT028_Dictionary_その1()
+        public void SEL028_Dictionary_その1()
         {
             using (var db = new DB())
             {
