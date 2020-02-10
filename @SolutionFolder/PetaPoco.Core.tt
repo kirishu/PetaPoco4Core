@@ -12,7 +12,6 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
-
 <#+
 /*
  きりはらカスタマイズ版 PetaPoco Entities Generator(T4Template)
@@ -105,7 +104,7 @@ public class Table
     public string CleanName;
     public string SequenceName;
     public bool Ignore;
-    public string Comment;        // added by kiri@syncnoah.com
+    public string Comment;        // added by @zapshu
 
     //public string ClassName;
     private string _className;
@@ -153,7 +152,8 @@ public class Column
     public bool IsNullable;
     public bool IsAutoIncrement;
     public bool Ignore;
-    public string Comment;         // added by kiri@syncnoah.com
+    public string Comment;         // added by @zapshu
+	public string DefaultValue;    // added by @zapshu
 }
 
 public class Tables : List<Table>
@@ -164,7 +164,7 @@ public class Tables : List<Table>
 
     public Table GetTable(string tableName)
     {
-        return this.Single(x=>string.Compare(x.Name, tableName, true)==0);
+        return this.Single( x => string.Compare(x.Name, tableName, true) == 0);
     }
 
     public Table this[string tableName]
@@ -214,6 +214,20 @@ string GetPrimaryKeys(List<Column> cols)
         result += col.Name + ",";
 
     return result.TrimEnd(',');
+}
+
+// PKのアトリビュート
+string GetPrimaryKeyAttrubute(Table tbl)
+{
+	var sb = new StringBuilder()
+		.Append("[PrimaryKey(\"" + GetPrimaryKeys(tbl.PK) + "\"")
+		.Append(", AutoIncrement=" + (tbl.PK[0].IsAutoIncrement ? "true" : "false"));
+	if (tbl.SequenceName != null)
+    {
+		sb.Append(", SequenceName=\"" + tbl.SequenceName + "\"");
+    }
+	sb.Append(")]");
+	return sb.ToString();
 }
 
 
@@ -339,7 +353,7 @@ Tables LoadTables()
     }
     catch (Exception x)
     {
-        var error=x.Message.Replace("\r\n", "\n").Replace("\n", " ");
+        var error = x.Message.Replace("\r\n", "\n").Replace("\n", " ");
         Warning(string.Format("Failed to read database schema - {0}", error));
         WriteLine("");
         WriteLine("// -----------------------------------------------------------------------------------------");
@@ -817,12 +831,12 @@ class PostgreSqlSchemaReader : SchemaReader
                 while(rdr.Read())
                 {
                     Table tbl = new Table();
-                    tbl.Name = rdr["table_name"].ToString();
-                    tbl.Schema = (rdr["table_schema"].ToString() == defaultSchema) ? "" : rdr["table_schema"].ToString();	// デフォルトスキーマと同じだったら省略する
-                    tbl.IsView = string.Compare(rdr["table_type"].ToString(), "View", true)==0;
-                    tbl.CleanName = CleanUp(tbl.Name);
-                    tbl.ClassName = (string.IsNullOrEmpty(tbl.Schema) ? "" : tbl.Schema + ".") + Inflector.MakeSingular(tbl.CleanName);
-                    tbl.Comment = Inflector.ConvertHtmlEscape(rdr["table_comment"].ToString());
+					tbl.Name = rdr["table_name"].ToString();
+					tbl.Schema = (rdr["table_schema"].ToString() == defaultSchema) ? "" : rdr["table_schema"].ToString();	// デフォルトスキーマと同じだったら省略する
+					tbl.IsView = string.Compare(rdr["table_type"].ToString(), "View", true)==0;
+					tbl.CleanName = CleanUp(tbl.Name);
+					tbl.ClassName = (string.IsNullOrEmpty(tbl.Schema) ? "" : tbl.Schema + ".") + Inflector.MakeSingular(tbl.CleanName);
+					tbl.Comment = Inflector.ConvertHtmlEscape(rdr["table_comment"].ToString());
                     result.Add(tbl);
                 }
             }
@@ -830,14 +844,23 @@ class PostgreSqlSchemaReader : SchemaReader
 
         foreach (var tbl in result)
         {
-            tbl.Columns=LoadColumns(tbl);
+            tbl.Columns = LoadColumns(tbl);
 
             // Mark the primary keys
-            string PrimaryKey=GetPK(tbl.Name);
+            string PrimaryKey = GetPK(tbl.Name);
             var pkColumn = tbl.Columns.Where(x => PrimaryKey.ToLower().Split(',').Any(p => p.Trim() == x.Name.ToLower().Trim()));
             foreach (Column col in pkColumn)
             {
                 col.IsPK = true;
+            }
+
+			// Sequence名を取得してtableのプロパティにセット
+			var seqCol =  pkColumn.SingleOrDefault(x => x.IsAutoIncrement && !string.IsNullOrEmpty(x.DefaultValue));
+			if (seqCol != null)
+            {
+				var rx = new Regex("'(.*?)'", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+				var m = rx.Match(seqCol.DefaultValue).Value.Replace("'", "");
+				tbl.SequenceName = m;
             }
         }
 
@@ -859,7 +882,7 @@ class PostgreSqlSchemaReader : SchemaReader
 
             var p = cmd.CreateParameter();
             p.ParameterName = "@tableName";
-            p.Value=tbl.Name;
+            p.Value = tbl.Name;
             cmd.Parameters.Add(p);
 
             var result=new List<Column>();
@@ -867,13 +890,16 @@ class PostgreSqlSchemaReader : SchemaReader
             {
                 while(rdr.Read())
                 {
-                    var col = new Column();
-                    col.Name=rdr["column_name"].ToString();
-                    col.PropertyName=CleanUp(col.Name);
-                    col.PropertyType=GetPropertyType(rdr["udt_name"].ToString());
-                    col.IsNullable=rdr["is_nullable"].ToString()=="YES";
-                    col.IsAutoIncrement = rdr["column_default"].ToString().StartsWith("nextval(");
-                    col.Comment = Inflector.ConvertHtmlEscape(rdr["column_comment"].ToString());
+                    var col = new Column
+                    {
+	                    Name = rdr["column_name"].ToString(),
+		                PropertyName = CleanUp(rdr["column_name"].ToString()),
+			            PropertyType=GetPropertyType(rdr["udt_name"].ToString()),
+				        IsNullable=rdr["is_nullable"].ToString()=="YES",
+					    IsAutoIncrement = rdr["column_default"].ToString().StartsWith("nextval("),
+						Comment = Inflector.ConvertHtmlEscape(rdr["column_comment"].ToString()),
+						DefaultValue = rdr["column_default"].ToString(),
+					};
                     result.Add(col);
                 }
             }
@@ -885,11 +911,11 @@ class PostgreSqlSchemaReader : SchemaReader
     string GetPK(string table){
 
         string sql=@"SELECT kcu.column_name
-                     FROM information_schema.key_column_usage kcu
-                     JOIN information_schema.table_constraints tc
-                     ON kcu.constraint_name=tc.constraint_name
-                     WHERE lower(tc.constraint_type)='primary key'
-                     AND kcu.table_name=@tableName";
+                       FROM information_schema.key_column_usage kcu
+                            INNER JOIN information_schema.table_constraints tc
+                                    ON kcu.constraint_name = tc.constraint_name
+                      WHERE lower(tc.constraint_type) = 'primary key'
+                        AND kcu.table_name=@tableName";
 
         using (var cmd=_factory.CreateCommand())
         {
@@ -1051,7 +1077,8 @@ class MySqlSchemaReader : SchemaReader
                 {
                     Table tbl=new Table();
                     tbl.Name=rdr["TABLE_NAME"].ToString();
-                    tbl.Schema=rdr["TABLE_SCHEMA"].ToString();
+                    //tbl.Schema=rdr["TABLE_SCHEMA"].ToString();
+					tbl.Schema=null;
                     tbl.IsView=string.Compare(rdr["TABLE_TYPE"].ToString(), "View", true)==0;
                     tbl.CleanName=CleanUp(tbl.Name);
                     tbl.ClassName=Inflector.MakeSingular(tbl.CleanName);
@@ -1109,7 +1136,7 @@ class MySqlSchemaReader : SchemaReader
             case "tinyint":
             case "bool":
             case "boolean":
-                //***propType= bUnsigned ? "byte" : "sbyte";     // added by kiri@syncnoah.com
+                //***propType= bUnsigned ? "byte" : "sbyte";     // added by @zapshu
                 propType=  "bool";
                 break;
             case "guid":

@@ -42,9 +42,10 @@ namespace PetaPoco4Core.Test.PostgreSql
             {
                 db.BeginTransaction();
 
-                var rec = new PtTable01
+                var rec = new PtTable02
                 {
                     Key01 = "92",
+                    Key02 = 92,
                     ColBool = true,
                     ColInt = 123,
                     ColDec = 987654.32m,
@@ -54,9 +55,12 @@ namespace PetaPoco4Core.Test.PostgreSql
                     UpdateBy = "pt_test001",
                     UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
                 };
-                db.Insert(rec);
+                var result = db.Insert(rec);
+                _output.WriteLine(result.ToString());
 
-                var rec2 = db.SingleById<PtTable01>("92");
+                Assert.Equal("-1", result.ToString());      // AutoIncrementでない場合は-1が返る
+
+                var rec2 = db.SingleById<PtTable02>(new { Key01 = "92", Key02 = 92 });
                 Assert.True(rec2.ColBool);
                 Assert.Equal(123, rec2.ColInt.Value);
                 Assert.Equal(987654.32m, rec2.ColDec.Value);
@@ -216,6 +220,42 @@ namespace PetaPoco4Core.Test.PostgreSql
             }
         }
 
+        [Fact]
+        public void INS009_AutoInclementKey()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                var rec = new PtTable03
+                {
+                    Key03 = 100,        // キー値をわざと指定しても、INSERT文には含まれない・・・というテスト
+                    ColBool = true,
+                    ColInt = 123,
+                    ColDec = 987654.32m,
+                    ColVarchar = "AutoIncrementテスト",
+                    CreateBy = "pt_test001",
+                    CreateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    UpdateBy = "pt_test001",
+                    UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                };
+                var newkey = db.Insert(rec);
+                var sql = db.LastSQL;
+                _output.WriteLine(sql);
+                _output.WriteLine(newkey.ToString());
+
+                Assert.NotNull(newkey);
+
+
+                // SQLに含まれてはいけない文字列
+                Assert.DoesNotContain("Key03", sql);
+
+
+                var recafter = db.SingleOrDefaultById<PtTable03>(newkey);
+                Assert.Equal("AutoIncrementテスト", recafter.ColVarchar);
+
+            }
+        }
 
 
     }

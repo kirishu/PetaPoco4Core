@@ -10,6 +10,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@SolutionFolder", "@SolutionFolder", "{190E3FEE-2B28-49B0-9A43-BBA43B36601D}"
 	ProjectSection(SolutionItems) = preProject
 		@SolutionFolder\Database.tt = @SolutionFolder\Database.tt
+		@SolutionFolder\DvdRental.cs = @SolutionFolder\DvdRental.cs
+		@SolutionFolder\DvdRental.tt = @SolutionFolder\DvdRental.tt
+		@SolutionFolder\Employees.cs = @SolutionFolder\Employees.cs
+		@SolutionFolder\Employees.tt = @SolutionFolder\Employees.tt
 		@SolutionFolder\PetaPoco.Core.tt = @SolutionFolder\PetaPoco.Core.tt
 		@SolutionFolder\PetaPoco.Generator.tt = @SolutionFolder\PetaPoco.Generator.tt
 		@SolutionFolder\readme.txt = @SolutionFolder\readme.txt

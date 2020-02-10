@@ -38,9 +38,10 @@ namespace PetaPoco4Core.Test.MySql
             {
                 db.BeginTransaction();
 
-                var rec = new PtTable01
+                var rec = new PtTable02
                 {
                     Key01 = "92",
+                    Key02 = 92,
                     ColBool = true,
                     ColInt = 123,
                     ColDec = 987654.32m,
@@ -50,9 +51,12 @@ namespace PetaPoco4Core.Test.MySql
                     UpdateBy = "pt_test001",
                     UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
                 };
-                db.Insert(rec);
+                var result = db.Insert(rec);
+                _output.WriteLine(result.ToString());
 
-                var rec2 = db.SingleById<PtTable01>("92");
+                Assert.Equal("-1", result.ToString());      // AutoIncrementでない場合は-1が返る
+
+                var rec2 = db.SingleById<PtTable02>(new { Key01 = "92", Key02 = 92 });
                 Assert.True(rec2.ColBool);
                 Assert.Equal(123, rec2.ColInt.Value);
                 Assert.Equal(987654.32m, rec2.ColDec.Value);

@@ -5,7 +5,7 @@
     /// </summary>
     public class DB : PetaPoco.DatabaseExtension
     {
-        public static readonly string Constr = "Server=192.168.1.212;Database=employees;uid=testman;pwd=testpwd;SslMode=None;";
+        public static readonly string Constr = "Server=localhost;Database=employees;uid=testman;pwd=testpwd;SslMode=None;";
 
         /// <summary>
         /// employees Database Object
@@ -32,12 +32,9 @@
             // DB接続
             using (var db = new DB())
             {
-                // PtTable01の作成
                 CreateTable01(db);
-                // PtTable02の作成
                 CreateTable02(db);
-                // PtTable03の作成
-                CreateTable03(db);
+                CreateTable03(db);   // AutoIncrement PK
             }
         }
 
@@ -147,6 +144,10 @@
 
         }
 
+        /// <summary>
+        /// AutoIncrement table
+        /// </summary>
+        /// <param name="db"></param>
         private void CreateTable03(DB db)
         {
             // 存在していたらDROP

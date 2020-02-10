@@ -1922,6 +1922,21 @@ namespace PetaPoco
             }
         }
 
+        /// <summary>
+        /// Returns primary key conditions
+        /// </summary>
+        /// <param name="primaryKeyValuePair"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        /// <example>
+        /// <![CDATA[
+        ///     Dictionary<string, object> keys = {{ "Key01", "123" }, { "Key02", 456 }};
+        ///     int i = 0;
+        ///     
+        ///     BuildPrimaryKeySql(keys, ref i);
+        ///       -> "\"Key01\" = @0 AND \"Key02\" = @1"
+        /// ]]>
+        /// </example>
         private string BuildPrimaryKeySql(Dictionary<string, object> primaryKeyValuePair, ref int index)
         {
             var tempIndex = index;
@@ -1929,6 +1944,27 @@ namespace PetaPoco
             return string.Join(" AND ", primaryKeyValuePair.Select((x, i) => string.Format("{0} = @{1}", EscapeSqlIdentifier(x.Key), tempIndex + i)).ToArray());
         }
 
+        /// <summary>
+        /// Returns the specified primary key value
+        /// </summary>
+        /// <param name="primaryKeyName"></param>
+        /// <param name="primaryKeyValue"></param>
+        /// <returns></returns>
+        /// <example>
+        /// <![CDATA[
+        ///     // キーが1つなら「値」を渡す
+        ///     GetPrimaryKeyValues("Key01", "123");
+        ///       -> [{ "Key01", "123" }]
+        /// 
+        ///     // キーが2つ以上なら匿名型で渡す
+        ///     GetPrimaryKeyValues("Key01,Key02", new { Key01 = "123", Key02 = 456, });
+        ///       -> [{ "Key01", "123" }, { "Key02", 456 }]
+        /// 
+        ///     // キーが1つなのに匿名型を渡すと正しくない
+        ///     GetPrimaryKeyValues("Key01", new { Key01 = "123" });
+        ///       -> これは間違いなので注意！・・・[{ "Key01",  [{"Key01", "123"}]}]
+        /// ]]>
+        /// </example>
         private Dictionary<string, object> GetPrimaryKeyValues(string primaryKeyName, object primaryKeyValue)
         {
             Dictionary<string, object> primaryKeyValues;

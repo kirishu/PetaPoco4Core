@@ -5,7 +5,7 @@
     /// </summary>
     public class DB : PetaPoco.DatabaseExtension
     {
-        public static readonly string Constr = "Server=192.168.1.212;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
+        public static readonly string Constr = "Server=localhost;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
 
         /// <summary>
         /// dvdlental Database Object
@@ -35,10 +35,9 @@
             // DB接続
             using (var db = new DB())
             {
-                // pt_table01の作成
                 CreateTable01(db);
-                // pt_table02の作成
                 CreateTable02(db);
+                CreateTable03(db);     // use Sequence PK
             }
         }
 
@@ -53,6 +52,7 @@
                 // 存在していたらDROP
                 db.Execute("DROP TABLE IF EXISTS pt_table01");
                 db.Execute("DROP TABLE IF EXISTS pt_table02");
+                db.Execute("DROP TABLE IF EXISTS pt_table03");
                 //var checktable01 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table01");
                 //if (!string.IsNullOrWhiteSpace(checktable01))
                 //{
@@ -69,8 +69,8 @@
 
         private void CreateTable01(DB db)
         {
-            //// 存在していたらDROP
-            //db.Execute("DROP TABLE IF EXISTS pt_table01");
+            // 存在していたらDROP
+            db.Execute("DROP TABLE IF EXISTS pt_table01");
 
             // 存在していたら作成しない
             var tablenm = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table01");
@@ -91,7 +91,7 @@
                 .Append("    , create_dt              TIMESTAMP(3)      NOT NULL")
                 .Append("    , update_by              VARCHAR(30)       NOT NULL")
                 .Append("    , update_dt              TIMESTAMP(3)      NOT NULL")
-                .Append("    , CONSTRAINT PK_pt_table01 PRIMARY KEY (key01)")
+                .Append("    , CONSTRAINT pk_pt_table01 PRIMARY KEY (key01)")
                 .Append(");");
             db.Execute(sql);
 
@@ -116,8 +116,8 @@
 
         private void CreateTable02(DB db)
         {
-            //// 存在していたらDROP
-            //db.Execute("DROP TABLE IF EXISTS pt_table02");
+            // 存在していたらDROP
+            db.Execute("DROP TABLE IF EXISTS pt_table02");
 
             // 存在していたら作成しない
             var tablenm = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table02");
@@ -139,7 +139,7 @@
                 .Append("    , create_dt              TIMESTAMP(3)      NOT NULL")
                 .Append("    , update_by              VARCHAR(30)       NOT NULL")
                 .Append("    , update_dt              TIMESTAMP(3)      NOT NULL")
-                .Append("    , CONSTRAINT PK_pt_table02 PRIMARY KEY (key01, key02)")
+                .Append("    , CONSTRAINT pk_pt_table02 PRIMARY KEY (key01, key02)")
                 .Append(");");
             db.Execute(sql);
 
@@ -160,6 +160,32 @@
             db.Execute("INSERT INTO pt_table02 values ('14',14,true,999,123456.78,'神奈川県','system','2018/10/24 12:00:00','system','2018/10/24 12:00:00');");
             db.Execute("INSERT INTO pt_table02 values ('15',15,true,999,123456.78,'新潟県','system','2018/10/24 12:00:00','system','2018/10/24 12:00:00');");
 
+        }
+
+        /// <summary>
+        /// AutoIncrement table
+        /// </summary>
+        /// <param name="db"></param>
+        private void CreateTable03(DB db)
+        {
+            // 存在していたらDROP
+            db.Execute("DROP TABLE IF EXISTS pt_table03");
+
+            // CREATE
+            var sql = PetaPoco.Sql.Builder
+                .Append("CREATE TABLE pt_table03 (")
+                .Append("      key03                  SERIAL            NOT NULL")
+                .Append("    , col_bool               bool              NOT NULL")
+                .Append("    , col_int                int")
+                .Append("    , col_dec                decimal(10,2)")
+                .Append("    , col_varchar            VARCHAR(20)")
+                .Append("    , create_by              VARCHAR(30)       NOT NULL")
+                .Append("    , create_dt              TIMESTAMP(3)      NOT NULL")
+                .Append("    , update_by              VARCHAR(30)       NOT NULL")
+                .Append("    , update_dt              TIMESTAMP(3)      NOT NULL")
+                .Append("    , CONSTRAINT pk_pt_table03 PRIMARY KEY (key03)")
+                .Append(");");
+            db.Execute(sql);
         }
 
 
