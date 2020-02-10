@@ -869,6 +869,7 @@ ADO.NETを素で使わない。思想が古い。OOP理念に反している。L
         <h3>Inserts, Updates and Deletes</h3>
         <h4>Insert</h4>
         <pre class="prettyprint lang-cs">
+// Entityクラス（PetaPocoオブジェクト）にデータをセットしてInsertメソッドを実行
 var rec = new Database.Employees.Title
 {
     EmpNo = 10,
@@ -878,15 +879,23 @@ var rec = new Database.Employees.Title
 };
 db.Insert(rec);
 </pre>
-<pre class="note">
-Entityクラス（PetaPocoオブジェクト）にデータをセットしてInsertメソッドを実行。
+<pre class="prettyprint lang-cs">
+// PKがAutoIncrementの場合
+// PK列にはセットせずに渡す（仮にセットしても無視されます）
+var rec = new Database.Employees.Title
+{
+    Title = "hoge",
+    FromDate = DateTime.Now,
+    ToDate = DateTime.Now,
+};
+var newKey = db.Insert(rec);
+// 戻り値には付与されたキー値が取得できる
+// ※ちなみにAutoIncrementでないInsertメソッドの戻り値は、常に-1。
 </pre>
 
-        <h4>Update</h4>
-<pre class="note">
-取得したレコードを更新する例
-</pre>
+<h4>Update</h4>
 <pre class="prettyprint lang-cs">
+// 取得したレコードを更新する例
 // レコード取得
 var rec = db.SingleOrDefaultById&lt;Database.Employees.Employee&gt;(123);
 
@@ -895,24 +904,98 @@ rec.HomePhone = "03-3768-7250";
 rec.UpdateDm = DateTime.Now;
 
 // 更新
-db.Update(rec);
+int updatedCount = db.Update(rec);
 
 // 発行されるSQL文は、変更列だけが記述される
-// UPDATE Employees SET HomePhone = @0, UpdateDm = @1 WHERE EmployeeID = @2
+// UPDATE Employees SET HomePhone = @0, UpdateDm = @1 WHERE EmpNo = @2
+
+/**
+ *  Database.ttで生成する際、TrackModifiedColumns をtrueで実行すると、更新列自動追跡機能が実装されます。
+ *  こうして生成したEntityは、値がセットされた列だけを更新し、セットを行っていない列はUPDATE文に含まれなくなります。
+*/
 
 </pre>
-<pre class="note">
-Database.ttで生成する際、TrackModifiedColumns をtrueで実行すると、更新列自動追跡機能が実装されます。
-こうして生成したEntityは、値がセットされた列だけを更新し、セットを行っていない列はUPDATE文に含まれなくなります。
+
+<pre class="prettyprint lang-cs">
+// 空のEntityでUpdate
+// 事前に読み込まなくても空のEntityに項目をセットしてイケます
+var rec = new Database.Employees.Employee
+{
+    EmpNo = 123;     // PKを指定
+    HomePhone = "03-3768-7250";
+    UpdateDm = DateTime.Now;
+};
+// 更新
+int updatedCount = db.Update(rec);
+
+// このSQL文も、変更列だけが記述される（PKは更新されない！）
+// UPDATE Employees SET HomePhone = @0, UpdateDm = @1 WHERE EmpNo = @2
+</pre>
+
+<pre class="prettyprint lang-cs">
+// PKの指定のしかた
+// PKは引数として指定できます
+var rec = new Database.Employees.Employee
+{
+    HomePhone = "03-3768-7250";
+    UpdateDm = DateTime.Now;
+};
+// 更新
+int updatedCount = db.Update(rec, 123);
+
+---------------------------------------------
+// 複数PKの場合は匿名型で渡す
+var rec = new Database.Employees.DeptManager
+{
+    FromDate = DateTime.Now;
+    ToDate = DateTime.Now;
+};
+var pk = new {
+    EmpNo = 123,
+    DeptNo = "A001",
+};
+// 更新
+int updatedCount = db.Update(rec, pk);
 
 </pre>
 
+<pre class="prettyprint lang-cs">
+// 一部のフィールドだけを更新する例
+var rec = db.SingleOrDefaultById&lt;Database.Employees.Employee&gt;(123);
 
+// 更新するフィールド名コレクションをIEnumerable&lt;string&gt;で作成
+var updateclos = new List&lt;string&gt;() {
+    "Column04",
+    "Column05",
+};
+// Update実行
+db.Update(rec, updatecols);
 
-<pre class="note">
-DMLを書く例
+// Column04 と Column05だけが更新される（引数に IEnumerable&lt;string&gt; を渡すと、その列だけを更新する）
+// UPDATE T_Table001 SET Column04 = @0, Column05 = @1 WHERE KeyCode = @2
+
 </pre>
 <pre class="prettyprint lang-cs">
+// 更新フィールドが超多く、除外するものがチョットで面倒な時は・・・
+// Entityから列名コレクションを取得して、そこから不要な列を取り除く作戦
+
+// 全フィールド名コレクションを取得
+var pd = PetaPoco.Database.PocoData.ForType(Database.Employees.T_Table001.GetType());
+var updatecols = pd.Columns.Keys.ToList();
+// ↑から除外フィールドを取り除く
+updatecols.RemoveAll(x => (
+    x.Equals("Column01", StringComparison.CurrentCultureIgnoreCase) ||
+    x.Equals("Column02", StringComparison.CurrentCultureIgnoreCase) ||
+    x.Equals("Column03", StringComparison.CurrentCultureIgnoreCase)
+    ));
+// Update実行
+db.Update(rec, updatecols);
+
+// こうすると、全項目からPKと、Column01,02,03を除外した列が更新される
+</pre>
+
+<pre class="prettyprint lang-cs">
+// DMLを書く例
 db.Update&lt;Database.Employees.T_Table001&gt;(PetaPoco.Sql.Builder
     .Append("SET Column01=@0", "AAAA")
     .Append("  , Column02=@0", "BBBB")
@@ -922,62 +1005,41 @@ db.Update&lt;Database.Employees.T_Table001&gt;(PetaPoco.Sql.Builder
 </pre>
 
 
-        <!--
-    <pre class="note">
-    一部のフィールドだけを更新する例
-    </pre>
-    <pre class="prettyprint lang-cs">
-    // Entityに値をセット
-    var rec = new Database.Employees.T_Table001();
-    rec.KeyCode = 123;    // ← PKセット
-    rec.Column04 = "ほげ";
-    rec.Column05 = null;
-
-    // 更新するフィールド名コレクションをIEnumerable&lt;string&gt;で作成
-    var updateclos = new List&lt;string&gt;() {
-        "Column04",
-        "Column05",
-    };
-    // Update実行
-    db.Update(rec, updatecols);
-
-
-    </pre>
-    <pre class="prettyprint lang-cs">
-    // 更新フィールドが超多く、除外するものがチョットで面倒な時は・・・
-    // Entityから列名コレクションを取得して、そこから不要な列を取り除く作戦
-
-    // 全フィールド名コレクションを取得
-    var pd = PetaPoco.Database.PocoData.ForType(Database.Employees.T_Table001.GetType());
-    var updatecols = pd.Columns.Keys.ToList();
-    // ↑から除外フィールドを取り除く
-    updatecols.RemoveAll(x => (
-        x.Equals("Column01", StringComparison.CurrentCultureIgnoreCase) ||
-        x.Equals("Column02", StringComparison.CurrentCultureIgnoreCase) ||
-        x.Equals("Column03", StringComparison.CurrentCultureIgnoreCase)
-        ));
-    // Update実行
-    db.Update(rec, updatecols);
-    </pre>
-    -->
 
 
 
 
 
-
-
-        <h4>Delete</h4>
+<h4>Delete</h4>
 <pre class="prettyprint lang-cs">
 // レコード取得
 var rec = db.SingleOrDefault&lt;Database.Employees.T_Table001&gt;("WHERE KeyCodeA=@0 AND KeyCodeB=@1", 123, 20001);
 // 削除
 db.Delete(rec);
 
-
-// または
-db.Delete&lt;Database.Employees.T_Table001&gt;("WHERE KeyCodeA=@0 AND KeyCodeB=@1", 123, 20001);
 </pre>
+
+<pre class="prettyprint lang-cs">
+// PK指定
+db.DeleteById&lt;Database.Employees.Employee&gt;(123);
+// DELETE FROM Employees WHERE EmpNo = 123;
+
+-------------------------------------------------
+// 複数PK
+var pk = new {
+    EmpNo = 123,
+    DeptNo = "A001",
+};
+db.DeleteById&lt;Database.Employees.DeptManager&gt;(pk);
+// DELETE FROM DeptManager WHERE EmpNo = 123 AND DeptNo = 'A001';
+
+-------------------------------------------------
+// こっちのほうが楽かも
+db.Delete&lt;Database.Employees.DeptManager&gt;(PetaPoco.Sql.Bulder.Append("WHERE EmpNo = @0 AND DeptNo = @1", 123, "A001"));
+
+</pre>
+
+<!--
 <pre class="note">
 
 これら以外に、Entityクラスを使わない方法もあります。
@@ -989,9 +1051,7 @@ db.Update("tablename", "pkname", new { title="New title" }, 123);
 // テーブル名、PK名、PKの値を渡してDeleteする例
 db.Delete("tablename", "pkname", null, 123);
 </pre>
-
-
-
+-->
 
         <h4>Save</h4>
 <pre class="prettyprint lang-cs">
@@ -1218,7 +1278,7 @@ Queryメソッドの結果は、IEnumerable&lt;T&gt;を返すので、処理は�
 </pre>
 <pre class="prettyprint lang-cs">
 // テーブル全件取得
-var recs = db.Query&lt;Database.Employees.Employee&gt;("ORDER BY EmployeeID");
+var recs = db.Query&lt;Database.Employees.Employee&gt;("ORDER BY EmpNo");
 
 foreach (var rec in recs)
 {
@@ -1235,7 +1295,7 @@ foreach (var rec in recs)
 
 <pre class="note">
 <span style="color:#900;">コレを回避するには、Queryメソッドではなく、Fetchを使う</span>
-    var recs = db.<span style="color:#900;">Fetch</span>&lt;Database.Employees.Employee&gt;("ORDER BY EmployeeID");
+    var recs = db.<span style="color:#900;">Fetch</span>&lt;Database.Employees.Employee&gt;("ORDER BY EmpNo");
 
 こうすれば、クエリが実際に実行されるのはSELECT文を発行した一回だけ。コレクションを使いまわしてもOK。
 

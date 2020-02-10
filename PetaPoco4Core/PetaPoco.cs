@@ -418,7 +418,7 @@ namespace PetaPoco
 
 #if (NETSTANDARD || NETCOREAPP)
         /// <summary>
-        /// Returns the .net standard conforming DbProviderFactory.
+        /// Returns the .net standard conforming DbProviderFactory. [kirishu]
         /// </summary>
         /// <param name="assemblyQualifiedNames">The assembly qualified name of the provider factory.</param>
         /// <returns>The db provider factory.</returns>
@@ -445,7 +445,7 @@ namespace PetaPoco
 
 #else
         /// <summary>
-        /// Returns the .net framework conforming DbProviderFactory.
+        /// Returns the .net framework conforming DbProviderFactory. [kirishu]
         /// </summary>
         /// <param name="providerName">The assembly qualified name of the provider factory.</param>
         /// <returns>The db provider factory.</returns>
@@ -477,7 +477,7 @@ namespace PetaPoco
         {
             // Automatically close one open connection reference
             //  (Works with KeepConnectionAlive and manually opening a shared connection)
-            // added kiri@syncnoah.com
+            // added [kirishu]
             if (disposing)
             {
                 if (_transaction == null)
@@ -768,7 +768,7 @@ namespace PetaPoco
                     p.GetType().GetProperty("UdtTypeName").SetValue(p, "geometry", null); //geography is the equivalent SQL Server Type
                     p.Value = item;
                 }
-                // added by kiri@syncnoah.com
+                // added by [kirishu]
                 else if (t == typeof(byte[]))
                 {
                     /*
@@ -801,7 +801,7 @@ namespace PetaPoco
 
         // Create a command
         static Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
-        // kiri@syncnoah.com このメソッドをprivate からprotectedに変更
+        // [kirishu] このメソッドをprivate からprotectedに変更
         // IDbCommand CreateCommand(IDbConnection connection, string sql, params object[] args)
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         protected IDbCommand CreateCommand(IDbConnection connection, string sql, params object[] args)
@@ -960,7 +960,7 @@ namespace PetaPoco
             return Fetch<T>("");
         }
 
-        // modified by kiri@syncnoah.com
+        // modified by [kirishu]
         // ↓これら正規表現パターンはprivateだったけど、継承側で使いたいのでprotectedにしました
         protected static Regex rxColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
         protected static Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
@@ -1718,7 +1718,7 @@ namespace PetaPoco
             return Insert(tableName, primaryKeyName, true, poco);
         }
 
-        // Insert a poco into a table.  If the poco has a property with the same name 
+        // Insert a poco into a table.  If the poco has a property with the same name
         // as the primary key the id of the new record is assigned to it.  Either way,
         // the new id is returned.
         [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
@@ -3222,7 +3222,7 @@ namespace PetaPoco
                 _rhs.Build(sb, args, this);
         }
 
-        // added by kiri@syncnoah.com
+        // added by [kirishu]
         // ディープコピーメソッドを追加しました
 #region ICloneable Member
         object ICloneable.Clone()
@@ -3269,7 +3269,7 @@ namespace PetaPoco
         }
 
         /// <summary>
-        /// added by kiri@syncnoah.com
+        /// added by [kirishu]
         /// Sqlオブジェクトを引数に取るWhereメソッドを追加しました
         /// </summary>
         /// <param name="sql">A reference to another SQL builder instance</param>

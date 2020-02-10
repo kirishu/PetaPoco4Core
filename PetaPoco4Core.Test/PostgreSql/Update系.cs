@@ -241,7 +241,72 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void UDP010_変更列のみ更新_事前読込なし()
+        public void UDP010_変更列のみ更新_事前読込なしKey1_1()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                // 更新する値
+                var rec = new PtTable01
+                {
+                    ColVarchar = "1234567890",
+                };
+
+                var cnt = db.Update(rec, "13");   // PKを指定するメソッド
+                _output.WriteLine(db.LastCommand);
+
+                Assert.Equal(1, cnt);
+
+                var sql = db.LastSQL;
+
+                // これは含まれるべき文字列
+                Assert.Contains("col_varchar", sql);
+
+                // これ以降は含まれてはいけない文字列
+                Assert.DoesNotContain("col_bool", sql);
+                Assert.DoesNotContain("col_int", sql);
+                Assert.DoesNotContain("col_dec", sql);
+                Assert.DoesNotContain("create_by", sql);
+                Assert.DoesNotContain("update_dt", sql);
+            }
+        }
+
+        [Fact]
+        public void UDP010_変更列のみ更新_事前読込なし_Key1_2()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                // レコード内にPK値も持つ
+                var rec = new PtTable01
+                {
+                    Key01 = "13",
+                    ColVarchar = "1234567890",
+                };
+
+                var cnt = db.Update(rec);       // PKはレコード内にあるパターン
+                _output.WriteLine(db.LastCommand);
+
+                Assert.Equal(1, cnt);
+
+                var sql = db.LastSQL;
+
+                // これは含まれるべき文字列
+                Assert.Contains("col_varchar", sql);
+
+                // これ以降は含まれてはいけない文字列
+                Assert.DoesNotContain("col_bool", sql);
+                Assert.DoesNotContain("col_int", sql);
+                Assert.DoesNotContain("col_dec", sql);
+                Assert.DoesNotContain("create_by", sql);
+                Assert.DoesNotContain("update_dt", sql);
+            }
+        }
+
+        [Fact]
+        public void UDP011_変更列のみ更新_事前読込なし_Key2_1()
         {
             using (var db = new DB())
             {
@@ -280,7 +345,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void UDP011_変更列のみ更新_事前読込なし_2()
+        public void UDP011_変更列のみ更新_事前読込なし_Key2_2()
         {
             using (var db = new DB())
             {
