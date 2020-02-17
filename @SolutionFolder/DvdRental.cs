@@ -4,11 +4,11 @@
 // 
 // The following connection settings were used to generate this file
 // 
-//     Connection String:      `Server=localhost;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=**zapped**;`
+//     Connection String:      `Server=192.168.1.212;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=**zapped**;`
 //     Provider:               `Npgsql`
 //     Schema:                 ``
 //     Include Views:          `True`
-//     Genetated:              `2020/02/10 18:42:08`
+//     Genetated:              `2020/02/17 19:04:01`
 
 using System;
 using PetaPoco;
@@ -52,21 +52,6 @@ namespace PetaPoco4Core.Database.DvdRental
         [Column("last_name")] public string LastName { get { return _LastName; } set { _LastName = value; MarkColumnModified("last_name"); } } string _LastName;
         /// <summary></summary>
         [Column("last_update")] public DateTime LastUpdate { get { return _LastUpdate; } set { _LastUpdate = value; MarkColumnModified("last_update"); } } DateTime _LastUpdate;
-    }
-
-    /// <summary></summary>
-    [TableName("actor_info")]
-    [ExplicitColumns]
-    public class ActorInfo
-    {
-        /// <summary></summary>
-        [Column("actor_id")] public int? ActorId { get; set; }
-        /// <summary></summary>
-        [Column("first_name")] public string FirstName { get; set; }
-        /// <summary></summary>
-        [Column("last_name")] public string LastName { get; set; }
-        /// <summary></summary>
-        [Column("film_info")] public string FilmInfo { get; set; }
     }
 
     /// <summary></summary>
@@ -166,31 +151,6 @@ namespace PetaPoco4Core.Database.DvdRental
     }
 
     /// <summary></summary>
-    [TableName("customer_list")]
-    [ExplicitColumns]
-    public class CustomerList
-    {
-        /// <summary></summary>
-        [Column("id")] public int? Id { get; set; }
-        /// <summary></summary>
-        [Column("name")] public string Name { get; set; }
-        /// <summary></summary>
-        [Column("address")] public string Address { get; set; }
-        /// <summary></summary>
-        [Column("zip code")] public string ZipCode { get; set; }
-        /// <summary></summary>
-        [Column("phone")] public string Phone { get; set; }
-        /// <summary></summary>
-        [Column("city")] public string City { get; set; }
-        /// <summary></summary>
-        [Column("country")] public string Country { get; set; }
-        /// <summary></summary>
-        [Column("notes")] public string Notes { get; set; }
-        /// <summary></summary>
-        [Column("sid")] public short? Sid { get; set; }
-    }
-
-    /// <summary></summary>
     [TableName("film")]
     [PrimaryKey("film_id", AutoIncrement=true, SequenceName="film_film_id_seq")]
     [ExplicitColumns]
@@ -253,29 +213,6 @@ namespace PetaPoco4Core.Database.DvdRental
     }
 
     /// <summary></summary>
-    [TableName("film_list")]
-    [ExplicitColumns]
-    public class FilmList
-    {
-        /// <summary></summary>
-        [Column("fid")] public int? Fid { get; set; }
-        /// <summary></summary>
-        [Column("title")] public string Title { get; set; }
-        /// <summary></summary>
-        [Column("description")] public string Description { get; set; }
-        /// <summary></summary>
-        [Column("category")] public string Category { get; set; }
-        /// <summary></summary>
-        [Column("price")] public decimal? Price { get; set; }
-        /// <summary></summary>
-        [Column("length")] public short? Length { get; set; }
-        /// <summary></summary>
-        [Column("rating")] public string Rating { get; set; }
-        /// <summary></summary>
-        [Column("actors")] public string Actors { get; set; }
-    }
-
-    /// <summary></summary>
     [TableName("inventory")]
     [PrimaryKey("inventory_id", AutoIncrement=true, SequenceName="inventory_inventory_id_seq")]
     [ExplicitColumns]
@@ -303,29 +240,6 @@ namespace PetaPoco4Core.Database.DvdRental
         [Column("name")] public string Name { get { return _Name; } set { _Name = value; MarkColumnModified("name"); } } string _Name;
         /// <summary></summary>
         [Column("last_update")] public DateTime LastUpdate { get { return _LastUpdate; } set { _LastUpdate = value; MarkColumnModified("last_update"); } } DateTime _LastUpdate;
-    }
-
-    /// <summary></summary>
-    [TableName("nicer_but_slower_film_list")]
-    [ExplicitColumns]
-    public class NicerButSlowerFilmList
-    {
-        /// <summary></summary>
-        [Column("fid")] public int? Fid { get; set; }
-        /// <summary></summary>
-        [Column("title")] public string Title { get; set; }
-        /// <summary></summary>
-        [Column("description")] public string Description { get; set; }
-        /// <summary></summary>
-        [Column("category")] public string Category { get; set; }
-        /// <summary></summary>
-        [Column("price")] public decimal? Price { get; set; }
-        /// <summary></summary>
-        [Column("length")] public short? Length { get; set; }
-        /// <summary></summary>
-        [Column("rating")] public string Rating { get; set; }
-        /// <summary></summary>
-        [Column("actors")] public string Actors { get; set; }
     }
 
     /// <summary></summary>
@@ -371,30 +285,6 @@ namespace PetaPoco4Core.Database.DvdRental
     }
 
     /// <summary></summary>
-    [TableName("sales_by_film_category")]
-    [ExplicitColumns]
-    public class SalesByFilmCategory
-    {
-        /// <summary></summary>
-        [Column("category")] public string Category { get; set; }
-        /// <summary></summary>
-        [Column("total_sales")] public decimal? TotalSales { get; set; }
-    }
-
-    /// <summary></summary>
-    [TableName("sales_by_store")]
-    [ExplicitColumns]
-    public class SalesByStore
-    {
-        /// <summary></summary>
-        [Column("store")] public string Store { get; set; }
-        /// <summary></summary>
-        [Column("manager")] public string Manager { get; set; }
-        /// <summary></summary>
-        [Column("total_sales")] public decimal? TotalSales { get; set; }
-    }
-
-    /// <summary></summary>
     [TableName("staff")]
     [PrimaryKey("staff_id", AutoIncrement=true, SequenceName="staff_staff_id_seq")]
     [ExplicitColumns]
@@ -425,6 +315,132 @@ namespace PetaPoco4Core.Database.DvdRental
     }
 
     /// <summary></summary>
+    [TableName("store")]
+    [PrimaryKey("store_id", AutoIncrement=true, SequenceName="store_store_id_seq")]
+    [ExplicitColumns]
+    public class Store: PetaPoco.PetaPocoRecord<Store>
+    {
+        /// <summary></summary>
+        [Column("store_id")] public int StoreId { get { return _StoreId; } set { _StoreId = value; MarkColumnModified("store_id"); } } int _StoreId;
+        /// <summary></summary>
+        [Column("manager_staff_id")] public short ManagerStaffId { get { return _ManagerStaffId; } set { _ManagerStaffId = value; MarkColumnModified("manager_staff_id"); } } short _ManagerStaffId;
+        /// <summary></summary>
+        [Column("address_id")] public short AddressId { get { return _AddressId; } set { _AddressId = value; MarkColumnModified("address_id"); } } short _AddressId;
+        /// <summary></summary>
+        [Column("last_update")] public DateTime LastUpdate { get { return _LastUpdate; } set { _LastUpdate = value; MarkColumnModified("last_update"); } } DateTime _LastUpdate;
+    }
+
+    /// <summary></summary>
+    [TableName("actor_info")]
+    [ExplicitColumns]
+    public class ActorInfo
+    {
+        /// <summary></summary>
+        [Column("actor_id")] public int? ActorId { get; set; }
+        /// <summary></summary>
+        [Column("first_name")] public string FirstName { get; set; }
+        /// <summary></summary>
+        [Column("last_name")] public string LastName { get; set; }
+        /// <summary></summary>
+        [Column("film_info")] public string FilmInfo { get; set; }
+    }
+
+    /// <summary></summary>
+    [TableName("customer_list")]
+    [ExplicitColumns]
+    public class CustomerList
+    {
+        /// <summary></summary>
+        [Column("id")] public int? Id { get; set; }
+        /// <summary></summary>
+        [Column("name")] public string Name { get; set; }
+        /// <summary></summary>
+        [Column("address")] public string Address { get; set; }
+        /// <summary></summary>
+        [Column("zip code")] public string ZipCode { get; set; }
+        /// <summary></summary>
+        [Column("phone")] public string Phone { get; set; }
+        /// <summary></summary>
+        [Column("city")] public string City { get; set; }
+        /// <summary></summary>
+        [Column("country")] public string Country { get; set; }
+        /// <summary></summary>
+        [Column("notes")] public string Notes { get; set; }
+        /// <summary></summary>
+        [Column("sid")] public short? Sid { get; set; }
+    }
+
+    /// <summary></summary>
+    [TableName("film_list")]
+    [ExplicitColumns]
+    public class FilmList
+    {
+        /// <summary></summary>
+        [Column("fid")] public int? Fid { get; set; }
+        /// <summary></summary>
+        [Column("title")] public string Title { get; set; }
+        /// <summary></summary>
+        [Column("description")] public string Description { get; set; }
+        /// <summary></summary>
+        [Column("category")] public string Category { get; set; }
+        /// <summary></summary>
+        [Column("price")] public decimal? Price { get; set; }
+        /// <summary></summary>
+        [Column("length")] public short? Length { get; set; }
+        /// <summary></summary>
+        [Column("rating")] public string Rating { get; set; }
+        /// <summary></summary>
+        [Column("actors")] public string Actors { get; set; }
+    }
+
+    /// <summary></summary>
+    [TableName("nicer_but_slower_film_list")]
+    [ExplicitColumns]
+    public class NicerButSlowerFilmList
+    {
+        /// <summary></summary>
+        [Column("fid")] public int? Fid { get; set; }
+        /// <summary></summary>
+        [Column("title")] public string Title { get; set; }
+        /// <summary></summary>
+        [Column("description")] public string Description { get; set; }
+        /// <summary></summary>
+        [Column("category")] public string Category { get; set; }
+        /// <summary></summary>
+        [Column("price")] public decimal? Price { get; set; }
+        /// <summary></summary>
+        [Column("length")] public short? Length { get; set; }
+        /// <summary></summary>
+        [Column("rating")] public string Rating { get; set; }
+        /// <summary></summary>
+        [Column("actors")] public string Actors { get; set; }
+    }
+
+    /// <summary></summary>
+    [TableName("sales_by_film_category")]
+    [ExplicitColumns]
+    public class SalesByFilmCategory
+    {
+        /// <summary></summary>
+        [Column("category")] public string Category { get; set; }
+        /// <summary></summary>
+        [Column("total_sales")] public decimal? TotalSales { get; set; }
+    }
+
+    /// <summary></summary>
+    [TableName("sales_by_store")]
+    [ExplicitColumns]
+    public class SalesByStore
+    {
+        /// <summary></summary>
+        [Column("store")] public string Store { get; set; }
+        /// <summary></summary>
+        [Column("manager")] public string Manager { get; set; }
+        /// <summary></summary>
+        [Column("total_sales")] public decimal? TotalSales { get; set; }
+    }
+
+    /// <summary></summary>
     [TableName("staff_list")]
     [ExplicitColumns]
     public class StaffList
@@ -445,22 +461,6 @@ namespace PetaPoco4Core.Database.DvdRental
         [Column("country")] public string Country { get; set; }
         /// <summary></summary>
         [Column("sid")] public short? Sid { get; set; }
-    }
-
-    /// <summary></summary>
-    [TableName("store")]
-    [PrimaryKey("store_id", AutoIncrement=true, SequenceName="store_store_id_seq")]
-    [ExplicitColumns]
-    public class Store: PetaPoco.PetaPocoRecord<Store>
-    {
-        /// <summary></summary>
-        [Column("store_id")] public int StoreId { get { return _StoreId; } set { _StoreId = value; MarkColumnModified("store_id"); } } int _StoreId;
-        /// <summary></summary>
-        [Column("manager_staff_id")] public short ManagerStaffId { get { return _ManagerStaffId; } set { _ManagerStaffId = value; MarkColumnModified("manager_staff_id"); } } short _ManagerStaffId;
-        /// <summary></summary>
-        [Column("address_id")] public short AddressId { get { return _AddressId; } set { _AddressId = value; MarkColumnModified("address_id"); } } short _AddressId;
-        /// <summary></summary>
-        [Column("last_update")] public DateTime LastUpdate { get { return _LastUpdate; } set { _LastUpdate = value; MarkColumnModified("last_update"); } } DateTime _LastUpdate;
     }
 }
 

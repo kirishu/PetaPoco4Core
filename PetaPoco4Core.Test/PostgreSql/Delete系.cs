@@ -74,7 +74,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void DEL004_DeleteById_1件削除Entity_1列PK()
+        public void DEL004_Delete_1件削除Entity_1列PK()
         {
             using (var db = new DB())
             {
@@ -83,7 +83,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 var recbefore = db.SingleOrDefaultById<PtTable01>("11");
                 Assert.NotNull(recbefore);
 
-                var cnt = db.DeleteById<PtTable01>("11");
+                var cnt = db.Delete<PtTable01>("WHERE Key01=@0", "11");
                 _output.WriteLine(db.LastCommand);
                 Assert.Equal(1, cnt);
 
@@ -93,7 +93,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void DEL005_DeleteById_1件削除Entity_2列PK()
+        public void DEL005_Delete_1件削除Entity_2列PK()
         {
             using (var db = new DB())
             {
@@ -108,7 +108,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 var recbefore = db.SingleOrDefaultById<PtTable02>(pk);
                 Assert.NotNull(recbefore);
 
-                var cnt = db.DeleteById<PtTable02>(pk);
+                var cnt = db.Delete<PtTable02>("WHERE Key01=@0 AND Key02=@1", "12", 12);
                 _output.WriteLine(db.LastCommand);
                 Assert.Equal(1, cnt);
 
@@ -118,7 +118,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void DEL006_DeleteById_1件削除Entity_2列PK_ヒットなし()
+        public void DEL006_Delete_1件削除Entity_2列PK_ヒットなし()
         {
             using (var db = new DB())
             {
@@ -133,7 +133,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 var recbefore = db.SingleOrDefaultById<PtTable02>(pk);
                 Assert.Null(recbefore);
 
-                var cnt = db.DeleteById<PtTable02>(pk);
+                var cnt = db.Delete<PtTable02>("WHERE Key01=@0 AND Key02=@1", "12", 999);
                 _output.WriteLine(db.LastCommand);
                 Assert.Equal(0, cnt);
             }
@@ -203,7 +203,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 db.BeginTransaction();
 
                 // 下記Deleteを実行する
-                var cnt = db.DeleteById<PtTable02>(pk);
+                var cnt = db.Delete<PtTable02>("WHERE Key01=@0 AND Key02=@1", "14", 14);
                 Assert.Equal(1, cnt);
 
                 // TransactionをCommitする
@@ -234,7 +234,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 db.BeginTransaction();
 
                 // 下記Deleteを実行する
-                var cnt = db.DeleteById<PtTable02>(pk);
+                var cnt = db.Delete<PtTable02>("WHERE Key01=@0 AND Key02=@1", "12", 12);
                 Assert.Equal(1, cnt);
 
                 // TransactionをRollbakする
@@ -246,6 +246,51 @@ namespace PetaPoco4Core.Test.PostgreSql
 
             }
         }
+
+
+        [Fact]
+        public void DEL011_Delete_1件読んで削除_PK1()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                var rec = db.SingleOrDefaultById<PtTable01>("12");
+
+                var cnt = db.Delete(rec);
+                _output.WriteLine(db.LastCommand);
+                Assert.Equal(1, cnt);
+
+                var recafter = db.SingleOrDefaultById<PtTable01>("12");
+                Assert.Null(recafter);
+
+            }
+        }
+
+        [Fact]
+        public void DEL012_Delete_1件読んで削除_PK2()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                var pk = new
+                {
+                    key01 = "12",
+                    key02 = 12,
+                };
+
+                var rec = db.SingleOrDefaultById<PtTable02>(pk);
+
+                var cnt = db.Delete(rec);
+                _output.WriteLine(db.LastCommand);
+                Assert.Equal(1, cnt);
+
+                var recafter = db.SingleOrDefaultById<PtTable02>(pk);
+                Assert.Null(recafter);
+            }
+        }
+
 
     }
 }

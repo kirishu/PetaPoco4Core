@@ -5,7 +5,7 @@
     // ******** 設定ここから *********
     
     DatabaseName = "dvdrental";
-    ConnectionString = @"Server=localhost;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
+    ConnectionString = @"Server=192.168.1.212;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
     ProviderName = "Npgsql";
     Namespace = "PetaPoco4Core.Database.DvdRental";
 

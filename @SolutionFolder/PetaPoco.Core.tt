@@ -18,7 +18,7 @@
  きりはらカスタマイズ版 PetaPoco Entities Generator(T4Template)
     ・PKが複合キーのテーブルにも対応
     ・Mono.TextTempationでも動くよう修正（VisualStudio製品版がなくてもOK）
-    ・PostgreSQLスキーマ取得を修正
+    ・PostgreSQL, SQLServerスキーマ取得を修正
  -----------------------------------------------------------------------------------------
 
  This code is part of the PetaPoco project (http://www.toptensoftware.com/petapoco).
@@ -105,7 +105,8 @@ public class Table
     public string CleanName;
     public string SequenceName;
     public bool Ignore;
-    public string Comment;        // added by kirishu
+    public string Comment;			// added by kirishu
+    public string DefaultSchema;	// added by kirishu
 
     //public string ClassName;
     private string _className;
@@ -154,7 +155,7 @@ public class Column
     public bool IsAutoIncrement;
     public bool Ignore;
     public string Comment;         // added by kirishu
-	public string DefaultValue;    // added by kirishu
+    public string DefaultValue;    // added by kirishu
 }
 
 public class Tables : List<Table>
@@ -205,7 +206,7 @@ string CheckNullable(Column col)
 // ColumnAttributeの記述文字列を返す
 string GetColumnAttribute(Column col)
 {
-	return "Column"	+ ((col.Name != col.PropertyName) ? "(\"" + col.Name + "\")" : "");
+    return "Column"    + ((col.Name != col.PropertyName) ? "(\"" + col.Name + "\")" : "");
 }
 
 string GetPrimaryKeys(List<Column> cols)
@@ -220,15 +221,15 @@ string GetPrimaryKeys(List<Column> cols)
 // PKのアトリビュート
 string GetPrimaryKeyAttrubute(Table tbl)
 {
-	var sb = new StringBuilder()
-		.Append("[PrimaryKey(\"" + GetPrimaryKeys(tbl.PK) + "\"")
-		.Append(", AutoIncrement=" + (tbl.PK[0].IsAutoIncrement ? "true" : "false"));
-	if (tbl.SequenceName != null)
+    var sb = new StringBuilder()
+        .Append("[PrimaryKey(\"" + GetPrimaryKeys(tbl.PK) + "\"")
+        .Append(", AutoIncrement=" + (tbl.PK[0].IsAutoIncrement ? "true" : "false"));
+    if (!string.IsNullOrEmpty(tbl.SequenceName))
     {
-		sb.Append(", SequenceName=\"" + tbl.SequenceName + "\"");
+        sb.Append(", SequenceName=\"" + tbl.SequenceName + "\"");
     }
-	sb.Append(")]");
-	return sb.ToString();
+    sb.Append(")]");
+    return sb.ToString();
 }
 
 
@@ -287,11 +288,11 @@ Tables LoadTables()
                 // MySql
                 reader=new MySqlSchemaReader();
             }
-            else if (_factory.GetType().Name == "SqlCeProviderFactory")
-            {
-                // SQL CE
-                reader=new SqlServerCeSchemaReader();
-            }
+            //else if (_factory.GetType().Name == "SqlCeProviderFactory")
+            //{
+            //    // SQL CE
+            //    reader=new SqlServerCeSchemaReader();
+            //}
             else if (_factory.GetType().Name == "NpgsqlFactory")
             {
                 // PostgreSQL
@@ -386,10 +387,23 @@ class SqlServerSchemaReader : SchemaReader
     // SchemaReader.ReadSchema
     public override Tables ReadSchema(DbConnection connection, DbProviderFactory factory)
     {
-        var result=new Tables();
-
         _connection=connection;
         _factory=factory;
+
+        // デフォルトスキーマの取得
+        string defaultSchema = string.Empty;
+        var cmdSchema = _factory.CreateCommand();
+        cmdSchema.Connection = connection;
+        cmdSchema.CommandText = "SELECT SCHEMA_NAME();";
+        using (var rdr = cmdSchema.ExecuteReader())
+        {
+            if (rdr.Read())
+            {
+                defaultSchema = rdr[0].ToString();
+            }
+        }
+
+        var result=new Tables();
 
         var cmd=_factory.CreateCommand();
         cmd.Connection=connection;
@@ -422,12 +436,19 @@ class SqlServerSchemaReader : SchemaReader
                 {
                     Table tbl=new Table();
                     tbl.Name=rdr["TableName"].ToString();
-                    tbl.Schema=rdr["SchemaName"].ToString();
-                    tbl.IsView=string.Compare(rdr["TableType"].ToString(), "10", true)==0;
-                    tbl.CleanName=CleanUp(tbl.Name);
-                    tbl.ClassName=Inflector.MakeSingular(tbl.CleanName);
+                    tbl.Schema = rdr["SchemaName"].ToString();
+                    tbl.IsView = (rdr["TableType"].ToString() == "10");
+					tbl.CleanName=CleanUp(tbl.Name);
+					if (string.IsNullOrEmpty(tbl.Schema) || tbl.Schema == defaultSchema)
+                    {
+						tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
+                    }
+					else
+                    {
+						tbl.ClassName = tbl.Schema + "." + Inflector.MakeSingular(tbl.CleanName);
+					}
                     tbl.Comment = (rdr["Comment"].ToString() == "") ? rdr["TableName"].ToString() : rdr["Comment"].ToString();
-
+					tbl.DefaultSchema = defaultSchema;
                     result.Add(tbl);
                 }
             }
@@ -445,7 +466,6 @@ class SqlServerSchemaReader : SchemaReader
                 col.IsPK = true;
             }
         }
-
 
         return result;
     }
@@ -596,202 +616,6 @@ class SqlServerSchemaReader : SchemaReader
 
 }
 
-/// <summary>
-/// SQL Server CE
-/// </summary>
-class SqlServerCeSchemaReader : SchemaReader
-{
-    // SchemaReader.ReadSchema
-    public override Tables ReadSchema(DbConnection connection, DbProviderFactory factory)
-    {
-        var result=new Tables();
-
-        _connection=connection;
-        _factory=factory;
-
-        var cmd=_factory.CreateCommand();
-        cmd.Connection=connection;
-        cmd.CommandText=TABLE_SQL;
-
-        //pull the tables in a reader
-        using(cmd)
-        {
-            using (var rdr=cmd.ExecuteReader())
-            {
-                while(rdr.Read())
-                {
-                    Table tbl=new Table();
-                    tbl.Name=rdr["TABLE_NAME"].ToString();
-                    tbl.CleanName=CleanUp(tbl.Name);
-                    tbl.ClassName=Inflector.MakeSingular(tbl.CleanName);
-                    tbl.Schema=null;
-                    tbl.IsView=false;
-                    result.Add(tbl);
-                }
-            }
-        }
-
-        foreach (var tbl in result)
-        {
-            tbl.Columns=LoadColumns(tbl);
-
-            // Mark the primary keys
-            string PrimaryKey=GetPK(tbl.Name);
-            var pkColumn = tbl.Columns.Where(x => PrimaryKey.ToLower().Split(',').Any(p => p.Trim() == x.Name.ToLower().Trim()));
-            foreach (Column col in pkColumn)
-            {
-                col.IsPK = true;
-            }
-        }
-
-
-        return result;
-    }
-
-    DbConnection _connection;
-    DbProviderFactory _factory;
-
-
-    List<Column> LoadColumns(Table tbl)
-    {
-
-        using (var cmd=_factory.CreateCommand())
-        {
-            cmd.Connection=_connection;
-            cmd.CommandText=COLUMN_SQL;
-
-            var p = cmd.CreateParameter();
-            p.ParameterName = "@tableName";
-            p.Value=tbl.Name;
-            cmd.Parameters.Add(p);
-
-            var result=new List<Column>();
-            using (IDataReader rdr=cmd.ExecuteReader())
-            {
-                while(rdr.Read())
-                {
-                    Column col=new Column();
-                    col.Name=rdr["ColumnName"].ToString();
-                    col.PropertyName=CleanUp(col.Name);
-                    col.PropertyType=GetPropertyType(rdr["DataType"].ToString());
-                    col.IsNullable=rdr["IsNullable"].ToString()=="YES";
-                    col.IsAutoIncrement=rdr["AUTOINC_INCREMENT"]!=DBNull.Value;
-                    result.Add(col);
-                }
-            }
-
-            return result;
-        }
-    }
-
-    string GetPK(string table){
-
-        string sql=@"
-DECLARE @primaryKeys VARCHAR(500) = '';
-
-SELECT @primaryKeys = COALESCE(@primaryKeys + ',', '') + KCU.COLUMN_NAME
-            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE KCU
-            JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS TC
-            ON KCU.CONSTRAINT_NAME=TC.CONSTRAINT_NAME
-            WHERE TC.CONSTRAINT_TYPE='PRIMARY KEY'
-            AND KCU.TABLE_NAME=@tableName;
-
-SELECT @primaryKeys;";
-
-        using (var cmd=_factory.CreateCommand())
-        {
-            cmd.Connection=_connection;
-            cmd.CommandText=sql;
-
-            var p = cmd.CreateParameter();
-            p.ParameterName = "@tableName";
-            p.Value=table;
-            cmd.Parameters.Add(p);
-
-            var result=cmd.ExecuteScalar();
-
-            if(result!=null)
-                return result.ToString().TrimStart(',');
-        }
-
-        return "";
-    }
-
-    string GetPropertyType(string sqlType)
-    {
-        string sysType="string";
-        switch (sqlType)
-        {
-            case "bigint":
-                sysType = "long";
-                break;
-            case "smallint":
-                sysType= "short";
-                break;
-            case "int":
-                sysType= "int";
-                break;
-            case "uniqueidentifier":
-                sysType=  "Guid";
-                 break;
-            case "smalldatetime":
-            case "datetime":
-            case "date":
-                sysType=  "DateTime";
-                  break;
-            case "time":
-                sysType=  "TimeSpan";
-                  break;
-            case "float":
-                sysType="double";
-                break;
-            case "real":
-                sysType="float";
-                break;
-            case "numeric":
-            case "smallmoney":
-            case "decimal":
-            case "money":
-                sysType=  "decimal";
-                 break;
-            case "tinyint":
-                sysType = "byte";
-                break;
-            case "bit":
-                sysType=  "bool";
-                   break;
-            case "image":
-            case "binary":
-            case "varbinary":
-            case "timestamp":
-                sysType=  "byte[]";
-                 break;
-        }
-        return sysType;
-    }
-
-
-
-    const string TABLE_SQL=@"SELECT *
-        FROM  INFORMATION_SCHEMA.TABLES
-        WHERE TABLE_TYPE='TABLE'";
-
-    const string COLUMN_SQL=@"SELECT
-            TABLE_CATALOG AS [Database],
-            TABLE_SCHEMA AS Owner,
-            TABLE_NAME AS TableName,
-            COLUMN_NAME AS ColumnName,
-            ORDINAL_POSITION AS OrdinalPosition,
-            COLUMN_DEFAULT AS DefaultSetting,
-            IS_NULLABLE AS IsNullable, DATA_TYPE AS DataType,
-            AUTOINC_INCREMENT,
-            CHARACTER_MAXIMUM_LENGTH AS MaxLength,
-            DATETIME_PRECISION AS DatePrecision
-        FROM  INFORMATION_SCHEMA.COLUMNS
-        WHERE TABLE_NAME=@tableName
-        ORDER BY OrdinalPosition ASC";
-
-}
 
 
 /// <summary>
@@ -805,18 +629,18 @@ class PostgreSqlSchemaReader : SchemaReader
         _connection=connection;
         _factory=factory;
 
-		// デフォルトスキーマの取得
-		string defaultSchema = string.Empty;
+        // デフォルトスキーマの取得
+        string defaultSchema = string.Empty;
         var cmdSchema=_factory.CreateCommand();
-		cmdSchema.Connection=connection;
-		cmdSchema.CommandText="SELECT current_schema();";
+        cmdSchema.Connection=connection;
+        cmdSchema.CommandText="SELECT current_schema();";
         using (var rdr=cmdSchema.ExecuteReader())
         {
-			if (rdr.Read())
+            if (rdr.Read())
             {
-				defaultSchema = rdr[0].ToString();
+                defaultSchema = rdr[0].ToString();
             }
-		}
+        }
 
         var result=new Tables();
 
@@ -832,12 +656,21 @@ class PostgreSqlSchemaReader : SchemaReader
                 while(rdr.Read())
                 {
                     Table tbl = new Table();
-					tbl.Name = rdr["table_name"].ToString();
-					tbl.Schema = (rdr["table_schema"].ToString() == defaultSchema) ? "" : rdr["table_schema"].ToString();	// デフォルトスキーマと同じだったら省略する
-					tbl.IsView = string.Compare(rdr["table_type"].ToString(), "View", true)==0;
-					tbl.CleanName = CleanUp(tbl.Name);
-					tbl.ClassName = (string.IsNullOrEmpty(tbl.Schema) ? "" : tbl.Schema + ".") + Inflector.MakeSingular(tbl.CleanName);
-					tbl.Comment = Inflector.ConvertHtmlEscape(rdr["table_comment"].ToString());
+                    tbl.Name = rdr["table_name"].ToString();
+                    tbl.Schema = rdr["table_schema"].ToString();
+                    tbl.IsView = string.Compare(rdr["table_type"].ToString(), "View", true)==0;
+					tbl.CleanName=CleanUp(tbl.Name);
+					if (string.IsNullOrEmpty(tbl.Schema) || tbl.Schema == defaultSchema)
+                    {
+						tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
+                    }
+					else
+                    {
+						tbl.ClassName = tbl.Schema + "." + Inflector.MakeSingular(tbl.CleanName);
+					}
+
+                    tbl.Comment = Inflector.ConvertHtmlEscape(rdr["table_comment"].ToString());
+					tbl.DefaultSchema = defaultSchema;
                     result.Add(tbl);
                 }
             }
@@ -855,13 +688,13 @@ class PostgreSqlSchemaReader : SchemaReader
                 col.IsPK = true;
             }
 
-			// Sequence名を取得してtableのプロパティにセット
-			var seqCol =  pkColumn.SingleOrDefault(x => x.IsAutoIncrement && !string.IsNullOrEmpty(x.DefaultValue));
-			if (seqCol != null)
+            // Sequence名を取得してtableのプロパティにセット
+            var seqCol =  pkColumn.SingleOrDefault(x => x.IsAutoIncrement && !string.IsNullOrEmpty(x.DefaultValue));
+            if (seqCol != null)
             {
-				var rx = new Regex("'(.*?)'", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-				var m = rx.Match(seqCol.DefaultValue).Value.Replace("'", "");
-				tbl.SequenceName = m;
+                var rx = new Regex("'(.*?)'", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                var m = rx.Match(seqCol.DefaultValue).Value.Replace("'", "");
+                tbl.SequenceName = m;
             }
         }
 
@@ -893,14 +726,14 @@ class PostgreSqlSchemaReader : SchemaReader
                 {
                     var col = new Column
                     {
-	                    Name = rdr["column_name"].ToString(),
-		                PropertyName = CleanUp(rdr["column_name"].ToString()),
-			            PropertyType=GetPropertyType(rdr["udt_name"].ToString()),
-				        IsNullable=rdr["is_nullable"].ToString()=="YES",
-					    IsAutoIncrement = rdr["column_default"].ToString().StartsWith("nextval("),
-						Comment = Inflector.ConvertHtmlEscape(rdr["column_comment"].ToString()),
-						DefaultValue = rdr["column_default"].ToString(),
-					};
+                        Name = rdr["column_name"].ToString(),
+                        PropertyName = CleanUp(rdr["column_name"].ToString()),
+                        PropertyType=GetPropertyType(rdr["udt_name"].ToString()),
+                        IsNullable=rdr["is_nullable"].ToString()=="YES",
+                        IsAutoIncrement = rdr["column_default"].ToString().StartsWith("nextval("),
+                        Comment = Inflector.ConvertHtmlEscape(rdr["column_comment"].ToString()),
+                        DefaultValue = rdr["column_default"].ToString(),
+                    };
                     result.Add(col);
                 }
             }
@@ -1026,9 +859,9 @@ class PostgreSqlSchemaReader : SchemaReader
                              ) cmnt
                            ON ifsm.table_name = cmnt.table_name
              WHERE ifsm.table_type IN ('BASE TABLE', 'VIEW')
-		       AND ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
+               AND ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
              ORDER BY ifsm.table_schema
-		            , ifsm.table_name;
+                    , ifsm.table_name;
             ";
 
     // カラム一覧抽出SQL
@@ -1079,7 +912,7 @@ class MySqlSchemaReader : SchemaReader
                     Table tbl=new Table();
                     tbl.Name=rdr["TABLE_NAME"].ToString();
                     //tbl.Schema=rdr["TABLE_SCHEMA"].ToString();
-					tbl.Schema=null;
+                    tbl.Schema=null;
                     tbl.IsView=string.Compare(rdr["TABLE_TYPE"].ToString(), "View", true)==0;
                     tbl.CleanName=CleanUp(tbl.Name);
                     tbl.ClassName=Inflector.MakeSingular(tbl.CleanName);

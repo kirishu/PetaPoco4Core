@@ -33,13 +33,13 @@ namespace <#=Namespace #>
 
 <# if (GeneratePocos) { //**[E]** #>
 <#
-foreach(Table tbl in tables.Where(x => !x.Ignore).OrderBy(x => x.Name).Select(x => x))
+foreach(Table tbl in tables.Where(x => !x.Ignore).OrderBy(x => x.IsView).ThenBy(x => x.Name).Select(x => x))
 { //**[F]**
 #>
 
     /// <summary><#=tbl.Comment#></summary>
-    [TableName("<#=String.IsNullOrEmpty(tbl.Schema)?"":tbl.Schema+"."#><#=tbl.Name#>")]
-<# if (tbl.PK != null && !tbl.IsView) { //**[G]** #>
+    [TableName("<#=(String.IsNullOrEmpty(tbl.Schema) || tbl.Schema == tbl.DefaultSchema)?"":tbl.Schema+"."#><#=tbl.Name#>")]
+<# if (!tbl.IsView && tbl.PK != null && tbl.PK.Count() > 0) { //**[G]** #>
     <#=GetPrimaryKeyAttrubute(tbl)#>
 <# } //**[G]** #>
     [ExplicitColumns]

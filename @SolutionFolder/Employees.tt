@@ -5,7 +5,7 @@
     // ******** 設定ここから *********
     
     DatabaseName = "employees";
-    ConnectionString = @"server=localhost;uid=testman;pwd=testpwd;database=employees;SslMode=None;";
+    ConnectionString = @"server=192.168.1.212;uid=testman;pwd=testpwd;database=employees;SslMode=None;";
     ProviderName = "MySql.Data.MySqlClient";
     Namespace = "PetaPoco4Core.Database.Employees";
 

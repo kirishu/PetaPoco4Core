@@ -1013,29 +1013,17 @@ db.Update&lt;Database.Employees.T_Table001&gt;(PetaPoco.Sql.Builder
 <h4>Delete</h4>
 <pre class="prettyprint lang-cs">
 // レコード取得
-var rec = db.SingleOrDefault&lt;Database.Employees.T_Table001&gt;("WHERE KeyCodeA=@0 AND KeyCodeB=@1", 123, 20001);
-// 削除
+var rec = db.SingleOrDefault&lt;Database.Employees.T_Table001&gt;("WHERE KeyCodeA = @0 AND KeyCodeB = @1", 123, 20001);
+// そのレコードを削除
 db.Delete(rec);
 
 </pre>
 
 <pre class="prettyprint lang-cs">
-// PK指定
-db.DeleteById&lt;Database.Employees.Employee&gt;(123);
-// DELETE FROM Employees WHERE EmpNo = 123;
+// 条件指定
+db.Delete&lt;Database.Employees.Employee&gt;("WHERE EmpNo = @0", 123);
 
--------------------------------------------------
-// 複数PK
-var pk = new {
-    EmpNo = 123,
-    DeptNo = "A001",
-};
-db.DeleteById&lt;Database.Employees.DeptManager&gt;(pk);
-// DELETE FROM DeptManager WHERE EmpNo = 123 AND DeptNo = 'A001';
-
--------------------------------------------------
-// こっちのほうが楽かも
-db.Delete&lt;Database.Employees.DeptManager&gt;(PetaPoco.Sql.Bulder.Append("WHERE EmpNo = @0 AND DeptNo = @1", 123, "A001"));
+db.Delete&lt;Database.Employees.DeptManager&gt;("WHERE EmpNo = @0 AND DeptNo = @1", 123, "A001");
 
 </pre>
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using PetaPoco;
 
-namespace PetaPoco4Core.Test.MySql
+namespace PetaPoco4Core.Test.SQLServer
 {
     /// <summary>PT テストテーブル01（PK 1列）</summary>
     [TableName("PtTable01")]

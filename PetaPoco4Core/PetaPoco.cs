@@ -269,18 +269,18 @@ namespace PetaPoco
         void CompleteTransaction();
         object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco);
         object Insert(string tableName, string primaryKeyName, object poco);
-        object Insert<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>;
-        int Update<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>;
-        int Update<T>(IPetaPocoRecord<T> poco, object primaryKey) where T : IPetaPocoRecord<T>;
-        int Update<T>(IPetaPocoRecord<T> poco, IEnumerable<string> columns) where T : IPetaPocoRecord<T>;
-        int Update<T>(IPetaPocoRecord<T> poco, object primaryKey, IEnumerable<string> columns) where T : IPetaPocoRecord<T>;
+        object Insert<T>(T poco) where T : IPetaPocoRecord<T>;
+        int Update<T>(T poco) where T : IPetaPocoRecord<T>;
+        int Update<T>(T poco, object primaryKey) where T : IPetaPocoRecord<T>;
+        int Update<T>(T poco, IEnumerable<string> columns) where T : IPetaPocoRecord<T>;
+        int Update<T>(T poco, object primaryKey, IEnumerable<string> columns) where T : IPetaPocoRecord<T>;
         int Update<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>;
         int Update<T>(Sql sql) where T : IPetaPocoRecord<T>;
         int Delete(string tableName, string primaryKeyName, object poco);
         int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue);
         int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>;
         int Delete<T>(Sql sql) where T : IPetaPocoRecord<T>;
-        int DeleteById<T>(object primaryKey) where T : IPetaPocoRecord<T>;
+        int Delete<T>(T poco) where T : IPetaPocoRecord<T>;
     }
 
 
@@ -1729,7 +1729,7 @@ namespace PetaPoco
 #endregion
 
         // Insert an annotated poco object
-        public object Insert<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>
+        public object Insert<T>(T poco) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(poco.GetType());
             return this.InsertExecute(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
@@ -2106,17 +2106,17 @@ namespace PetaPoco
 #endregion
 
 
-        public int Update<T>(IPetaPocoRecord<T> poco) where T : IPetaPocoRecord<T>
+        public int Update<T>(T poco) where T : IPetaPocoRecord<T>
         {
             return Update<T>(poco, null, null);
         }
 
-        public int Update<T>(IPetaPocoRecord<T> poco, object primaryKey) where T : IPetaPocoRecord<T>
+        public int Update<T>(T poco, object primaryKey) where T : IPetaPocoRecord<T>
         {
             return Update<T>(poco, primaryKey, null);
         }
 
-        public int Update<T>(IPetaPocoRecord<T> poco, IEnumerable<string> columns) where T : IPetaPocoRecord<T>
+        public int Update<T>(T poco, IEnumerable<string> columns) where T : IPetaPocoRecord<T>
         {
             return Update(poco, null, columns);
         }
@@ -2131,18 +2131,19 @@ namespace PetaPoco
         /// <returns>Count of updated records.</returns>
         /// <example>
         /// <![CDATA[
-        ///     var rec = new Database.MUser
+        ///     var rec = new Database.THoge
         ///     {
         ///         UserName = "Taro Nanigashi",
         ///         BirthDay = DateTime.Parse("1970/04/04"),
         ///     };
         ///     var pk = new {
-        ///         UserId = "A001",
+        ///         Key01 = 123,
+        ///         Key02 = 456,
         ///     };
-        ///     int cnt = db.Update(rec, pk);
+        ///     int cnt = db.Update(pk);
         /// ]]>
         /// </example>
-        public int Update<T>(IPetaPocoRecord<T> poco, object primaryKey, IEnumerable<string> columns) where T: IPetaPocoRecord<T>
+        public int Update<T>(T poco, object primaryKey, IEnumerable<string> columns) where T: IPetaPocoRecord<T>
         {
             if (poco == null) { throw new ArgumentNullException(nameof(poco)); }
             if (columns != null && !columns.Any()) { return 0; }
@@ -2172,33 +2173,33 @@ namespace PetaPoco
             string versionName = null;
             object versionValue = null;
 
-            foreach (var i in pd.Columns)
+            foreach (var col in pd.Columns)
             {
                 // Don't update the primary key, but grab the value if we don't have it
-                if (primaryKey == null && primaryKeyValuePairs.ContainsKey(i.Key))
+                if (primaryKey == null && primaryKeyValuePairs.ContainsKey(col.Key))
                 {
-                    primaryKeyValuePairs[i.Key] = i.Value.GetValue(poco);
+                    primaryKeyValuePairs[col.Key] = col.Value.GetValue(poco);
                     continue;
                 }
 
                 // Dont update result only columns
-                if (i.Value.ResultColumn)
+                if (col.Value.ResultColumn)
                 {
                     continue;
                 }
 
-                if (!i.Value.VersionColumn
+                if (!col.Value.VersionColumn
                     && columns != null
-                    && !columns.Contains(i.Value.ColumnName, StringComparer.OrdinalIgnoreCase))
+                    && !columns.Contains(col.Value.ColumnName, StringComparer.OrdinalIgnoreCase))
                 {
                     continue;
                 }
 
-                object value = i.Value.GetValue(poco);
+                object value = col.Value.GetValue(poco);
 
-                if (i.Value.VersionColumn)
+                if (col.Value.VersionColumn)
                 {
-                    versionName = i.Key;
+                    versionName = col.Key;
                     versionValue = value;
                     value = Convert.ToInt64(value) + 1;
                 }
@@ -2208,7 +2209,7 @@ namespace PetaPoco
                 {
                     sb.Append(", ");
                 }
-                sb.AppendFormat("{0} = @{1}", EscapeSqlIdentifier(i.Key), index++);
+                sb.AppendFormat("{0} = @{1}", EscapeSqlIdentifier(col.Key), index++);
 
                 rawvalues.Add(value);
             }
@@ -2307,28 +2308,20 @@ namespace PetaPoco
             return Execute(new Sql(string.Format("DELETE FROM {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
         }
 
-        /// <summary>
-        /// PK指定して1件だけ削除
-        /// 追加メソッド
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="primaryKey"></param>
-        /// <returns>Count of deleteed record.</returns>
-        /// <example>
-        /// <![CDATA[
-        ///     var pk = new {
-        ///         UserId = "A001",
-        ///     };
-        ///     int cnt = db.DeleteById<Database.MUser>(pk);
-        /// ]]>
-        /// </example>
-        public int DeleteById<T>(object primaryKey) where T : IPetaPocoRecord<T>
+        public int Delete<T>(T poco) where T : IPetaPocoRecord<T>
         {
-            if (primaryKey == null) { throw new ArgumentNullException(nameof(primaryKey)); }
+            if (poco == null) { throw new ArgumentNullException(nameof(poco)); }
 
             var pd = PocoData.ForType(typeof(T));
             string tableName = pd.TableInfo.TableName;
-            var primaryKeyValuePairs = GetPrimaryKeyValues(pd.TableInfo.PrimaryKey, primaryKey);
+            string pkName = pd.TableInfo.PrimaryKey;
+
+            var primaryKeyValuePairs = pkName.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToDictionary(x => x, x => (object)null);
+
+            foreach (var key in primaryKeyValuePairs.Keys.ToArray())
+            {
+                primaryKeyValuePairs[key] = pd.Columns.Single(x => x.Key.Equals(key, StringComparison.CurrentCultureIgnoreCase)).Value.GetValue(poco);
+            }
 
             var index = 0;
             var sql = string.Format("DELETE FROM {0} WHERE {1}", tableName, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));

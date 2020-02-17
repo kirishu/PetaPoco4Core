@@ -2,7 +2,7 @@
 using Xunit;
 using Xunit.Abstractions;
 
-namespace PetaPoco4Core.Test.MySql
+namespace PetaPoco4Core.Test.SQLServer
 {
     public class Delete系: TestBase
     {
@@ -286,7 +286,7 @@ namespace PetaPoco4Core.Test.MySql
                 _output.WriteLine(db.LastCommand);
                 Assert.Equal(1, cnt);
 
-                var recafter = db.SingleOrDefaultById<PtTable01>(pk);
+                var recafter = db.SingleOrDefaultById<PtTable02>(pk);
                 Assert.Null(recafter);
             }
         }

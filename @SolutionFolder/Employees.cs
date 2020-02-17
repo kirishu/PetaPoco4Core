@@ -4,11 +4,11 @@
 // 
 // The following connection settings were used to generate this file
 // 
-//     Connection String:      `server=localhost;uid=testman;pwd=**zapped**;database=employees;SslMode=None;`
+//     Connection String:      `server=192.168.1.212;uid=testman;pwd=**zapped**;database=employees;SslMode=None;`
 //     Provider:               `MySql.Data.MySqlClient`
 //     Schema:                 ``
 //     Include Views:          `True`
-//     Genetated:              `2020/02/10 18:42:18`
+//     Genetated:              `2020/02/17 18:30:13`
 
 using System;
 using PetaPoco;
@@ -38,21 +38,6 @@ namespace PetaPoco4Core.Database.Employees
     }
 
 
-    /// <summary>VIEW</summary>
-    [TableName("current_dept_emp")]
-    [ExplicitColumns]
-    public class CurrentDeptEmp
-    {
-        /// <summary></summary>
-        [Column("emp_no")] public int EmpNo { get; set; }
-        /// <summary></summary>
-        [Column("dept_no")] public string DeptNo { get; set; }
-        /// <summary></summary>
-        [Column("from_date")] public DateTime? FromDate { get; set; }
-        /// <summary></summary>
-        [Column("to_date")] public DateTime? ToDate { get; set; }
-    }
-
     /// <summary></summary>
     [TableName("departments")]
     [PrimaryKey("dept_no", AutoIncrement=false)]
@@ -79,19 +64,6 @@ namespace PetaPoco4Core.Database.Employees
         [Column("from_date")] public DateTime FromDate { get { return _FromDate; } set { _FromDate = value; MarkColumnModified("from_date"); } } DateTime _FromDate;
         /// <summary></summary>
         [Column("to_date")] public DateTime ToDate { get { return _ToDate; } set { _ToDate = value; MarkColumnModified("to_date"); } } DateTime _ToDate;
-    }
-
-    /// <summary>VIEW</summary>
-    [TableName("dept_emp_latest_date")]
-    [ExplicitColumns]
-    public class DeptEmpLatestDate
-    {
-        /// <summary></summary>
-        [Column("emp_no")] public int EmpNo { get; set; }
-        /// <summary></summary>
-        [Column("from_date")] public DateTime? FromDate { get; set; }
-        /// <summary></summary>
-        [Column("to_date")] public DateTime? ToDate { get; set; }
     }
 
     /// <summary></summary>
@@ -160,6 +132,34 @@ namespace PetaPoco4Core.Database.Employees
         [Column("from_date")] public DateTime FromDate { get { return _FromDate; } set { _FromDate = value; MarkColumnModified("from_date"); } } DateTime _FromDate;
         /// <summary></summary>
         [Column("to_date")] public DateTime? ToDate { get { return _ToDate; } set { _ToDate = value; MarkColumnModified("to_date"); } } DateTime? _ToDate;
+    }
+
+    /// <summary>VIEW</summary>
+    [TableName("current_dept_emp")]
+    [ExplicitColumns]
+    public class CurrentDeptEmp
+    {
+        /// <summary></summary>
+        [Column("emp_no")] public int EmpNo { get; set; }
+        /// <summary></summary>
+        [Column("dept_no")] public string DeptNo { get; set; }
+        /// <summary></summary>
+        [Column("from_date")] public DateTime? FromDate { get; set; }
+        /// <summary></summary>
+        [Column("to_date")] public DateTime? ToDate { get; set; }
+    }
+
+    /// <summary>VIEW</summary>
+    [TableName("dept_emp_latest_date")]
+    [ExplicitColumns]
+    public class DeptEmpLatestDate
+    {
+        /// <summary></summary>
+        [Column("emp_no")] public int EmpNo { get; set; }
+        /// <summary></summary>
+        [Column("from_date")] public DateTime? FromDate { get; set; }
+        /// <summary></summary>
+        [Column("to_date")] public DateTime? ToDate { get; set; }
     }
 }
 
