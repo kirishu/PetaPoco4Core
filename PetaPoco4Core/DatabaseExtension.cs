@@ -20,6 +20,7 @@ using System;
 using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 using NLog;
 
 namespace PetaPoco
@@ -106,32 +107,31 @@ namespace PetaPoco
         private string GetLogParameterDeclare(IDataParameterCollection parameters)
         {
             var log = new StringBuilder();
+            var dateTypes = new string[] { "DATETIME", "DATE", "TIME" };
+
             foreach (IDataParameter param in parameters)
             {
+                string logvalue = GetLogQuotedParameterValue(param.Value);
+                string typename = GetLogParameterType(param);
+                if (this._dbType != DBType.SqlServer && dateTypes.Contains(typename))
+                {
+                    logvalue = "'" + logvalue + "'";
+                }
+
                 if (_useA5Mk2Params)
                 {
-                    log.Append("SetParameter ");
-                    log.Append(param.ParameterName.Replace(this.ParamPrefix, "p"));      // "@"を"p"に変更する
-                    log.Append(' ');
-                    log.Append(GetLogQuotedParameterValue(param.Value));
-                    log.Append(' ');
-                    log.Append(GetLogParameterType(param));
+                    log.AppendFormat("SetParameter {0} {1}",
+                        param.ParameterName.Replace(this.ParamPrefix, "p"),     // "@"を"p"に変更する
+                        dateTypes.Contains(typename) ? "'" + logvalue + "'" : logvalue
+                    );    
                 }
                 else
                 {
                     if (this._dbType == DBType.SqlServer)
                     {
-                        log.Append("DECLARE ");
-                        log.Append(param.ParameterName);
-                        log.Append(' ');
-                        log.Append(GetLogParameterType(param));
-                        log.Append("; ");
+                        log.AppendFormat("DECLARE {0} {1};", param.ParameterName, typename);
                     }
-                    log.Append("SET ");
-                    log.Append(param.ParameterName);
-                    log.Append(" = ");
-                    log.Append(GetLogQuotedParameterValue(param.Value));
-                    log.Append(";");
+                    log.AppendFormat("SET {0} = {1};", param.ParameterName, logvalue);
                 }
                 log.AppendLine();
             }
@@ -202,7 +202,7 @@ namespace PetaPoco
                         }
                         else
                         {
-                            log.Append(((DateTime)value).ToString("yyyy/MM/dd HH:mm:ss"));
+                            log.Append(((DateTime)value).ToString("yyyy/MM/dd HH:mm:ss.fff"));
                         }
                     }
                     else if (value is TimeSpan)
@@ -288,45 +288,45 @@ namespace PetaPoco
                     dbtype = _useA5Mk2Params ? "String" : "NVARCHAR(4000)";
                     break;
                 case DbType.Boolean:
-                    dbtype = _useA5Mk2Params ? "Boolean" : "BOOLEAN";
+                    dbtype = "BOOLEAN";
                     break;
                 case DbType.Byte:
-                    dbtype = _useA5Mk2Params ? "Integer" : "TINYINT";
+                    dbtype = "TINYINT";
                     break;
                 case DbType.Int16:
                 case DbType.SByte:
-                    dbtype = _useA5Mk2Params ? "Integer" : "SMALLINT";
+                    dbtype = "SMALLINT";
                     break;
                 case DbType.Int32:
                 case DbType.UInt16:
-                    dbtype = _useA5Mk2Params ? "Integer" : "INT";
+                    dbtype = "INT";
                     break;
                 case DbType.Int64:
                 case DbType.UInt32:
-                    dbtype = _useA5Mk2Params ? "Integer" : "BIGINT";
+                    dbtype = "BIGINT";
                     break;
                 case DbType.UInt64:
                 case DbType.Currency:
                 case DbType.Decimal:
                 case DbType.VarNumeric:
-                    dbtype = _useA5Mk2Params ? "Currency" : "DECIMAL";
+                    dbtype = "DECIMAL";
                     break;
                 case DbType.Single:
-                    dbtype = _useA5Mk2Params ? "Float" : "FLOAT";
+                    dbtype = "FLOAT";
                     break;
                 case DbType.Double:
-                    dbtype = _useA5Mk2Params ? "Float" : "REAL";
+                    dbtype = "REAL";
                     break;
                 case DbType.Time:
-                    dbtype = _useA5Mk2Params ? "Time" : "TIME";
+                    dbtype = "TIME";
                     break;
                 case DbType.Date:
-                    dbtype = _useA5Mk2Params ? "Date" : "DATE";
+                    dbtype = "DATE";
                     break;
                 case DbType.DateTime:
                 case DbType.DateTime2:
                 case DbType.DateTimeOffset:
-                    dbtype = _useA5Mk2Params ? "DateTime" : "DATETIME";
+                    dbtype = "DATETIME";
                     break;
                 case DbType.Binary:
                 case DbType.Guid:

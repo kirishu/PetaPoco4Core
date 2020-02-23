@@ -105,22 +105,10 @@ public class Table
     public string CleanName;
     public string SequenceName;
     public bool Ignore;
-    public string Comment;			// added by kirishu
-    public string DefaultSchema;	// added by kirishu
+    public string Comment;              // added by kirishu
+    public string DefaultSchema;        // added by kirishu
 
-    //public string ClassName;
-    private string _className;
-    public string ClassName
-    {
-        get
-        {
-            return (ConvertPascalCase) ? Inflector.SnakeToPascal(_className) : _className;
-        }
-        set
-        {
-            _className = value;
-        }
-    }
+    public string ClassName;
 
     public List<Column> PK
     {
@@ -438,17 +426,17 @@ class SqlServerSchemaReader : SchemaReader
                     tbl.Name=rdr["TableName"].ToString();
                     tbl.Schema = rdr["SchemaName"].ToString();
                     tbl.IsView = (rdr["TableType"].ToString() == "10");
-					tbl.CleanName=CleanUp(tbl.Name);
-					if (string.IsNullOrEmpty(tbl.Schema) || tbl.Schema == defaultSchema)
+                    tbl.CleanName=CleanUp(tbl.Name);
+                    if (string.IsNullOrEmpty(tbl.Schema) || tbl.Schema == defaultSchema)
                     {
-						tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
+                        tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
                     }
-					else
+                    else
                     {
-						tbl.ClassName = tbl.Schema + "." + Inflector.MakeSingular(tbl.CleanName);
-					}
+                        tbl.ClassName = tbl.Schema + "." + Inflector.MakeSingular(tbl.CleanName);
+                    }
                     tbl.Comment = (rdr["Comment"].ToString() == "") ? rdr["TableName"].ToString() : rdr["Comment"].ToString();
-					tbl.DefaultSchema = defaultSchema;
+                    tbl.DefaultSchema = defaultSchema;
                     result.Add(tbl);
                 }
             }
@@ -659,18 +647,18 @@ class PostgreSqlSchemaReader : SchemaReader
                     tbl.Name = rdr["table_name"].ToString();
                     tbl.Schema = rdr["table_schema"].ToString();
                     tbl.IsView = string.Compare(rdr["table_type"].ToString(), "View", true)==0;
-					tbl.CleanName=CleanUp(tbl.Name);
-					if (string.IsNullOrEmpty(tbl.Schema) || tbl.Schema == defaultSchema)
+                    tbl.CleanName=CleanUp(tbl.Name);
+                    if (string.IsNullOrEmpty(tbl.Schema) || tbl.Schema == defaultSchema)
                     {
-						tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
+                        tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
                     }
-					else
+                    else
                     {
-						tbl.ClassName = tbl.Schema + "." + Inflector.MakeSingular(tbl.CleanName);
-					}
+                        tbl.ClassName = tbl.Schema + "." + Inflector.MakeSingular(tbl.CleanName);
+                    }
 
                     tbl.Comment = Inflector.ConvertHtmlEscape(rdr["table_comment"].ToString());
-					tbl.DefaultSchema = defaultSchema;
+                    tbl.DefaultSchema = defaultSchema;
                     result.Add(tbl);
                 }
             }
@@ -1043,17 +1031,18 @@ class OracleSchemaReader : SchemaReader
         //pull the tables in a reader
         using(cmd)
         {
-
             using (var rdr=cmd.ExecuteReader())
             {
                 while(rdr.Read())
                 {
-                    Table tbl=new Table();
-                    tbl.Name=rdr["TABLE_NAME"].ToString();
+                    Table tbl = new Table();
+                    tbl.Name = rdr["TABLE_NAME"].ToString();
                     tbl.Schema = rdr["TABLE_SCHEMA"].ToString();
-                    tbl.IsView=string.Compare(rdr["TABLE_TYPE"].ToString(), "View", true)==0;
-                    tbl.CleanName=CleanUp(tbl.Name);
-                    tbl.ClassName=Inflector.MakeSingular(tbl.CleanName);
+                    tbl.IsView = string.Compare(rdr["TABLE_TYPE"].ToString(), "View", true)==0;
+                    tbl.CleanName = CleanUp(tbl.Name);
+                    tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
+                    tbl.Comment = rdr["COMMENTS"].ToString();
+                    tbl.DefaultSchema = tbl.Schema;
                     result.Add(tbl);
                 }
             }
@@ -1099,12 +1088,16 @@ class OracleSchemaReader : SchemaReader
             {
                 while(rdr.Read())
                 {
-                    Column col=new Column();
-                    col.Name=rdr["ColumnName"].ToString();
-                    col.PropertyName=CleanUp(col.Name);
-                    col.PropertyType=GetPropertyType(rdr["DataType"].ToString(), (rdr["DataType"] == DBNull.Value ? null : rdr["DataType"].ToString()));
-                    col.IsNullable=rdr["IsNullable"].ToString()=="Y";
-                    col.IsAutoIncrement=true;
+                    var col = new Column
+                    {
+                        Name = rdr["ColumnName"].ToString(),
+                        PropertyName = CleanUp(rdr["ColumnName"].ToString()),
+                        PropertyType = GetPropertyType(rdr["DataType"].ToString(), (rdr["DataType"] == DBNull.Value ? null : rdr["DataType"].ToString())),
+                        IsNullable = rdr["IsNullable"].ToString() == "Y",
+                        IsAutoIncrement = false,
+                        Comment = rdr["comments"].ToString(),
+                        DefaultValue = "",
+                    };
                     result.Add(col);
                 }
             }
@@ -1205,27 +1198,34 @@ class OracleSchemaReader : SchemaReader
 
 
     const string TABLE_SQL=
- @"select a.TABLE_NAME
-        , b.OWNER as TABLE_SCHEMA
-        , 'Table' as TABLE_TYPE
-     from USER_TABLES a
-    inner join ALL_TABLES b on a.TABLE_NAME = b.TABLE_NAME
-    union
-   select c.VIEW_NAME as TABLE_NAME
-        , d.OWNER as TABLE_SCHEMA
-        , 'View' as TABLE_TYPE
-     from USER_VIEWS c
-    inner join ALL_VIEWS d on c.VIEW_NAME = d.VIEW_NAME";
+@"select a.TABLE_NAME
+     , b.OWNER as TABLE_SCHEMA
+     , atc.COMMENTS
+     , 'Table' as TABLE_TYPE
+  from USER_TABLES a
+       inner join ALL_TABLES b on a.TABLE_NAME = b.TABLE_NAME
+        left join ALL_TAB_COMMENTS atc on a.TABLE_NAME = atc.TABLE_NAME
+ union
+ select c.VIEW_NAME as TABLE_NAME
+      , d.OWNER as TABLE_SCHEMA
+      , atc.COMMENTS
+      , 'View' as TABLE_TYPE
+  from USER_VIEWS c
+       inner join ALL_VIEWS d on c.VIEW_NAME = d.VIEW_NAME
+        left join ALL_TAB_COMMENTS atc on c.VIEW_NAME = atc.TABLE_NAME";
 
 
-    const string COLUMN_SQL=@"select table_name TableName,
- column_name ColumnName,
- data_type DataType,
- data_scale DataScale,
- nullable IsNullable
- from USER_TAB_COLS utc
- where table_name = upper(:tableName)
- order by column_id";
+    const string COLUMN_SQL=
+ @"select utc.table_name TableName
+        , utc.column_name ColumnName
+        , utc.data_type DataType
+        , utc.data_scale DataScale
+        , utc.nullable IsNullable
+        , ucc.comments 
+     from USER_TAB_COLS utc
+          left join USER_COL_COMMENTS ucc on utc.table_name = ucc.table_name and utc.column_name  = ucc.column_name
+    where utc.table_name = upper(:tableName)
+    order by utc.column_id";
 
 }
 
@@ -1503,17 +1503,17 @@ public static class Inflector {
             return text;
         }
 
-        /*
         return text
             .ToLower()
             .Split(new[] { '_' }, StringSplitOptions.RemoveEmptyEntries)
             .Select(s => char.ToUpperInvariant(s[0]) + s.Substring(1, s.Length - 1))
             .Aggregate(string.Empty, (s1, s2) => s1 + s2);
-        */
+        /*
         return Regex.Replace(
             text.Replace("_", " "),
             @"\b[a-z]",
             match => match.Value.ToUpper()).Replace(" ", "");
+        */
     }
 
     #region Nested type: InflectorRule

@@ -1,0 +1,45 @@
+<#@ include file="PetaPoco.Core.tt" #>
+<#
+    // ******** コマンド *********
+    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" Scott.tt -o Scott.cs
+    // ******** 設定ここから *********
+    
+    DatabaseName = "Scott";
+    ConnectionString = @"Data Source=CentOSdb@Scott;User Id=SCOTT;Password=tiger;Pooling=true;";
+    ProviderName = "Oracle.DataAccess.Client";
+    Namespace = "PetaPoco4Core.Database.Scoot";
+
+    ConvertPascalCase = true;      // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
+    IncludeViews = false;            // Viewも対象にするならtrue
+    
+    RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
+    ClassPrefix = "";
+    ClassSuffix = "";
+    // ******** 設定ここまで *********
+
+    GeneratePocos = true;           // Pocoオブジェクトを作る
+    GenerateCommon = true;          // Databaseオブジェクトを作る
+    TrackModifiedColumns = true;    // 更新列自動追跡機能を使うならtrue（true推奨）
+    
+    // Read schema
+    var tables = LoadTables();
+
+    /**
+    *    // Tweak Schema
+    *    tables["tablename"].Ignore = true;                            // To ignore a table
+    *    tables["tablename"].ClassName = "newname";                    // To change the class name of a table
+    *    tables["tablename"]["columnname"].Ignore = true;              // To ignore a column
+    *    tables["tablename"]["columnname"].PropertyName="newname";     // To change the property name of a column
+    *    tables["tablename"]["columnname"].PropertyType="bool";        // To change the property type of a column
+    ** */
+    
+    // 除外するテーブルがあればここに記述します
+    //tables["dtproperties"].Ignore = true;
+
+    // Generate output
+    if (tables.Count>0)
+    {
+#>
+<#@ include file="PetaPoco.Generator.tt" #>
+<# } #>
+

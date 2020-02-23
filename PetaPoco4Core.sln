@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@SolutionFolder", "@Solutio
 		@SolutionFolder\PetaPoco.Core.tt = @SolutionFolder\PetaPoco.Core.tt
 		@SolutionFolder\PetaPoco.Generator.tt = @SolutionFolder\PetaPoco.Generator.tt
 		@SolutionFolder\readme.txt = @SolutionFolder\readme.txt
+		@SolutionFolder\Scott.cs = @SolutionFolder\Scott.cs
+		@SolutionFolder\Scott.tt = @SolutionFolder\Scott.tt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@Documents", "@Documents", "{B55B9C00-1430-4FA9-8B42-5CCFEC6A8C19}"
