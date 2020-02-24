@@ -9,7 +9,7 @@
     ProviderName = "MySql.Data.MySqlClient";
     Namespace = "PetaPoco4Core.Database.Employees";
 
-    ConvertPascalCase = true;       // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
+    ConvertPascalCase = false;      // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
     RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
     IncludeViews = true;            // Viewも対象にするならtrue
     

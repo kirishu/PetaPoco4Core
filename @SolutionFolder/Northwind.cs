@@ -8,7 +8,7 @@
 //     Provider:               `System.Data.SqlClient`
 //     Schema:                 ``
 //     Include Views:          `True`
-//     Genetated:              `2020/02/17 18:28:52`
+//     Genetated:              `2020/02/24 17:28:39`
 
 using System;
 using PetaPoco;
@@ -44,9 +44,13 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Category: PetaPoco.PetaPocoRecord<Category>
     {
+        /// <summary></summary>
         [Column] public int CategoryID { get { return _CategoryID; } set { _CategoryID = value; MarkColumnModified("CategoryID"); } } int _CategoryID;
+        /// <summary></summary>
         [Column] public string CategoryName { get { return _CategoryName; } set { _CategoryName = value; MarkColumnModified("CategoryName"); } } string _CategoryName;
+        /// <summary></summary>
         [Column] public string Description { get { return _Description; } set { _Description = value; MarkColumnModified("Description"); } } string _Description;
+        /// <summary></summary>
         [Column] public byte[] Picture { get { return _Picture; } set { _Picture = value; MarkColumnModified("Picture"); } } byte[] _Picture;
     }
 
@@ -56,7 +60,9 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class CustomerCustomerDemo: PetaPoco.PetaPocoRecord<CustomerCustomerDemo>
     {
+        /// <summary></summary>
         [Column] public string CustomerID { get { return _CustomerID; } set { _CustomerID = value; MarkColumnModified("CustomerID"); } } string _CustomerID;
+        /// <summary></summary>
         [Column] public string CustomerTypeID { get { return _CustomerTypeID; } set { _CustomerTypeID = value; MarkColumnModified("CustomerTypeID"); } } string _CustomerTypeID;
     }
 
@@ -66,7 +72,9 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class CustomerDemographic: PetaPoco.PetaPocoRecord<CustomerDemographic>
     {
+        /// <summary></summary>
         [Column] public string CustomerTypeID { get { return _CustomerTypeID; } set { _CustomerTypeID = value; MarkColumnModified("CustomerTypeID"); } } string _CustomerTypeID;
+        /// <summary></summary>
         [Column] public string CustomerDesc { get { return _CustomerDesc; } set { _CustomerDesc = value; MarkColumnModified("CustomerDesc"); } } string _CustomerDesc;
     }
 
@@ -76,16 +84,27 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Customer: PetaPoco.PetaPocoRecord<Customer>
     {
+        /// <summary></summary>
         [Column] public string CustomerID { get { return _CustomerID; } set { _CustomerID = value; MarkColumnModified("CustomerID"); } } string _CustomerID;
+        /// <summary></summary>
         [Column] public string CompanyName { get { return _CompanyName; } set { _CompanyName = value; MarkColumnModified("CompanyName"); } } string _CompanyName;
+        /// <summary></summary>
         [Column] public string ContactName { get { return _ContactName; } set { _ContactName = value; MarkColumnModified("ContactName"); } } string _ContactName;
+        /// <summary></summary>
         [Column] public string ContactTitle { get { return _ContactTitle; } set { _ContactTitle = value; MarkColumnModified("ContactTitle"); } } string _ContactTitle;
+        /// <summary></summary>
         [Column] public string Address { get { return _Address; } set { _Address = value; MarkColumnModified("Address"); } } string _Address;
+        /// <summary></summary>
         [Column] public string City { get { return _City; } set { _City = value; MarkColumnModified("City"); } } string _City;
+        /// <summary></summary>
         [Column] public string Region { get { return _Region; } set { _Region = value; MarkColumnModified("Region"); } } string _Region;
+        /// <summary></summary>
         [Column] public string PostalCode { get { return _PostalCode; } set { _PostalCode = value; MarkColumnModified("PostalCode"); } } string _PostalCode;
+        /// <summary></summary>
         [Column] public string Country { get { return _Country; } set { _Country = value; MarkColumnModified("Country"); } } string _Country;
+        /// <summary></summary>
         [Column] public string Phone { get { return _Phone; } set { _Phone = value; MarkColumnModified("Phone"); } } string _Phone;
+        /// <summary></summary>
         [Column] public string Fax { get { return _Fax; } set { _Fax = value; MarkColumnModified("Fax"); } } string _Fax;
     }
 
@@ -95,23 +114,41 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Employee: PetaPoco.PetaPocoRecord<Employee>
     {
+        /// <summary></summary>
         [Column] public int EmployeeID { get { return _EmployeeID; } set { _EmployeeID = value; MarkColumnModified("EmployeeID"); } } int _EmployeeID;
+        /// <summary></summary>
         [Column] public string LastName { get { return _LastName; } set { _LastName = value; MarkColumnModified("LastName"); } } string _LastName;
+        /// <summary></summary>
         [Column] public string FirstName { get { return _FirstName; } set { _FirstName = value; MarkColumnModified("FirstName"); } } string _FirstName;
+        /// <summary></summary>
         [Column] public string Title { get { return _Title; } set { _Title = value; MarkColumnModified("Title"); } } string _Title;
+        /// <summary></summary>
         [Column] public string TitleOfCourtesy { get { return _TitleOfCourtesy; } set { _TitleOfCourtesy = value; MarkColumnModified("TitleOfCourtesy"); } } string _TitleOfCourtesy;
+        /// <summary></summary>
         [Column] public DateTime? BirthDate { get { return _BirthDate; } set { _BirthDate = value; MarkColumnModified("BirthDate"); } } DateTime? _BirthDate;
+        /// <summary></summary>
         [Column] public DateTime? HireDate { get { return _HireDate; } set { _HireDate = value; MarkColumnModified("HireDate"); } } DateTime? _HireDate;
+        /// <summary></summary>
         [Column] public string Address { get { return _Address; } set { _Address = value; MarkColumnModified("Address"); } } string _Address;
+        /// <summary></summary>
         [Column] public string City { get { return _City; } set { _City = value; MarkColumnModified("City"); } } string _City;
+        /// <summary></summary>
         [Column] public string Region { get { return _Region; } set { _Region = value; MarkColumnModified("Region"); } } string _Region;
+        /// <summary></summary>
         [Column] public string PostalCode { get { return _PostalCode; } set { _PostalCode = value; MarkColumnModified("PostalCode"); } } string _PostalCode;
+        /// <summary></summary>
         [Column] public string Country { get { return _Country; } set { _Country = value; MarkColumnModified("Country"); } } string _Country;
+        /// <summary></summary>
         [Column] public string HomePhone { get { return _HomePhone; } set { _HomePhone = value; MarkColumnModified("HomePhone"); } } string _HomePhone;
+        /// <summary></summary>
         [Column] public string Extension { get { return _Extension; } set { _Extension = value; MarkColumnModified("Extension"); } } string _Extension;
+        /// <summary></summary>
         [Column] public byte[] Photo { get { return _Photo; } set { _Photo = value; MarkColumnModified("Photo"); } } byte[] _Photo;
+        /// <summary></summary>
         [Column] public string Notes { get { return _Notes; } set { _Notes = value; MarkColumnModified("Notes"); } } string _Notes;
+        /// <summary></summary>
         [Column] public int? ReportsTo { get { return _ReportsTo; } set { _ReportsTo = value; MarkColumnModified("ReportsTo"); } } int? _ReportsTo;
+        /// <summary></summary>
         [Column] public string PhotoPath { get { return _PhotoPath; } set { _PhotoPath = value; MarkColumnModified("PhotoPath"); } } string _PhotoPath;
     }
 
@@ -121,7 +158,9 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class EmployeeTerritory: PetaPoco.PetaPocoRecord<EmployeeTerritory>
     {
+        /// <summary></summary>
         [Column] public int EmployeeID { get { return _EmployeeID; } set { _EmployeeID = value; MarkColumnModified("EmployeeID"); } } int _EmployeeID;
+        /// <summary></summary>
         [Column] public string TerritoryID { get { return _TerritoryID; } set { _TerritoryID = value; MarkColumnModified("TerritoryID"); } } string _TerritoryID;
     }
 
@@ -131,10 +170,15 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Order_Detail: PetaPoco.PetaPocoRecord<Order_Detail>
     {
+        /// <summary></summary>
         [Column] public int OrderID { get { return _OrderID; } set { _OrderID = value; MarkColumnModified("OrderID"); } } int _OrderID;
+        /// <summary></summary>
         [Column] public int ProductID { get { return _ProductID; } set { _ProductID = value; MarkColumnModified("ProductID"); } } int _ProductID;
+        /// <summary></summary>
         [Column] public decimal UnitPrice { get { return _UnitPrice; } set { _UnitPrice = value; MarkColumnModified("UnitPrice"); } } decimal _UnitPrice;
+        /// <summary></summary>
         [Column] public short Quantity { get { return _Quantity; } set { _Quantity = value; MarkColumnModified("Quantity"); } } short _Quantity;
+        /// <summary></summary>
         [Column] public float Discount { get { return _Discount; } set { _Discount = value; MarkColumnModified("Discount"); } } float _Discount;
     }
 
@@ -144,19 +188,33 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Order: PetaPoco.PetaPocoRecord<Order>
     {
+        /// <summary></summary>
         [Column] public int OrderID { get { return _OrderID; } set { _OrderID = value; MarkColumnModified("OrderID"); } } int _OrderID;
+        /// <summary></summary>
         [Column] public string CustomerID { get { return _CustomerID; } set { _CustomerID = value; MarkColumnModified("CustomerID"); } } string _CustomerID;
+        /// <summary></summary>
         [Column] public int? EmployeeID { get { return _EmployeeID; } set { _EmployeeID = value; MarkColumnModified("EmployeeID"); } } int? _EmployeeID;
+        /// <summary></summary>
         [Column] public DateTime? OrderDate { get { return _OrderDate; } set { _OrderDate = value; MarkColumnModified("OrderDate"); } } DateTime? _OrderDate;
+        /// <summary></summary>
         [Column] public DateTime? RequiredDate { get { return _RequiredDate; } set { _RequiredDate = value; MarkColumnModified("RequiredDate"); } } DateTime? _RequiredDate;
+        /// <summary></summary>
         [Column] public DateTime? ShippedDate { get { return _ShippedDate; } set { _ShippedDate = value; MarkColumnModified("ShippedDate"); } } DateTime? _ShippedDate;
+        /// <summary></summary>
         [Column] public int? ShipVia { get { return _ShipVia; } set { _ShipVia = value; MarkColumnModified("ShipVia"); } } int? _ShipVia;
+        /// <summary></summary>
         [Column] public decimal? Freight { get { return _Freight; } set { _Freight = value; MarkColumnModified("Freight"); } } decimal? _Freight;
+        /// <summary></summary>
         [Column] public string ShipName { get { return _ShipName; } set { _ShipName = value; MarkColumnModified("ShipName"); } } string _ShipName;
+        /// <summary></summary>
         [Column] public string ShipAddress { get { return _ShipAddress; } set { _ShipAddress = value; MarkColumnModified("ShipAddress"); } } string _ShipAddress;
+        /// <summary></summary>
         [Column] public string ShipCity { get { return _ShipCity; } set { _ShipCity = value; MarkColumnModified("ShipCity"); } } string _ShipCity;
+        /// <summary></summary>
         [Column] public string ShipRegion { get { return _ShipRegion; } set { _ShipRegion = value; MarkColumnModified("ShipRegion"); } } string _ShipRegion;
+        /// <summary></summary>
         [Column] public string ShipPostalCode { get { return _ShipPostalCode; } set { _ShipPostalCode = value; MarkColumnModified("ShipPostalCode"); } } string _ShipPostalCode;
+        /// <summary></summary>
         [Column] public string ShipCountry { get { return _ShipCountry; } set { _ShipCountry = value; MarkColumnModified("ShipCountry"); } } string _ShipCountry;
     }
 
@@ -166,15 +224,25 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Product: PetaPoco.PetaPocoRecord<Product>
     {
+        /// <summary></summary>
         [Column] public int ProductID { get { return _ProductID; } set { _ProductID = value; MarkColumnModified("ProductID"); } } int _ProductID;
+        /// <summary></summary>
         [Column] public string ProductName { get { return _ProductName; } set { _ProductName = value; MarkColumnModified("ProductName"); } } string _ProductName;
+        /// <summary></summary>
         [Column] public int? SupplierID { get { return _SupplierID; } set { _SupplierID = value; MarkColumnModified("SupplierID"); } } int? _SupplierID;
+        /// <summary></summary>
         [Column] public int? CategoryID { get { return _CategoryID; } set { _CategoryID = value; MarkColumnModified("CategoryID"); } } int? _CategoryID;
+        /// <summary></summary>
         [Column] public string QuantityPerUnit { get { return _QuantityPerUnit; } set { _QuantityPerUnit = value; MarkColumnModified("QuantityPerUnit"); } } string _QuantityPerUnit;
+        /// <summary></summary>
         [Column] public decimal? UnitPrice { get { return _UnitPrice; } set { _UnitPrice = value; MarkColumnModified("UnitPrice"); } } decimal? _UnitPrice;
+        /// <summary></summary>
         [Column] public short? UnitsInStock { get { return _UnitsInStock; } set { _UnitsInStock = value; MarkColumnModified("UnitsInStock"); } } short? _UnitsInStock;
+        /// <summary></summary>
         [Column] public short? UnitsOnOrder { get { return _UnitsOnOrder; } set { _UnitsOnOrder = value; MarkColumnModified("UnitsOnOrder"); } } short? _UnitsOnOrder;
+        /// <summary></summary>
         [Column] public short? ReorderLevel { get { return _ReorderLevel; } set { _ReorderLevel = value; MarkColumnModified("ReorderLevel"); } } short? _ReorderLevel;
+        /// <summary></summary>
         [Column] public bool Discontinued { get { return _Discontinued; } set { _Discontinued = value; MarkColumnModified("Discontinued"); } } bool _Discontinued;
     }
 
@@ -184,7 +252,9 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Region: PetaPoco.PetaPocoRecord<Region>
     {
+        /// <summary></summary>
         [Column] public int RegionID { get { return _RegionID; } set { _RegionID = value; MarkColumnModified("RegionID"); } } int _RegionID;
+        /// <summary></summary>
         [Column] public string RegionDescription { get { return _RegionDescription; } set { _RegionDescription = value; MarkColumnModified("RegionDescription"); } } string _RegionDescription;
     }
 
@@ -194,8 +264,11 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Shipper: PetaPoco.PetaPocoRecord<Shipper>
     {
+        /// <summary></summary>
         [Column] public int ShipperID { get { return _ShipperID; } set { _ShipperID = value; MarkColumnModified("ShipperID"); } } int _ShipperID;
+        /// <summary></summary>
         [Column] public string CompanyName { get { return _CompanyName; } set { _CompanyName = value; MarkColumnModified("CompanyName"); } } string _CompanyName;
+        /// <summary></summary>
         [Column] public string Phone { get { return _Phone; } set { _Phone = value; MarkColumnModified("Phone"); } } string _Phone;
     }
 
@@ -205,17 +278,29 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Supplier: PetaPoco.PetaPocoRecord<Supplier>
     {
+        /// <summary></summary>
         [Column] public int SupplierID { get { return _SupplierID; } set { _SupplierID = value; MarkColumnModified("SupplierID"); } } int _SupplierID;
+        /// <summary></summary>
         [Column] public string CompanyName { get { return _CompanyName; } set { _CompanyName = value; MarkColumnModified("CompanyName"); } } string _CompanyName;
+        /// <summary></summary>
         [Column] public string ContactName { get { return _ContactName; } set { _ContactName = value; MarkColumnModified("ContactName"); } } string _ContactName;
+        /// <summary></summary>
         [Column] public string ContactTitle { get { return _ContactTitle; } set { _ContactTitle = value; MarkColumnModified("ContactTitle"); } } string _ContactTitle;
+        /// <summary></summary>
         [Column] public string Address { get { return _Address; } set { _Address = value; MarkColumnModified("Address"); } } string _Address;
+        /// <summary></summary>
         [Column] public string City { get { return _City; } set { _City = value; MarkColumnModified("City"); } } string _City;
+        /// <summary></summary>
         [Column] public string Region { get { return _Region; } set { _Region = value; MarkColumnModified("Region"); } } string _Region;
+        /// <summary></summary>
         [Column] public string PostalCode { get { return _PostalCode; } set { _PostalCode = value; MarkColumnModified("PostalCode"); } } string _PostalCode;
+        /// <summary></summary>
         [Column] public string Country { get { return _Country; } set { _Country = value; MarkColumnModified("Country"); } } string _Country;
+        /// <summary></summary>
         [Column] public string Phone { get { return _Phone; } set { _Phone = value; MarkColumnModified("Phone"); } } string _Phone;
+        /// <summary></summary>
         [Column] public string Fax { get { return _Fax; } set { _Fax = value; MarkColumnModified("Fax"); } } string _Fax;
+        /// <summary></summary>
         [Column] public string HomePage { get { return _HomePage; } set { _HomePage = value; MarkColumnModified("HomePage"); } } string _HomePage;
     }
 
@@ -225,9 +310,66 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Territory: PetaPoco.PetaPocoRecord<Territory>
     {
+        /// <summary></summary>
         [Column] public string TerritoryID { get { return _TerritoryID; } set { _TerritoryID = value; MarkColumnModified("TerritoryID"); } } string _TerritoryID;
+        /// <summary></summary>
         [Column] public string TerritoryDescription { get { return _TerritoryDescription; } set { _TerritoryDescription = value; MarkColumnModified("TerritoryDescription"); } } string _TerritoryDescription;
+        /// <summary></summary>
         [Column] public int RegionID { get { return _RegionID; } set { _RegionID = value; MarkColumnModified("RegionID"); } } int _RegionID;
+    }
+
+    /// <summary>テストテーブル - オートナンバー</summary>
+    [TableName("TestAutoNumber")]
+    [PrimaryKey("Key03", AutoIncrement=true)]
+    [ExplicitColumns]
+    public class TestAutoNumber: PetaPoco.PetaPocoRecord<TestAutoNumber>
+    {
+        /// <summary>プライマリキー</summary>
+        [Column] public int Key03 { get { return _Key03; } set { _Key03 = value; MarkColumnModified("Key03"); } } int _Key03;
+        /// <summary>bit型の列</summary>
+        [Column] public bool ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("ColBool"); } } bool _ColBool;
+        /// <summary>int型の列</summary>
+        [Column] public int? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("ColInt"); } } int? _ColInt;
+        /// <summary>decimal型の列</summary>
+        [Column] public decimal? ColDec { get { return _ColDec; } set { _ColDec = value; MarkColumnModified("ColDec"); } } decimal? _ColDec;
+        /// <summary>varchar型の列</summary>
+        [Column] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("ColVarchar"); } } string _ColVarchar;
+        /// <summary>作成者</summary>
+        [Column] public string CreateBy { get { return _CreateBy; } set { _CreateBy = value; MarkColumnModified("CreateBy"); } } string _CreateBy;
+        /// <summary>作成日時</summary>
+        [Column] public DateTime CreateDt { get { return _CreateDt; } set { _CreateDt = value; MarkColumnModified("CreateDt"); } } DateTime _CreateDt;
+        /// <summary>更新者</summary>
+        [Column] public string UpdateBy { get { return _UpdateBy; } set { _UpdateBy = value; MarkColumnModified("UpdateBy"); } } string _UpdateBy;
+        /// <summary>更新日時</summary>
+        [Column] public DateTime UpdateDt { get { return _UpdateDt; } set { _UpdateDt = value; MarkColumnModified("UpdateDt"); } } DateTime _UpdateDt;
+    }
+
+    /// <summary>テストテーブル - 複合キー</summary>
+    [TableName("TestCompositeKey")]
+    [PrimaryKey("Key01,Key02", AutoIncrement=false)]
+    [ExplicitColumns]
+    public class TestCompositeKey: PetaPoco.PetaPocoRecord<TestCompositeKey>
+    {
+        /// <summary>プライマリキーその１</summary>
+        [Column] public string Key01 { get { return _Key01; } set { _Key01 = value; MarkColumnModified("Key01"); } } string _Key01;
+        /// <summary>プライマリキーその２</summary>
+        [Column] public int Key02 { get { return _Key02; } set { _Key02 = value; MarkColumnModified("Key02"); } } int _Key02;
+        /// <summary>bit型の列</summary>
+        [Column] public bool ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("ColBool"); } } bool _ColBool;
+        /// <summary>int型の列</summary>
+        [Column] public int? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("ColInt"); } } int? _ColInt;
+        /// <summary>decimal型の列</summary>
+        [Column] public decimal? ColDec { get { return _ColDec; } set { _ColDec = value; MarkColumnModified("ColDec"); } } decimal? _ColDec;
+        /// <summary>varchar型の列</summary>
+        [Column] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("ColVarchar"); } } string _ColVarchar;
+        /// <summary>作成者</summary>
+        [Column] public string CreateBy { get { return _CreateBy; } set { _CreateBy = value; MarkColumnModified("CreateBy"); } } string _CreateBy;
+        /// <summary>作成日時</summary>
+        [Column] public DateTime CreateDt { get { return _CreateDt; } set { _CreateDt = value; MarkColumnModified("CreateDt"); } } DateTime _CreateDt;
+        /// <summary>更新者</summary>
+        [Column] public string UpdateBy { get { return _UpdateBy; } set { _UpdateBy = value; MarkColumnModified("UpdateBy"); } } string _UpdateBy;
+        /// <summary>更新日時</summary>
+        [Column] public DateTime UpdateDt { get { return _UpdateDt; } set { _UpdateDt = value; MarkColumnModified("UpdateDt"); } } DateTime _UpdateDt;
     }
 
     /// <summary>Alphabetical list of products</summary>
@@ -235,16 +377,27 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Alphabetical_list_of_product
     {
+        /// <summary></summary>
         [Column] public int ProductID { get; set; }
+        /// <summary></summary>
         [Column] public string ProductName { get; set; }
+        /// <summary></summary>
         [Column] public int? SupplierID { get; set; }
+        /// <summary></summary>
         [Column] public int? CategoryID { get; set; }
+        /// <summary></summary>
         [Column] public string QuantityPerUnit { get; set; }
+        /// <summary></summary>
         [Column] public decimal? UnitPrice { get; set; }
+        /// <summary></summary>
         [Column] public short? UnitsInStock { get; set; }
+        /// <summary></summary>
         [Column] public short? UnitsOnOrder { get; set; }
+        /// <summary></summary>
         [Column] public short? ReorderLevel { get; set; }
+        /// <summary></summary>
         [Column] public bool Discontinued { get; set; }
+        /// <summary></summary>
         [Column] public string CategoryName { get; set; }
     }
 
@@ -253,7 +406,9 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Category_Sales_for_1997
     {
+        /// <summary></summary>
         [Column] public string CategoryName { get; set; }
+        /// <summary></summary>
         [Column] public decimal? CategorySales { get; set; }
     }
 
@@ -262,7 +417,9 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Current_Product_List
     {
+        /// <summary></summary>
         [Column] public int ProductID { get; set; }
+        /// <summary></summary>
         [Column] public string ProductName { get; set; }
     }
 
@@ -271,9 +428,13 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Customer_and_Suppliers_by_City
     {
+        /// <summary></summary>
         [Column] public string City { get; set; }
+        /// <summary></summary>
         [Column] public string CompanyName { get; set; }
+        /// <summary></summary>
         [Column] public string ContactName { get; set; }
+        /// <summary></summary>
         [Column] public string Relationship { get; set; }
     }
 
@@ -282,31 +443,57 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Invoice
     {
+        /// <summary></summary>
         [Column] public string ShipName { get; set; }
+        /// <summary></summary>
         [Column] public string ShipAddress { get; set; }
+        /// <summary></summary>
         [Column] public string ShipCity { get; set; }
+        /// <summary></summary>
         [Column] public string ShipRegion { get; set; }
+        /// <summary></summary>
         [Column] public string ShipPostalCode { get; set; }
+        /// <summary></summary>
         [Column] public string ShipCountry { get; set; }
+        /// <summary></summary>
         [Column] public string CustomerID { get; set; }
+        /// <summary></summary>
         [Column] public string CustomerName { get; set; }
+        /// <summary></summary>
         [Column] public string Address { get; set; }
+        /// <summary></summary>
         [Column] public string City { get; set; }
+        /// <summary></summary>
         [Column] public string Region { get; set; }
+        /// <summary></summary>
         [Column] public string PostalCode { get; set; }
+        /// <summary></summary>
         [Column] public string Country { get; set; }
+        /// <summary></summary>
         [Column] public string Salesperson { get; set; }
+        /// <summary></summary>
         [Column] public int OrderID { get; set; }
+        /// <summary></summary>
         [Column] public DateTime? OrderDate { get; set; }
+        /// <summary></summary>
         [Column] public DateTime? RequiredDate { get; set; }
+        /// <summary></summary>
         [Column] public DateTime? ShippedDate { get; set; }
+        /// <summary></summary>
         [Column] public string ShipperName { get; set; }
+        /// <summary></summary>
         [Column] public int ProductID { get; set; }
+        /// <summary></summary>
         [Column] public string ProductName { get; set; }
+        /// <summary></summary>
         [Column] public decimal UnitPrice { get; set; }
+        /// <summary></summary>
         [Column] public short Quantity { get; set; }
+        /// <summary></summary>
         [Column] public float Discount { get; set; }
+        /// <summary></summary>
         [Column] public decimal? ExtendedPrice { get; set; }
+        /// <summary></summary>
         [Column] public decimal? Freight { get; set; }
     }
 
@@ -315,12 +502,19 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Order_Details_Extended
     {
+        /// <summary></summary>
         [Column] public int OrderID { get; set; }
+        /// <summary></summary>
         [Column] public int ProductID { get; set; }
+        /// <summary></summary>
         [Column] public string ProductName { get; set; }
+        /// <summary></summary>
         [Column] public decimal UnitPrice { get; set; }
+        /// <summary></summary>
         [Column] public short Quantity { get; set; }
+        /// <summary></summary>
         [Column] public float Discount { get; set; }
+        /// <summary></summary>
         [Column] public decimal? ExtendedPrice { get; set; }
     }
 
@@ -329,7 +523,9 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Order_Subtotal
     {
+        /// <summary></summary>
         [Column] public int OrderID { get; set; }
+        /// <summary></summary>
         [Column] public decimal? Subtotal { get; set; }
     }
 
@@ -338,25 +534,45 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Orders_Qry
     {
+        /// <summary></summary>
         [Column] public int OrderID { get; set; }
+        /// <summary></summary>
         [Column] public string CustomerID { get; set; }
+        /// <summary></summary>
         [Column] public int? EmployeeID { get; set; }
+        /// <summary></summary>
         [Column] public DateTime? OrderDate { get; set; }
+        /// <summary></summary>
         [Column] public DateTime? RequiredDate { get; set; }
+        /// <summary></summary>
         [Column] public DateTime? ShippedDate { get; set; }
+        /// <summary></summary>
         [Column] public int? ShipVia { get; set; }
+        /// <summary></summary>
         [Column] public decimal? Freight { get; set; }
+        /// <summary></summary>
         [Column] public string ShipName { get; set; }
+        /// <summary></summary>
         [Column] public string ShipAddress { get; set; }
+        /// <summary></summary>
         [Column] public string ShipCity { get; set; }
+        /// <summary></summary>
         [Column] public string ShipRegion { get; set; }
+        /// <summary></summary>
         [Column] public string ShipPostalCode { get; set; }
+        /// <summary></summary>
         [Column] public string ShipCountry { get; set; }
+        /// <summary></summary>
         [Column] public string CompanyName { get; set; }
+        /// <summary></summary>
         [Column] public string Address { get; set; }
+        /// <summary></summary>
         [Column] public string City { get; set; }
+        /// <summary></summary>
         [Column] public string Region { get; set; }
+        /// <summary></summary>
         [Column] public string PostalCode { get; set; }
+        /// <summary></summary>
         [Column] public string Country { get; set; }
     }
 
@@ -365,8 +581,11 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Product_Sales_for_1997
     {
+        /// <summary></summary>
         [Column] public string CategoryName { get; set; }
+        /// <summary></summary>
         [Column] public string ProductName { get; set; }
+        /// <summary></summary>
         [Column] public decimal? ProductSales { get; set; }
     }
 
@@ -375,7 +594,9 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Products_Above_Average_Price
     {
+        /// <summary></summary>
         [Column] public string ProductName { get; set; }
+        /// <summary></summary>
         [Column] public decimal? UnitPrice { get; set; }
     }
 
@@ -384,10 +605,15 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Products_by_Category
     {
+        /// <summary></summary>
         [Column] public string CategoryName { get; set; }
+        /// <summary></summary>
         [Column] public string ProductName { get; set; }
+        /// <summary></summary>
         [Column] public string QuantityPerUnit { get; set; }
+        /// <summary></summary>
         [Column] public short? UnitsInStock { get; set; }
+        /// <summary></summary>
         [Column] public bool Discontinued { get; set; }
     }
 
@@ -396,9 +622,13 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Quarterly_Order
     {
+        /// <summary></summary>
         [Column] public string CustomerID { get; set; }
+        /// <summary></summary>
         [Column] public string CompanyName { get; set; }
+        /// <summary></summary>
         [Column] public string City { get; set; }
+        /// <summary></summary>
         [Column] public string Country { get; set; }
     }
 
@@ -407,9 +637,13 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Sales_by_Category
     {
+        /// <summary></summary>
         [Column] public int CategoryID { get; set; }
+        /// <summary></summary>
         [Column] public string CategoryName { get; set; }
+        /// <summary></summary>
         [Column] public string ProductName { get; set; }
+        /// <summary></summary>
         [Column] public decimal? ProductSales { get; set; }
     }
 
@@ -418,9 +652,13 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Sales_Totals_by_Amount
     {
+        /// <summary></summary>
         [Column] public decimal? SaleAmount { get; set; }
+        /// <summary></summary>
         [Column] public int OrderID { get; set; }
+        /// <summary></summary>
         [Column] public string CompanyName { get; set; }
+        /// <summary></summary>
         [Column] public DateTime? ShippedDate { get; set; }
     }
 
@@ -429,8 +667,11 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Summary_of_Sales_by_Quarter
     {
+        /// <summary></summary>
         [Column] public DateTime? ShippedDate { get; set; }
+        /// <summary></summary>
         [Column] public int OrderID { get; set; }
+        /// <summary></summary>
         [Column] public decimal? Subtotal { get; set; }
     }
 
@@ -439,8 +680,11 @@ namespace PetaPoco4Core.Database.Northwind
     [ExplicitColumns]
     public class Summary_of_Sales_by_Year
     {
+        /// <summary></summary>
         [Column] public DateTime? ShippedDate { get; set; }
+        /// <summary></summary>
         [Column] public int OrderID { get; set; }
+        /// <summary></summary>
         [Column] public decimal? Subtotal { get; set; }
     }
 }

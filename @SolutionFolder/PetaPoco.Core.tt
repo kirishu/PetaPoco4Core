@@ -465,21 +465,26 @@ class SqlServerSchemaReader : SchemaReader
         {
             cmd.Connection=_connection;
             cmd.CommandText=
-                @"SELECT TABLE_CATALOG AS [Database],
-                         TABLE_SCHEMA AS Owner,
-                         TABLE_NAME AS TableName,
-                         COLUMN_NAME AS ColumnName,
-                         ORDINAL_POSITION AS OrdinalPosition,
-                         COLUMN_DEFAULT AS DefaultSetting,
-                         IS_NULLABLE AS IsNullable, DATA_TYPE AS DataType,
-                         CHARACTER_MAXIMUM_LENGTH AS MaxLength,
-                         DATETIME_PRECISION AS DatePrecision,
-                         COLUMNPROPERTY(object_id('[' + TABLE_SCHEMA + '].[' + TABLE_NAME + ']'), COLUMN_NAME, 'IsIdentity') AS IsIdentity,
-                         COLUMNPROPERTY(object_id('[' + TABLE_SCHEMA + '].[' + TABLE_NAME + ']'), COLUMN_NAME, 'IsComputed') as IsComputed
-                    FROM INFORMATION_SCHEMA.COLUMNS
-                   WHERE TABLE_NAME=@tableName
-                     AND TABLE_SCHEMA=@schemaName
-                   ORDER BY OrdinalPosition ASC";
+@"SELECT cif.TABLE_CATALOG AS [Database]
+     , cif.TABLE_SCHEMA AS Owner
+     , cif.TABLE_NAME AS TableName
+     , cif.COLUMN_NAME AS ColumnName
+     , cif.ORDINAL_POSITION AS OrdinalPosition
+     , cif.COLUMN_DEFAULT AS DefaultSetting
+     , cif.IS_NULLABLE AS IsNullable
+     , cif.DATA_TYPE AS DataType
+     , cif.CHARACTER_MAXIMUM_LENGTH AS MaxLength
+     , cif.DATETIME_PRECISION AS DatePrecision
+     , COLUMNPROPERTY(object_id('[' + TABLE_SCHEMA + '].[' + TABLE_NAME + ']'), COLUMN_NAME, 'IsIdentity') AS IsIdentity
+     , COLUMNPROPERTY(object_id('[' + TABLE_SCHEMA + '].[' + TABLE_NAME + ']'), COLUMN_NAME, 'IsComputed') as IsComputed
+     , exp.value   AS commnet
+  FROM INFORMATION_SCHEMA.COLUMNS AS cif
+       LEFT JOIN sys.tables AS tbl ON cif.TABLE_NAME = tbl.name
+       LEFT JOIN sys.columns AS col ON tbl.object_id = col.object_id AND cif.COLUMN_NAME = col.name
+       LEFT JOIN sys.extended_properties AS exp ON col.object_id = exp.major_id AND col.column_id = exp.minor_id
+ WHERE cif.TABLE_NAME = @tableName
+   AND cif.TABLE_SCHEMA = @schemaName
+ ORDER BY OrdinalPosition ASC;";
 
             var p = cmd.CreateParameter();
             p.ParameterName = "@tableName";
@@ -502,6 +507,8 @@ class SqlServerSchemaReader : SchemaReader
                     col.PropertyType=GetPropertyType(rdr["DataType"].ToString());
                     col.IsNullable=rdr["IsNullable"].ToString()=="YES";
                     col.IsAutoIncrement=((int)rdr["IsIdentity"])==1;
+                    col.Comment = Inflector.ConvertHtmlEscape(rdr["commnet"].ToString());
+                    col.DefaultValue = rdr["DefaultSetting"].ToString();
                     result.Add(col);
                 }
             }
@@ -1094,9 +1101,9 @@ class OracleSchemaReader : SchemaReader
                         PropertyName = CleanUp(rdr["ColumnName"].ToString()),
                         PropertyType = GetPropertyType(rdr["DataType"].ToString(), (rdr["DataType"] == DBNull.Value ? null : rdr["DataType"].ToString())),
                         IsNullable = rdr["IsNullable"].ToString() == "Y",
-                        IsAutoIncrement = false,
+                        IsAutoIncrement = (rdr["DataDefault"].ToString().IndexOf("NEXTVAL", StringComparison.CurrentCultureIgnoreCase) > 0),
                         Comment = rdr["comments"].ToString(),
-                        DefaultValue = "",
+                        DefaultValue = rdr["DataDefault"].ToString(),
                     };
                     result.Add(col);
                 }
@@ -1221,9 +1228,11 @@ class OracleSchemaReader : SchemaReader
         , utc.data_type DataType
         , utc.data_scale DataScale
         , utc.nullable IsNullable
-        , ucc.comments 
+        , ucc.comments
+        , dtc.data_default DataDefault
      from USER_TAB_COLS utc
           left join USER_COL_COMMENTS ucc on utc.table_name = ucc.table_name and utc.column_name  = ucc.column_name
+          left join DBA_TAB_COLUMNS dtc on utc.table_name = dtc.table_name and utc.column_name  = dtc.column_name
     where utc.table_name = upper(:tableName)
     order by utc.column_id";
 

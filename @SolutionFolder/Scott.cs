@@ -8,7 +8,7 @@
 //     Provider:               `Oracle.DataAccess.Client`
 //     Schema:                 ``
 //     Include Views:          `False`
-//     Genetated:              `2020/02/24 02:08:13`
+//     Genetated:              `2020/02/24 16:55:46`
 
 using System;
 using PetaPoco;
@@ -102,6 +102,60 @@ namespace PetaPoco4Core.Database.Scoot
         [Column("LOSAL")] public decimal? Losal { get { return _Losal; } set { _Losal = value; MarkColumnModified("LOSAL"); } } decimal? _Losal;
         /// <summary></summary>
         [Column("HISAL")] public decimal? Hisal { get { return _Hisal; } set { _Hisal = value; MarkColumnModified("HISAL"); } } decimal? _Hisal;
+    }
+
+    /// <summary>テストテーブル - オートナンバー</summary>
+    [TableName("TEST_AUTO_NUMBER")]
+    [PrimaryKey("KEY03", AutoIncrement=false)]
+    [ExplicitColumns]
+    public class TestAutoNumber: PetaPoco.PetaPocoRecord<TestAutoNumber>
+    {
+        /// <summary>プライマリキー</summary>
+        [Column("KEY03")] public decimal Key03 { get { return _Key03; } set { _Key03 = value; MarkColumnModified("KEY03"); } } decimal _Key03;
+        /// <summary>bool型の列</summary>
+        [Column("COL_BOOL")] public decimal ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("COL_BOOL"); } } decimal _ColBool;
+        /// <summary>int型の列</summary>
+        [Column("COL_INT")] public decimal? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("COL_INT"); } } decimal? _ColInt;
+        /// <summary>decimal型の列</summary>
+        [Column("COL_DEC")] public decimal? ColDec { get { return _ColDec; } set { _ColDec = value; MarkColumnModified("COL_DEC"); } } decimal? _ColDec;
+        /// <summary>varchar型の列</summary>
+        [Column("COL_VARCHAR")] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("COL_VARCHAR"); } } string _ColVarchar;
+        /// <summary>作成者</summary>
+        [Column("CREATE_BY")] public string CreateBy { get { return _CreateBy; } set { _CreateBy = value; MarkColumnModified("CREATE_BY"); } } string _CreateBy;
+        /// <summary>作成日時</summary>
+        [Column("CREATE_DT")] public string CreateDt { get { return _CreateDt; } set { _CreateDt = value; MarkColumnModified("CREATE_DT"); } } string _CreateDt;
+        /// <summary>更新者</summary>
+        [Column("UPDATE_BY")] public string UpdateBy { get { return _UpdateBy; } set { _UpdateBy = value; MarkColumnModified("UPDATE_BY"); } } string _UpdateBy;
+        /// <summary>更新日時</summary>
+        [Column("UPDATE_DT")] public string UpdateDt { get { return _UpdateDt; } set { _UpdateDt = value; MarkColumnModified("UPDATE_DT"); } } string _UpdateDt;
+    }
+
+    /// <summary>テストテーブル - 複合キー</summary>
+    [TableName("TEST_COMPOSITE_KEY")]
+    [PrimaryKey("KEY01,KEY02", AutoIncrement=false)]
+    [ExplicitColumns]
+    public class TestCompositeKey: PetaPoco.PetaPocoRecord<TestCompositeKey>
+    {
+        /// <summary>プライマリキーその１</summary>
+        [Column("KEY01")] public string Key01 { get { return _Key01; } set { _Key01 = value; MarkColumnModified("KEY01"); } } string _Key01;
+        /// <summary>プライマリキーその２</summary>
+        [Column("KEY02")] public decimal Key02 { get { return _Key02; } set { _Key02 = value; MarkColumnModified("KEY02"); } } decimal _Key02;
+        /// <summary>bool型の列</summary>
+        [Column("COL_BOOL")] public decimal ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("COL_BOOL"); } } decimal _ColBool;
+        /// <summary>int型の列</summary>
+        [Column("COL_INT")] public decimal? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("COL_INT"); } } decimal? _ColInt;
+        /// <summary>decimal型の列</summary>
+        [Column("COL_DEC")] public decimal? ColDec { get { return _ColDec; } set { _ColDec = value; MarkColumnModified("COL_DEC"); } } decimal? _ColDec;
+        /// <summary>varchar型の列</summary>
+        [Column("COL_VARCHAR")] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("COL_VARCHAR"); } } string _ColVarchar;
+        /// <summary>作成者</summary>
+        [Column("CREATE_BY")] public string CreateBy { get { return _CreateBy; } set { _CreateBy = value; MarkColumnModified("CREATE_BY"); } } string _CreateBy;
+        /// <summary>作成日時</summary>
+        [Column("CREATE_DT")] public string CreateDt { get { return _CreateDt; } set { _CreateDt = value; MarkColumnModified("CREATE_DT"); } } string _CreateDt;
+        /// <summary>更新者</summary>
+        [Column("UPDATE_BY")] public string UpdateBy { get { return _UpdateBy; } set { _UpdateBy = value; MarkColumnModified("UPDATE_BY"); } } string _UpdateBy;
+        /// <summary>更新日時</summary>
+        [Column("UPDATE_DT")] public string UpdateDt { get { return _UpdateDt; } set { _UpdateDt = value; MarkColumnModified("UPDATE_DT"); } } string _UpdateDt;
     }
 
     /// <summary>テストテーブルほげ</summary>

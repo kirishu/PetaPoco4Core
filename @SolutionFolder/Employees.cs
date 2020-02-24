@@ -8,7 +8,7 @@
 //     Provider:               `MySql.Data.MySqlClient`
 //     Schema:                 ``
 //     Include Views:          `True`
-//     Genetated:              `2020/02/17 18:30:13`
+//     Genetated:              `2020/02/24 16:22:27`
 
 using System;
 using PetaPoco;
@@ -42,124 +42,178 @@ namespace PetaPoco4Core.Database.Employees
     [TableName("departments")]
     [PrimaryKey("dept_no", AutoIncrement=false)]
     [ExplicitColumns]
-    public class Department: PetaPoco.PetaPocoRecord<Department>
+    public class department: PetaPoco.PetaPocoRecord<department>
     {
         /// <summary></summary>
-        [Column("dept_no")] public string DeptNo { get { return _DeptNo; } set { _DeptNo = value; MarkColumnModified("dept_no"); } } string _DeptNo;
+        [Column] public string dept_no { get { return _dept_no; } set { _dept_no = value; MarkColumnModified("dept_no"); } } string _dept_no;
         /// <summary></summary>
-        [Column("dept_name")] public string DeptName { get { return _DeptName; } set { _DeptName = value; MarkColumnModified("dept_name"); } } string _DeptName;
+        [Column] public string dept_name { get { return _dept_name; } set { _dept_name = value; MarkColumnModified("dept_name"); } } string _dept_name;
     }
 
     /// <summary></summary>
     [TableName("dept_emp")]
     [PrimaryKey("emp_no,dept_no", AutoIncrement=false)]
     [ExplicitColumns]
-    public class DeptEmp: PetaPoco.PetaPocoRecord<DeptEmp>
+    public class dept_emp: PetaPoco.PetaPocoRecord<dept_emp>
     {
         /// <summary></summary>
-        [Column("emp_no")] public int EmpNo { get { return _EmpNo; } set { _EmpNo = value; MarkColumnModified("emp_no"); } } int _EmpNo;
+        [Column] public int emp_no { get { return _emp_no; } set { _emp_no = value; MarkColumnModified("emp_no"); } } int _emp_no;
         /// <summary></summary>
-        [Column("dept_no")] public string DeptNo { get { return _DeptNo; } set { _DeptNo = value; MarkColumnModified("dept_no"); } } string _DeptNo;
+        [Column] public string dept_no { get { return _dept_no; } set { _dept_no = value; MarkColumnModified("dept_no"); } } string _dept_no;
         /// <summary></summary>
-        [Column("from_date")] public DateTime FromDate { get { return _FromDate; } set { _FromDate = value; MarkColumnModified("from_date"); } } DateTime _FromDate;
+        [Column] public DateTime from_date { get { return _from_date; } set { _from_date = value; MarkColumnModified("from_date"); } } DateTime _from_date;
         /// <summary></summary>
-        [Column("to_date")] public DateTime ToDate { get { return _ToDate; } set { _ToDate = value; MarkColumnModified("to_date"); } } DateTime _ToDate;
+        [Column] public DateTime to_date { get { return _to_date; } set { _to_date = value; MarkColumnModified("to_date"); } } DateTime _to_date;
     }
 
     /// <summary></summary>
     [TableName("dept_manager")]
     [PrimaryKey("emp_no,dept_no", AutoIncrement=false)]
     [ExplicitColumns]
-    public class DeptManager: PetaPoco.PetaPocoRecord<DeptManager>
+    public class dept_manager: PetaPoco.PetaPocoRecord<dept_manager>
     {
         /// <summary></summary>
-        [Column("emp_no")] public int EmpNo { get { return _EmpNo; } set { _EmpNo = value; MarkColumnModified("emp_no"); } } int _EmpNo;
+        [Column] public int emp_no { get { return _emp_no; } set { _emp_no = value; MarkColumnModified("emp_no"); } } int _emp_no;
         /// <summary></summary>
-        [Column("dept_no")] public string DeptNo { get { return _DeptNo; } set { _DeptNo = value; MarkColumnModified("dept_no"); } } string _DeptNo;
+        [Column] public string dept_no { get { return _dept_no; } set { _dept_no = value; MarkColumnModified("dept_no"); } } string _dept_no;
         /// <summary></summary>
-        [Column("from_date")] public DateTime FromDate { get { return _FromDate; } set { _FromDate = value; MarkColumnModified("from_date"); } } DateTime _FromDate;
+        [Column] public DateTime from_date { get { return _from_date; } set { _from_date = value; MarkColumnModified("from_date"); } } DateTime _from_date;
         /// <summary></summary>
-        [Column("to_date")] public DateTime ToDate { get { return _ToDate; } set { _ToDate = value; MarkColumnModified("to_date"); } } DateTime _ToDate;
+        [Column] public DateTime to_date { get { return _to_date; } set { _to_date = value; MarkColumnModified("to_date"); } } DateTime _to_date;
     }
 
     /// <summary></summary>
     [TableName("employees")]
     [PrimaryKey("emp_no", AutoIncrement=false)]
     [ExplicitColumns]
-    public class Employee: PetaPoco.PetaPocoRecord<Employee>
+    public class employee: PetaPoco.PetaPocoRecord<employee>
     {
         /// <summary></summary>
-        [Column("emp_no")] public int EmpNo { get { return _EmpNo; } set { _EmpNo = value; MarkColumnModified("emp_no"); } } int _EmpNo;
+        [Column] public int emp_no { get { return _emp_no; } set { _emp_no = value; MarkColumnModified("emp_no"); } } int _emp_no;
         /// <summary></summary>
-        [Column("birth_date")] public DateTime BirthDate { get { return _BirthDate; } set { _BirthDate = value; MarkColumnModified("birth_date"); } } DateTime _BirthDate;
+        [Column] public DateTime birth_date { get { return _birth_date; } set { _birth_date = value; MarkColumnModified("birth_date"); } } DateTime _birth_date;
         /// <summary></summary>
-        [Column("first_name")] public string FirstName { get { return _FirstName; } set { _FirstName = value; MarkColumnModified("first_name"); } } string _FirstName;
+        [Column] public string first_name { get { return _first_name; } set { _first_name = value; MarkColumnModified("first_name"); } } string _first_name;
         /// <summary></summary>
-        [Column("last_name")] public string LastName { get { return _LastName; } set { _LastName = value; MarkColumnModified("last_name"); } } string _LastName;
+        [Column] public string last_name { get { return _last_name; } set { _last_name = value; MarkColumnModified("last_name"); } } string _last_name;
         /// <summary></summary>
-        [Column("gender")] public string Gender { get { return _Gender; } set { _Gender = value; MarkColumnModified("gender"); } } string _Gender;
+        [Column] public string gender { get { return _gender; } set { _gender = value; MarkColumnModified("gender"); } } string _gender;
         /// <summary></summary>
-        [Column("hire_date")] public DateTime HireDate { get { return _HireDate; } set { _HireDate = value; MarkColumnModified("hire_date"); } } DateTime _HireDate;
+        [Column] public DateTime hire_date { get { return _hire_date; } set { _hire_date = value; MarkColumnModified("hire_date"); } } DateTime _hire_date;
     }
 
     /// <summary></summary>
     [TableName("salaries")]
     [PrimaryKey("emp_no,from_date", AutoIncrement=false)]
     [ExplicitColumns]
-    public class Salary: PetaPoco.PetaPocoRecord<Salary>
+    public class salary: PetaPoco.PetaPocoRecord<salary>
     {
         /// <summary></summary>
-        [Column("emp_no")] public int EmpNo { get { return _EmpNo; } set { _EmpNo = value; MarkColumnModified("emp_no"); } } int _EmpNo;
+        [Column] public int emp_no { get { return _emp_no; } set { _emp_no = value; MarkColumnModified("emp_no"); } } int _emp_no;
         /// <summary></summary>
-        [Column("salary")] public int _Salary { get { return __Salary; } set { __Salary = value; MarkColumnModified("salary"); } } int __Salary;
+        [Column("salary")] public int _salary { get { return __salary; } set { __salary = value; MarkColumnModified("salary"); } } int __salary;
         /// <summary></summary>
-        [Column("from_date")] public DateTime FromDate { get { return _FromDate; } set { _FromDate = value; MarkColumnModified("from_date"); } } DateTime _FromDate;
+        [Column] public DateTime from_date { get { return _from_date; } set { _from_date = value; MarkColumnModified("from_date"); } } DateTime _from_date;
         /// <summary></summary>
-        [Column("to_date")] public DateTime ToDate { get { return _ToDate; } set { _ToDate = value; MarkColumnModified("to_date"); } } DateTime _ToDate;
+        [Column] public DateTime to_date { get { return _to_date; } set { _to_date = value; MarkColumnModified("to_date"); } } DateTime _to_date;
+    }
+
+    /// <summary>テストテーブル - オートナンバー</summary>
+    [TableName("TestAutoNumber")]
+    [PrimaryKey("Key03", AutoIncrement=true)]
+    [ExplicitColumns]
+    public class TestAutoNumber: PetaPoco.PetaPocoRecord<TestAutoNumber>
+    {
+        /// <summary>プライマリキー</summary>
+        [Column] public int Key03 { get { return _Key03; } set { _Key03 = value; MarkColumnModified("Key03"); } } int _Key03;
+        /// <summary>bool型の列</summary>
+        [Column] public bool ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("ColBool"); } } bool _ColBool;
+        /// <summary>int型の列</summary>
+        [Column] public int? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("ColInt"); } } int? _ColInt;
+        /// <summary>decimal型の列</summary>
+        [Column] public decimal? ColDec { get { return _ColDec; } set { _ColDec = value; MarkColumnModified("ColDec"); } } decimal? _ColDec;
+        /// <summary>varchar型の列</summary>
+        [Column] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("ColVarchar"); } } string _ColVarchar;
+        /// <summary>作成者</summary>
+        [Column] public string CreateBy { get { return _CreateBy; } set { _CreateBy = value; MarkColumnModified("CreateBy"); } } string _CreateBy;
+        /// <summary>作成日時</summary>
+        [Column] public DateTime CreateDt { get { return _CreateDt; } set { _CreateDt = value; MarkColumnModified("CreateDt"); } } DateTime _CreateDt;
+        /// <summary>更新者</summary>
+        [Column] public string UpdateBy { get { return _UpdateBy; } set { _UpdateBy = value; MarkColumnModified("UpdateBy"); } } string _UpdateBy;
+        /// <summary>更新日時</summary>
+        [Column] public DateTime UpdateDt { get { return _UpdateDt; } set { _UpdateDt = value; MarkColumnModified("UpdateDt"); } } DateTime _UpdateDt;
+    }
+
+    /// <summary>テストテーブル - 複合キー</summary>
+    [TableName("TestCompositeKey")]
+    [PrimaryKey("Key01,Key02", AutoIncrement=false)]
+    [ExplicitColumns]
+    public class TestCompositeKey: PetaPoco.PetaPocoRecord<TestCompositeKey>
+    {
+        /// <summary>プライマリキーその１</summary>
+        [Column] public string Key01 { get { return _Key01; } set { _Key01 = value; MarkColumnModified("Key01"); } } string _Key01;
+        /// <summary>プライマリキーその２</summary>
+        [Column] public int Key02 { get { return _Key02; } set { _Key02 = value; MarkColumnModified("Key02"); } } int _Key02;
+        /// <summary>bool型の列</summary>
+        [Column] public bool ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("ColBool"); } } bool _ColBool;
+        /// <summary>int型の列</summary>
+        [Column] public int? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("ColInt"); } } int? _ColInt;
+        /// <summary>decimal型の列</summary>
+        [Column] public decimal? ColDec { get { return _ColDec; } set { _ColDec = value; MarkColumnModified("ColDec"); } } decimal? _ColDec;
+        /// <summary>varchar型の列</summary>
+        [Column] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("ColVarchar"); } } string _ColVarchar;
+        /// <summary>作成者</summary>
+        [Column] public string CreateBy { get { return _CreateBy; } set { _CreateBy = value; MarkColumnModified("CreateBy"); } } string _CreateBy;
+        /// <summary>作成日時</summary>
+        [Column] public DateTime CreateDt { get { return _CreateDt; } set { _CreateDt = value; MarkColumnModified("CreateDt"); } } DateTime _CreateDt;
+        /// <summary>更新者</summary>
+        [Column] public string UpdateBy { get { return _UpdateBy; } set { _UpdateBy = value; MarkColumnModified("UpdateBy"); } } string _UpdateBy;
+        /// <summary>更新日時</summary>
+        [Column] public DateTime UpdateDt { get { return _UpdateDt; } set { _UpdateDt = value; MarkColumnModified("UpdateDt"); } } DateTime _UpdateDt;
     }
 
     /// <summary></summary>
     [TableName("titles")]
     [PrimaryKey("emp_no,title,from_date", AutoIncrement=false)]
     [ExplicitColumns]
-    public class Title: PetaPoco.PetaPocoRecord<Title>
+    public class title: PetaPoco.PetaPocoRecord<title>
     {
         /// <summary></summary>
-        [Column("emp_no")] public int EmpNo { get { return _EmpNo; } set { _EmpNo = value; MarkColumnModified("emp_no"); } } int _EmpNo;
+        [Column] public int emp_no { get { return _emp_no; } set { _emp_no = value; MarkColumnModified("emp_no"); } } int _emp_no;
         /// <summary></summary>
-        [Column("title")] public string _Title { get { return __Title; } set { __Title = value; MarkColumnModified("title"); } } string __Title;
+        [Column("title")] public string _title { get { return __title; } set { __title = value; MarkColumnModified("title"); } } string __title;
         /// <summary></summary>
-        [Column("from_date")] public DateTime FromDate { get { return _FromDate; } set { _FromDate = value; MarkColumnModified("from_date"); } } DateTime _FromDate;
+        [Column] public DateTime from_date { get { return _from_date; } set { _from_date = value; MarkColumnModified("from_date"); } } DateTime _from_date;
         /// <summary></summary>
-        [Column("to_date")] public DateTime? ToDate { get { return _ToDate; } set { _ToDate = value; MarkColumnModified("to_date"); } } DateTime? _ToDate;
+        [Column] public DateTime? to_date { get { return _to_date; } set { _to_date = value; MarkColumnModified("to_date"); } } DateTime? _to_date;
     }
 
     /// <summary>VIEW</summary>
     [TableName("current_dept_emp")]
     [ExplicitColumns]
-    public class CurrentDeptEmp
+    public class current_dept_emp
     {
         /// <summary></summary>
-        [Column("emp_no")] public int EmpNo { get; set; }
+        [Column] public int emp_no { get; set; }
         /// <summary></summary>
-        [Column("dept_no")] public string DeptNo { get; set; }
+        [Column] public string dept_no { get; set; }
         /// <summary></summary>
-        [Column("from_date")] public DateTime? FromDate { get; set; }
+        [Column] public DateTime? from_date { get; set; }
         /// <summary></summary>
-        [Column("to_date")] public DateTime? ToDate { get; set; }
+        [Column] public DateTime? to_date { get; set; }
     }
 
     /// <summary>VIEW</summary>
     [TableName("dept_emp_latest_date")]
     [ExplicitColumns]
-    public class DeptEmpLatestDate
+    public class dept_emp_latest_date
     {
         /// <summary></summary>
-        [Column("emp_no")] public int EmpNo { get; set; }
+        [Column] public int emp_no { get; set; }
         /// <summary></summary>
-        [Column("from_date")] public DateTime? FromDate { get; set; }
+        [Column] public DateTime? from_date { get; set; }
         /// <summary></summary>
-        [Column("to_date")] public DateTime? ToDate { get; set; }
+        [Column] public DateTime? to_date { get; set; }
     }
 }
 
