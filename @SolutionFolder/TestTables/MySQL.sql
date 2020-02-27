@@ -1,5 +1,20 @@
 -- =======================================================================================
--- CREATE
+-- usage : mysql -U mysql < MySQL.sql
+-- =======================================================================================
+-- ---------------------------------------------------------------------------------------
+-- CREATE DATABASE
+-- ---------------------------------------------------------------------------------------
+CREATE DATABASE IF NOT EXISTS PetaPocoSample
+       CHARACTER SET utf8mb4
+       COLLATE utf8mb4_general_ci;
+
+CREATE USER 'testman'@'%' IDENTIFIED BY 'testpwd';
+GRANT ALL ON PetaPocoSample.* TO 'testman'@'%';
+
+USE PetaPocoSample;
+-- ---------------------------------------------------------------------------------------
+-- CREATE OBJECTS
+-- ---------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS TestCompositeKey (
       Key01                 VARCHAR(2)        NOT NULL      COMMENT 'プライマリキーその１'
     , Key02                 int               NOT NULL      COMMENT 'プライマリキーその２'
@@ -15,7 +30,7 @@ CREATE TABLE IF NOT EXISTS TestCompositeKey (
 )
 COMMENT='テストテーブル - 複合キー';
 
--- データINSERT
+-- data for TestCompositeKey
 INSERT INTO TestCompositeKey VALUES ('01',01,true,  999,123456.78,'北海道','system',NOW(),'system',NOW());
 INSERT INTO TestCompositeKey VALUES ('02',02,false, 999,123456.78,'青森県','system',NOW(),'system',NOW());
 INSERT INTO TestCompositeKey VALUES ('03',03,true,  999,123456.78,'岩手県','system',NOW(),'system',NOW());
@@ -32,8 +47,7 @@ INSERT INTO TestCompositeKey VALUES ('13',13,false, 999,123456.78,'東京都','s
 INSERT INTO TestCompositeKey VALUES ('14',14,true,  999,123456.78,'神奈川県','system',NOW(),'system',NOW());
 INSERT INTO TestCompositeKey VALUES ('15',15,false, 999,123456.78,'新潟県','system',NOW(),'system',NOW());
 
--- =======================================================================================
--- CREATE
+-- ---------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS TestAutoNumber (
       Key03                 int               NOT NULL AUTO_INCREMENT COMMENT 'プライマリキー'
     , ColBool               bool              NOT NULL      COMMENT 'bool型の列'
@@ -47,7 +61,3 @@ CREATE TABLE IF NOT EXISTS TestAutoNumber (
     , CONSTRAINT PK_TestAutoNumber PRIMARY KEY (Key03)
 )
 COMMENT='テストテーブル - オートナンバー';
-
-
-
-

@@ -1,7 +1,7 @@
 <#@ include file="PetaPoco.Core.tt" #>
 <#
     // ******** コマンド *********
-    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" Employees.tt -o Employees.cs
+    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" MySQL.tt -o MySQL.cs
     // ******** 設定ここから *********
     
     DatabaseName = "employees";

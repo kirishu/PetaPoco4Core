@@ -13,7 +13,6 @@ CREATE TABLE test_composite_key (
     , update_dt              timestamp(3)      NOT NULL
     , PRIMARY KEY (key01, key02)
 );
-
 COMMENT ON TABLE test_composite_key IS 'テストテーブル - 複合キー';
 COMMENT ON COLUMN test_composite_key.key01              IS 'プライマリキーその１';
 COMMENT ON COLUMN test_composite_key.key02              IS 'プライマリキーその２';
@@ -59,7 +58,6 @@ CREATE TABLE IF NOT EXISTS test_auto_number (
     , update_dt              timestamp(3)      NOT NULL
     , PRIMARY KEY (key03)
 );
-
 COMMENT ON TABLE test_auto_number IS 'テストテーブル - オートナンバー';
 COMMENT ON COLUMN test_auto_number.key03              IS 'プライマリキー';
 COMMENT ON COLUMN test_auto_number.col_bool           IS 'bool型の列';
@@ -70,7 +68,3 @@ COMMENT ON COLUMN test_auto_number.create_by          IS '作成者';
 COMMENT ON COLUMN test_auto_number.create_dt          IS '作成日時';
 COMMENT ON COLUMN test_auto_number.update_by          IS '更新者';
 COMMENT ON COLUMN test_auto_number.update_dt          IS '更新日時';
-
-
-
-

@@ -1,18 +1,20 @@
 <#@ include file="PetaPoco.Core.tt" #>
 <#
     // ******** コマンド *********
-    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" Scott.tt -o Scott.cs
+    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" PostgreSQL.tt -o PostgreSQL.cs
     // ******** 設定ここから *********
     
-    DatabaseName = "Scott";
-    ConnectionString = @"Data Source=CentOSdb@Scott;User Id=SCOTT;Password=tiger;Pooling=true;";
-    ProviderName = "Oracle.DataAccess.Client";
-    Namespace = "PetaPoco4Core.Database.Scoot";
+    DatabaseName = "dvdrental";
+    ConnectionString = @"Server=192.168.1.212;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
+    ProviderName = "Npgsql";
+    Namespace = "PetaPoco4Core.Database.DvdRental";
 
-    ConvertPascalCase = true;      // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
-    IncludeViews = false;            // Viewも対象にするならtrue
+    ConvertPascalCase = true;       // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
     
     RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
+    
+    IncludeViews = true;           // Viewも対象にするならtrue
+    
     ClassPrefix = "";
     ClassSuffix = "";
     // ******** 設定ここまで *********

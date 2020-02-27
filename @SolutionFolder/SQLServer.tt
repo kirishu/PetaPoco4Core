@@ -1,20 +1,18 @@
 <#@ include file="PetaPoco.Core.tt" #>
 <#
     // ******** コマンド *********
-    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" DvdRental.tt -o DvdRental.cs
+    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" SQLServer.tt -o SQLServer.cs
     // ******** 設定ここから *********
     
-    DatabaseName = "dvdrental";
-    ConnectionString = @"Server=192.168.1.212;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
-    ProviderName = "Npgsql";
-    Namespace = "PetaPoco4Core.Database.DvdRental";
+    DatabaseName = "Northwind";
+    ConnectionString = @"Data Source=192.168.1.210;Database=Northwind;Integrated Security=False;User ID=testman;Password=testpwd;Pooling=true;";
+    ProviderName = "System.Data.SqlClient";
+    Namespace = "PetaPoco4Core.Database.Northwind";
 
-    ConvertPascalCase = true;       // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
+    ConvertPascalCase = false;      // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
+    IncludeViews = true;            // Viewも対象にするならtrue
     
     RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
-    
-    IncludeViews = true;           // Viewも対象にするならtrue
-    
     ClassPrefix = "";
     ClassSuffix = "";
     // ******** 設定ここまで *********
