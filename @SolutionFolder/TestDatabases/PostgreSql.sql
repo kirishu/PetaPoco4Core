@@ -71,6 +71,37 @@ INSERT INTO tr_composite_key VALUES ('15',15,false, 999,123456.78,'新潟県','h
 CREATE SEQUENCE seq_a01 AS bigint;
 CREATE TABLE IF NOT EXISTS tr_auto_number (
       key03                  bigint            NOT NULL DEFAULT nextval('seq_a01')
+    , key01                  varchar(2)
+    , col_int                int
+    , PRIMARY KEY (key03)
+);
+
+COMMENT ON TABLE tr_auto_number IS 'テストテーブル - オートナンバー';
+COMMENT ON COLUMN tr_auto_number.key03              IS 'オートナンバーキー';
+COMMENT ON COLUMN tr_auto_number.key02              IS 'プライマリキーその２';
+COMMENT ON COLUMN tr_auto_number.col_int            IS 'intの列';
+
+-- ---------------------------------------------------------------------------------------
+CREATE VIEW vi_hoge_fuga AS
+  SELECT tbl1.key01              AS tbl1_key01
+       , tbl1.key02              AS tbl1_key02
+       , tbl1.col_bool           AS tbl1_col_bool
+       , tbl1.col_int            AS tbl1_col_int
+       , tbl1.col_dec            AS tbl1_col_dec
+       , tbl1.col_varchar        AS tbl1_col_varchar
+       , tbl1.update_by          AS tbl1_update_by
+       , tbl1.update_dt          AS tbl1_update_dt
+       , tbl2.col_int            AS tbl2_col_int
+    FROM tr_composite_key tbl1
+         LEFT JOIN tr_auto_number tbl2 ON tbl1.key02 = tbl2.key02;
+
+COMMENT ON VIEW vi_hoge_fuga IS 'テストビュー その1';
+COMMENT ON COLUMN vi_hoge_fuga.tbl1_key01              IS 'ほげ';
+COMMENT ON COLUMN vi_hoge_fuga.tbl1_key02              IS 'ふが';
+
+-- ---------------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS tr_columns (
+      key01                  varchar(2)        NOT NULL
     , col_varchar            varchar(50)
     , col_char               char(3)
     , col_bigint             bigint
@@ -85,42 +116,21 @@ CREATE TABLE IF NOT EXISTS tr_auto_number (
     , col_text               text
     , col_bytea              bytea
     , col_timestamp3         timestamp(3)      NOT NULL
-    , PRIMARY KEY (key03)
+    , PRIMARY KEY (key01)
 );
-
-COMMENT ON TABLE tr_auto_number IS 'テストテーブル - オートナンバー';
-COMMENT ON COLUMN tr_auto_number.key03              IS 'プライマリキー';
-COMMENT ON COLUMN tr_auto_number.col_varchar        IS 'varcharの列';
-COMMENT ON COLUMN tr_auto_number.col_char           IS 'charの列';
-COMMENT ON COLUMN tr_auto_number.col_bigint         IS 'bigintの列';
-COMMENT ON COLUMN tr_auto_number.col_int            IS 'intの列';
-COMMENT ON COLUMN tr_auto_number.col_smallint       IS 'smallintの列';
-COMMENT ON COLUMN tr_auto_number.col_bool           IS 'boolの列';
-COMMENT ON COLUMN tr_auto_number.col_decimal        IS 'decimalの列';
-COMMENT ON COLUMN tr_auto_number.col_numeric        IS 'numericの列';
-COMMENT ON COLUMN tr_auto_number.col_date           IS 'dateの列';
-COMMENT ON COLUMN tr_auto_number.col_time           IS 'timeの列';
-COMMENT ON COLUMN tr_auto_number.col_timestamp      IS 'timestampの列';
-COMMENT ON COLUMN tr_auto_number.col_text           IS 'textの列';
-COMMENT ON COLUMN tr_auto_number.col_bytea          IS 'byteaの列';
-COMMENT ON COLUMN tr_auto_number.col_timestamp3     IS 'timestamp(3)の列';
-
--- ---------------------------------------------------------------------------------------
-CREATE VIEW vi_hoge_fuga AS
-  SELECT tbl1.key01              AS tbl1_key01
-       , tbl1.key02              AS tbl1_key02
-       , tbl1.col_bool           AS tbl1_col_bool
-       , tbl1.col_int            AS tbl1_col_int
-       , tbl1.col_dec            AS tbl1_col_dec
-       , tbl1.col_varchar        AS tbl1_col_varchar
-       , tbl1.update_by          AS tbl1_update_by
-       , tbl1.update_dt          AS tbl1_update_dt
-       , tbl2.col_bool           AS tbl2_col_bool
-       , tbl2.col_varchar        AS tbl2_col_varchar
-       , tbl2.col_timestamp3     AS tbl2_col_timestamp3
-    FROM tr_composite_key tbl1
-         LEFT JOIN tr_auto_number tbl2 ON tbl1.col_int = tbl2.col_int;
-
-COMMENT ON VIEW vi_hoge_fuga IS 'テストビュー その1';
-COMMENT ON COLUMN vi_hoge_fuga.tbl1_key01              IS 'ほげ';
-COMMENT ON COLUMN vi_hoge_fuga.tbl1_key02              IS 'ふが';
+COMMENT ON TABLE tr_columns IS 'テストテーブル - 列の型テスト';
+COMMENT ON COLUMN tr_columns.key01              IS 'プライマリキーその１';
+COMMENT ON COLUMN tr_columns.col_varchar        IS 'varcharの列';
+COMMENT ON COLUMN tr_columns.col_char           IS 'charの列';
+COMMENT ON COLUMN tr_columns.col_bigint         IS 'bigintの列';
+COMMENT ON COLUMN tr_columns.col_int            IS 'intの列';
+COMMENT ON COLUMN tr_columns.col_smallint       IS 'smallintの列';
+COMMENT ON COLUMN tr_columns.col_bool           IS 'boolの列';
+COMMENT ON COLUMN tr_columns.col_decimal        IS 'decimalの列';
+COMMENT ON COLUMN tr_columns.col_numeric        IS 'numericの列';
+COMMENT ON COLUMN tr_columns.col_date           IS 'dateの列';
+COMMENT ON COLUMN tr_columns.col_time           IS 'timeの列';
+COMMENT ON COLUMN tr_columns.col_timestamp      IS 'timestampの列';
+COMMENT ON COLUMN tr_columns.col_text           IS 'textの列';
+COMMENT ON COLUMN tr_columns.col_bytea          IS 'byteaの列';
+COMMENT ON COLUMN tr_columns.col_timestamp3     IS 'timestamp(3)の列';

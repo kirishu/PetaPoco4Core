@@ -8,26 +8,21 @@ namespace PetaPocoAppFx
 {
     public class ProcsSelect
     {
-        PetaPoco.DatabaseExtension _db;
-
-        Type T1;
-        
-
-
         public ProcsSelect()
         {
-            Database.PostgreSql.Config.ConnectionString = Program.ConnectionString;
-            _db = new Database.PostgreSql.DB();
 
             //typeTrCompositKey = typeof(Database.PostgreSql.TrCompositeKey);
 
         }
 
-        public void Execute()
+        public void ExecutePostgreSql()
         {
-            var recs = _db.Fetch<Database.PostgreSql.TrCompositeKey>();
-            Console.WriteLine(recs.Count);
-
+            Database.PostgreSql.Config.ConnectionString = Program.ConnectionString;
+            using (var db = new Database.PostgreSql.DB())
+            {
+                var recs1 = db.Fetch<Database.PostgreSql.TrCompositeKey>();
+                var recs2 = db.Fetch<Database.PostgreSql.TrAutoNumber>();
+            }
         }
 
     }

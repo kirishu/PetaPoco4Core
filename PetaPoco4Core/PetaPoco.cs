@@ -41,7 +41,6 @@ using System.Threading;
 
 namespace PetaPoco
 {
-
     /// <summary>
     /// Holds the results of a paged request.
     /// </summary>
@@ -311,7 +310,7 @@ namespace PetaPoco
 
         // Member variables
         private string _connectionString;
-        private DbProviderFactory _factory;
+        private DbProviderFactory _dbFactory;
         private IDbConnection _sharedConnection;
         private IDbTransaction _transaction;
         private int _sharedConnectionDepth;
@@ -338,7 +337,32 @@ namespace PetaPoco
             }
 
             _connectionString = connectionString;
+            _dbFactory = GetDbFactory(dbType);
 
+            _transactionDepth = 0;
+            ForceDateTimesToUtc = true;
+            EnableAutoSelect = true;
+
+            if (_dbType == DBType.MySql
+                && _connectionString != null
+                && _connectionString.IndexOf("Allow User Variables=true", StringComparison.CurrentCulture) >= 0)
+            {
+                ParamPrefix = "?";
+            }
+            else if (_dbType == DBType.Oracle)
+            {
+                ParamPrefix = ":";
+            }
+        }
+
+        /// <summary>
+        /// Returns the .NET standard conforming DbProviderFactory. [kirishu]
+        /// </summary>
+        /// <param name="dbType">The database type.</param>
+        /// <returns>The db provider factory.</returns>
+        /// <exception cref="ArgumentException">Thrown when AssemblyName does not match a type.</exception>
+        protected DbProviderFactory GetDbFactory(DBType dbType)
+        {
             string providerName = string.Empty;
             string[] assemblyName;
 
@@ -384,75 +408,28 @@ namespace PetaPoco
                 throw new ArgumentException("DBType is not exist");
             }
 
-            _transactionDepth = 0;
-            ForceDateTimesToUtc = true;
-            EnableAutoSelect = true;
-
-            // DB factoryの取得
 #if (NETSTANDARD || NETCOREAPP)
             // .NET Core または .NET Standardのとき
-            _factory = GetFactoryCoreStandard(assemblyName);
-#else
-            // .NET Frameworkのとき
-            _factory = GetFactoryNetFramework(providerName);
-#endif
-
-            if (_dbType == DBType.MySql
-                && _connectionString != null
-                && _connectionString.IndexOf("Allow User Variables=true", StringComparison.CurrentCulture) >= 0)
-            {
-                ParamPrefix = "?";
-            }
-            else if (_dbType == DBType.Oracle)
-            {
-                ParamPrefix = ":";
-            }
-        }
-
-#if (NETSTANDARD || NETCOREAPP)
-        /// <summary>
-        /// Returns the .net standard conforming DbProviderFactory. [kirishu]
-        /// </summary>
-        /// <param name="assemblyQualifiedNames">The assembly qualified name of the provider factory.</param>
-        /// <returns>The db provider factory.</returns>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="assemblyQualifiedNames" /> does not match a type.</exception>
-        protected DbProviderFactory GetFactoryCoreStandard(params string[] assemblyQualifiedNames)
-        {
             Type ft = null;
-            foreach (var assemblyName in assemblyQualifiedNames)
+            foreach (var asm in assemblyName)
             {
-                ft = Type.GetType(assemblyName);
-                if (ft != null)
-                {
-                    break;
-                }
+                ft = Type.GetType(asm);
+                if (ft != null) break;
             }
-
             if (ft == null)
             {
                 throw new ArgumentException("Could not load the " + GetType().Name + " DbProviderFactory.");
             }
-
             return (DbProviderFactory)ft.GetField("Instance").GetValue(null);
-        }
-
 #else
-        /// <summary>
-        /// Returns the .net framework conforming DbProviderFactory. [kirishu]
-        /// </summary>
-        /// <param name="providerName">The assembly qualified name of the provider factory.</param>
-        /// <returns>The db provider factory.</returns>
-        /// <exception cref="ArgumentException">Thrown when <paramref name="providerName" /> does not match a type.</exception>
-        protected DbProviderFactory GetFactoryNetFramework(string providerName)
-        {
+            // .NET Frameworkのとき
             if (string.IsNullOrEmpty(providerName))
             {
                 throw new ArgumentException("Could not load the " + providerName + " DbProviderFactory.");
             }
-
             return DbProviderFactories.GetFactory(providerName);
-        }
 #endif
+        }
 
         /// <summary>
         /// Automatically close one open shared connection
@@ -495,7 +472,7 @@ namespace PetaPoco
         {
             if (_sharedConnectionDepth == 0)
             {
-                _sharedConnection = _factory.CreateConnection();
+                _sharedConnection = _dbFactory.CreateConnection();
                 _sharedConnection.ConnectionString = _connectionString;
 
                 if (_sharedConnection.State == ConnectionState.Broken)
@@ -547,7 +524,7 @@ namespace PetaPoco
 
         public IDataParameter CreateParameter()
         {
-            using (var conn = _sharedConnection ?? _factory.CreateConnection())
+            using (var conn = _sharedConnection ?? _dbFactory.CreateConnection())
             using (var comm = conn.CreateCommand())
                 return comm.CreateParameter();
         }
@@ -1695,7 +1672,7 @@ namespace PetaPoco
             }
         }
 
-#region Obsolete Update Methods
+        #region Obsolete Update Methods
         // 下記のメソッド（テーブル名を指定するもの）は使用禁止にします
         //      object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco);
         //      object Insert(string tableName, string primaryKeyName, object poco);
@@ -1714,7 +1691,7 @@ namespace PetaPoco
         {
             return this.InsertExecute(tableName, primaryKeyName, autoIncrement, poco);
         }
-#endregion
+        #endregion
 
         // Insert an annotated poco object
         public object Insert<T>(T poco) where T : IPetaPocoRecord<T>
@@ -1970,7 +1947,7 @@ namespace PetaPoco
         }
 
 
-#region Obsolete Update Methods
+        #region Obsolete Update Methods
         // 下記のメソッド（テーブル名を指定するものや、PKのキー名を取るもの）は使用禁止にします
         //      int Update(string tableName, string primaryKeyName, object poco, object primaryKeyValue);
         //      int Update(string tableName, string primaryKeyName, object poco);
@@ -2085,7 +2062,7 @@ namespace PetaPoco
         //{
         //    return Update(poco, null, null);
         //}
-#endregion
+        #endregion
 
 
         public int Update<T>(T poco) where T : IPetaPocoRecord<T>
@@ -2242,7 +2219,7 @@ namespace PetaPoco
             return Execute(new Sql(string.Format("UPDATE {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
         }
 
-#region Obsolete Update Methods
+        #region Obsolete Update Methods
         // 下記のメソッド（テーブル名を指定するものや、PKのキー名を取るもの）は使用禁止にします
         //  （ここまで書くならDMLでいいだろう）
         //      int Delete(string tableName, string primaryKeyName, object poco);
@@ -2276,7 +2253,7 @@ namespace PetaPoco
             return Execute(sql, primaryKeyValuePairs.Select(x => x.Value).ToArray());
         }
 
-#endregion
+        #endregion
 
         public int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>
         {
@@ -3199,7 +3176,7 @@ namespace PetaPoco
 
         // added by [kirishu]
         // ディープコピーメソッドを追加しました
-#region ICloneable Member
+        #region ICloneable Member
         object ICloneable.Clone()
         {
             return Clone();
@@ -3229,7 +3206,7 @@ namespace PetaPoco
             cloned._sqlFinal = _sqlFinal;
             return cloned;
         }
-#endregion
+        #endregion
 
 
         /// <summary>
