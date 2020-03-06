@@ -1,13 +1,13 @@
-<#@ include file="PetaPoco.Core.tt" #>
+<#@ include file="../../@SolutionFolder/PetaPoco.Core.tt" #>
 <#
     // ******** コマンド *********
-    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" MySQL.tt -o MySQL.cs
+    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" MySql.tt -o MySql.cs
     // ******** 設定ここから *********
     
-    DatabaseName = "employees";
-    ConnectionString = @"server=192.168.1.212;uid=testman;pwd=testpwd;database=employees;SslMode=None;";
+    DatabaseName = "PetaPocoSample";
+    ConnectionString = @"server=localhost;database=PetaPocoSample;uid=testman;pwd=testpwd;SslMode=None;";
     ProviderName = "MySql.Data.MySqlClient";
-    Namespace = "PetaPoco4Core.Database.Employees";
+    Namespace = "PetaPocoAppFx.Database.MySql";
 
     ConvertPascalCase = false;      // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
     RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
@@ -40,6 +40,6 @@
     if (tables.Count>0)
     {
 #>
-<#@ include file="PetaPoco.Generator.tt" #>
+<#@ include file="../../@SolutionFolder/PetaPoco.Generator.tt" #>
 <# } #>
 

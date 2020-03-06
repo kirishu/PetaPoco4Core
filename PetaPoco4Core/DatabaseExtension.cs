@@ -1,7 +1,10 @@
 ﻿/*
- * DatabaseExtension v2.0.0
- * PetaPoco.Database 拡張クラス
+ * DatabaseExtension - PetaPoco.Database Extension class
+ * Created by kirishu (zapshu@gmail.com)
+ * v4.7.1
+ * https://github.com/kirishu/PetaPoco4Core
  */
+
 #region 変更履歴
 // 25-Feb-2013 新規作成
 // 22-Dec-2013 [OnExecutingCommand] DEBUG時のSQLログをクエリアナライザから実行可能な形式にする
@@ -13,8 +16,8 @@
 // 21-Jun-2019 .NET Standard 2.0 に対応
 #endregion
 
-#pragma warning disable CA1305 // IFormatProvider を指定します
-#pragma warning disable CA1303 // ローカライズされるパラメーターとしてリテラルを渡さない
+#pragma warning disable CA1305 // Specify IFormatProvider
+#pragma warning disable CA1303 // Do not pass literals as localized parameters
 
 using System;
 using System.Data;
@@ -56,13 +59,11 @@ namespace PetaPoco
             : base(connectionString, dbType)
         {
             _dbType = dbType;
-
-#if DEBUG
-            _logger.Debug("[New Instance] {0}", connectionString);
-#endif
             base.CommandTimeout = 30;    // default 30sec
 
-            _useA5Mk2Params = (dbType == DBType.PostgreSQL);
+            _useA5Mk2Params = (dbType == DBType.PostgreSql);
+
+            _logger.Debug("[New Instance] {0}", connectionString);
         }
 
         /// <summary>
@@ -73,7 +74,6 @@ namespace PetaPoco
         {
             if (cmd == null) { throw new ArgumentNullException(nameof(cmd)); }
 
-#if DEBUG
             var text = cmd.CommandText;
             if (_useA5Mk2Params)
             {
@@ -92,9 +92,10 @@ namespace PetaPoco
             log.AppendLine(text);
             log.AppendLine("-- END COMMAND");
 
-            System.Diagnostics.Debug.WriteLine(log.ToString());
             _logger.Debug(log.ToString());
             _execTime = DateTime.Now;
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(log.ToString());
 #endif
         }
 
@@ -349,11 +350,11 @@ namespace PetaPoco
         /// <param name="cmd"></param>
         public override void OnExecutedCommand(IDbCommand cmd)
         {
-#if DEBUG
             TimeSpan ts = DateTime.Now - _execTime;
             var log = string.Format("[OnExecutedCommand] {0} milliseconds", ts.TotalMilliseconds);
-            System.Diagnostics.Debug.WriteLine(log);
             _logger.Debug(log);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(log);
 #endif
         }
 

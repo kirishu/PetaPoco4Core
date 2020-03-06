@@ -10,7 +10,7 @@
         /// <summary>
         /// dvdlental Database Object
         /// </summary>
-        public DB() : base(Constr, DBType.PostgreSQL)
+        public DB() : base(Constr, DBType.PostgreSql)
         {
         }
     }

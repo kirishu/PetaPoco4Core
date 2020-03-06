@@ -1,4 +1,4 @@
-/* PetaPoco v4.0.3.12 - A Tiny ORMish thing for your POCO's.
+﻿/* PetaPoco v4.0.3.12 - A Tiny ORMish thing for your POCO's.
  * Copyright 2011-2012 Topten Software.  All Rights Reserved.
  *
  * Apache License 2.0 - http://www.toptensoftware.com/petapoco/license
@@ -8,8 +8,9 @@
  * and Adam Schroder (@schotime) for lots of suggestions, improvements and Oracle support
  */
 /* Modified by kirishu (zapshu@gmail.com)
+ * v4.7.1
  * https://github.com/kirishu/PetaPoco4Core
-*/
+ */
 
 #region Suppressions
 #pragma warning disable CS1591 // CS1591: Missing XML comment for publicly visible type or member
@@ -293,9 +294,8 @@ namespace PetaPoco
         {
             NotSet,
             SqlServer,
-            SqlServerCE,
             MySql,
-            PostgreSQL,
+            PostgreSql,
             Oracle,
             SQLite
         }
@@ -364,18 +364,11 @@ namespace PetaPoco
                     "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess",
                 };
             }
-            else if (dbType == DBType.PostgreSQL)
+            else if (dbType == DBType.PostgreSql)
             {
                 providerName = "Npgsql";
                 assemblyName = new string[] {
                     "Npgsql.NpgsqlFactory, Npgsql, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
-                };
-            }
-            else if (dbType == DBType.SqlServerCE)
-            {
-                providerName = "System.Data.SqlServerCe.3.5";
-                assemblyName = new string[] {
-                    "System.Data.SqlServerCe.SqlCeProviderFactory, System.Data.SqlServerCe, Culture=neutral, PublicKeyToken=89845dcd8080cc91",
                 };
             }
             else if (dbType == DBType.SQLite)
@@ -753,7 +746,7 @@ namespace PetaPoco
                     p.Value = (item as AnsiString).Value;
                     p.DbType = DbType.AnsiString;
                 }
-                else if (t == typeof(bool) && _dbType != DBType.PostgreSQL)
+                else if (t == typeof(bool) && _dbType != DBType.PostgreSql)
                 {
                     p.Value = ((bool)item) ? 1 : 0;
                 }
@@ -1020,11 +1013,6 @@ namespace PetaPoco
                 sqlPage = string.Format("SELECT * FROM (SELECT ROW_NUMBER() OVER ({0}) peta_rn, {1}) peta_paged WHERE peta_rn>@{2} AND peta_rn<=@{3}",
                                         sqlOrderBy ?? "ORDER BY (SELECT NULL /*peta_dual*/)", sqlSelectRemoved, args.Length, args.Length + 1);
                 args = args.Concat(new object[] { skip, skip + take }).ToArray();
-            }
-            else if (_dbType == DBType.SqlServerCE)
-            {
-                sqlPage = string.Format("{0}\nOFFSET @{1} ROWS FETCH NEXT @{2} ROWS ONLY", sql, args.Length, args.Length + 1);
-                args = args.Concat(new object[] { skip, take }).ToArray();
             }
             else
             {
@@ -1696,7 +1684,7 @@ namespace PetaPoco
                 case DBType.MySql:
                     return string.Format("`{0}`", str);
 
-                case DBType.PostgreSQL:
+                case DBType.PostgreSql:
                     return string.Format("\"{0}\"", str);
 
                 case DBType.Oracle:
@@ -1810,12 +1798,6 @@ namespace PetaPoco
 
                             switch (_dbType)
                             {
-                                case DBType.SqlServerCE:
-                                    DoPreExecute(cmd);
-                                    cmd.ExecuteNonQuery();
-                                    OnExecutedCommand(cmd);
-                                    id = ExecuteScalar<object>("SELECT @@@IDENTITY AS NewID;");
-                                    break;
                                 case DBType.SqlServer:
                                     cmd.CommandText += ";\nSELECT SCOPE_IDENTITY() AS NewID;";
                                     DoPreExecute(cmd);
@@ -1828,7 +1810,7 @@ namespace PetaPoco
                                     id = cmd.ExecuteScalar();
                                     OnExecutedCommand(cmd);
                                     break;
-                                case DBType.PostgreSQL:
+                                case DBType.PostgreSql:
                                     if (primaryKeyName != null)
                                     {
                                         cmd.CommandText += string.Format(" returning {0} as NewID", EscapeSqlIdentifier(primaryKeyName));

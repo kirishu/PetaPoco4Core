@@ -126,7 +126,7 @@ namespace PetaPoco4Core.Test.PostgreSql
             var ex = Assert.Throws<System.TimeoutException>(() =>
             {
                 var constr = "Server=8.8.8.8;Port=5432;Timeout=10;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSQL))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -144,7 +144,7 @@ namespace PetaPoco4Core.Test.PostgreSql
             var ex = Assert.Throws<System.Net.Sockets.SocketException>(() =>
             {
                 var constr = "Server=8.8.8.8;Port=5432;Timeout=30;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSQL))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -220,7 +220,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
             var ex = Assert.Throws<System.Net.Sockets.SocketException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSQL))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -237,7 +237,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSQL))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -254,7 +254,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSQL))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }

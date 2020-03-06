@@ -93,6 +93,7 @@ bool IncludeViews = false;
 bool GenerateCommon = true;
 bool GeneratePocos = true;
 bool TrackModifiedColumns = false;
+string DBType = "";
 
 public static bool ConvertPascalCase;
 
@@ -266,7 +267,7 @@ Tables LoadTables()
         Tables result;
         using(var conn=_factory.CreateConnection())
         {
-            conn.ConnectionString=ConnectionString;
+            conn.ConnectionString = ConnectionString;
             conn.Open();
 
             SchemaReader reader=null;
@@ -274,36 +275,34 @@ Tables LoadTables()
             if (_factory.GetType().Name == "MySqlClientFactory")
             {
                 // MySql
-                reader=new MySqlSchemaReader();
+				DBType = "DBType.MySql";
+                reader = new MySqlSchemaReader();
             }
-            //else if (_factory.GetType().Name == "SqlCeProviderFactory")
-            //{
-            //    // SQL CE
-            //    reader=new SqlServerCeSchemaReader();
-            //}
             else if (_factory.GetType().Name == "NpgsqlFactory")
             {
                 // PostgreSQL
-                reader=new PostgreSqlSchemaReader();
+				DBType = "DBType.PostgreSql";
+                reader = new PostgreSqlSchemaReader();
             }
             else if (_factory.GetType().Name == "OracleClientFactory")
             {
                 // Oracle
-                reader=new OracleSchemaReader();
+				DBType = "DBType.Oracle";
+                reader = new OracleSchemaReader();
             }
             else
             {
                 // Assume SQL Server
-                reader=new SqlServerSchemaReader();
+				DBType = "DBType.SqlServer";
+                reader = new SqlServerSchemaReader();
             }
 
-            //***reader.outer=this;
-            result=reader.ReadSchema(conn, _factory);
+            result = reader.ReadSchema(conn, _factory);
 
             // Remove unrequired tables/views
             for (int i = result.Count - 1; i >= 0; i--)
             {
-                if (SchemaName!=null && string.Compare(result[i].Schema, SchemaName, true)!=0)
+                if (!string.IsNullOrEmpty(SchemaName) && string.Compare(result[i].Schema, SchemaName, true) != 0)
                 {
                     result.RemoveAt(i);
                     continue;
@@ -783,7 +782,7 @@ class PostgreSqlSchemaReader : SchemaReader
             case "int2":
             case "serial2":
                 return "short";
-            
+
             case "int":
             case "serial":
             case "int4":
@@ -803,7 +802,7 @@ class PostgreSqlSchemaReader : SchemaReader
             case "real":
             case "float4":
                 return "float";
-            
+
             case "double":
             case "double precision":
             case "float8":
@@ -833,53 +832,32 @@ class PostgreSqlSchemaReader : SchemaReader
 
 
     // テーブル一覧抽出SQL
-    //const string TABLE_SQL=@"
-    //        SELECT table_name, table_schema, table_type
-    //        FROM information_schema.tables
-    //        WHERE (table_type='BASE TABLE' OR table_type='VIEW')
-    //          AND table_schema NOT IN ('pg_catalog', 'information_schema');
-    //        ";
     const string TABLE_SQL=@"
-            SELECT ifsm.table_name
-                 , ifsm.table_schema
-                 , ifsm.table_type
-                 , cmnt.table_comment
-              FROM information_schema.tables ifsm
-                   LEFT JOIN (SELECT psut.relname  AS table_name
-                                   , pd.description AS table_comment
-                                FROM pg_stat_user_tables psut
-                                     INNER JOIN pg_description pd
-                                             ON psut.relid = pd.objoid
-                                            AND pd.objsubid = 0
-                             ) cmnt
-                           ON ifsm.table_name = cmnt.table_name
-             WHERE ifsm.table_type IN ('BASE TABLE', 'VIEW')
-               AND ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
-             ORDER BY ifsm.table_schema
-                    , ifsm.table_name;
-            ";
+        SELECT ifsm.table_name
+             , ifsm.table_schema
+             , ifsm.table_type
+             , obj_description(ifsm.table_name::regclass) AS table_comment
+          FROM information_schema.tables ifsm
+         WHERE ifsm.table_type IN ('BASE TABLE', 'VIEW')
+           AND ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
+         ORDER BY ifsm.table_schema
+                , ifsm.table_name;
+        ";
 
     // カラム一覧抽出SQL
-    //const string COLUMN_SQL=@"
-    //        SELECT column_name, is_nullable, udt_name, column_default
-    //        FROM information_schema.columns
-    //        WHERE table_name=@tableName;
-    //        ";
     const string COLUMN_SQL=@"
-            SELECT ifsm.table_name
-                 , ifsm.column_name
-                 , ifsm.is_nullable
-                 , ifsm.udt_name
-                 , ifsm.column_default
-                 , ifsm.ordinal_position
-                 , col_description(psat.relid, ifsm.ordinal_position) AS column_comment
-              FROM information_schema.columns ifsm
-                   LEFT JOIN pg_stat_all_tables psat
-                          ON ifsm.table_schema = psat.schemaname
-                         AND ifsm.table_name = psat.relname
-             WHERE ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
-               AND ifsm.table_name = @tableName;
-             ";
+        SELECT ifsm.table_name
+             , ifsm.column_name
+             , ifsm.is_nullable
+             , ifsm.udt_name
+             , ifsm.column_default
+             , ifsm.ordinal_position
+             , col_description(ifsm.table_name::regclass, ifsm.ordinal_position) AS column_comment
+          FROM information_schema.columns ifsm
+         WHERE ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
+           AND ifsm.table_name = @tableName
+         ORDER BY ifsm.ordinal_position;
+         ";
 }
 
 /// <summary>
@@ -890,118 +868,128 @@ class MySqlSchemaReader : SchemaReader
     // SchemaReader.ReadSchema
     public override Tables ReadSchema(DbConnection connection, DbProviderFactory factory)
     {
-        var result=new Tables();
-
-
-        var cmd=factory.CreateCommand();
-        cmd.Connection=connection;
-        cmd.CommandText=TABLE_SQL;
+        var result = new Tables();
 
         //pull the tables in a reader
-        using(cmd)
+        using(var cmd = factory.CreateCommand())
         {
-            using (var rdr=cmd.ExecuteReader())
+            cmd.Connection = connection;
+            cmd.CommandText = TABLE_SQL;
+            using (var rdr = cmd.ExecuteReader())
             {
                 while(rdr.Read())
                 {
-                    Table tbl=new Table();
-                    tbl.Name=rdr["TABLE_NAME"].ToString();
+                    Table tbl = new Table();
+                    tbl.Name = rdr["TABLE_NAME"].ToString();
                     //tbl.Schema=rdr["TABLE_SCHEMA"].ToString();
-                    tbl.Schema=null;
-                    tbl.IsView=string.Compare(rdr["TABLE_TYPE"].ToString(), "View", true)==0;
-                    tbl.CleanName=CleanUp(tbl.Name);
-                    tbl.ClassName=Inflector.MakeSingular(tbl.CleanName);
+                    tbl.Schema = null;
+                    tbl.IsView = string.Compare(rdr["TABLE_TYPE"].ToString(), "View", true)==0;
+                    tbl.CleanName = CleanUp(tbl.Name);
+                    tbl.ClassName = Inflector.MakeSingular(tbl.CleanName);
                     tbl.Comment = Inflector.ConvertHtmlEscape(rdr["TABLE_COMMENT"].ToString());
                     result.Add(tbl);
                 }
             }
         }
 
-
         //this will return everything for the DB
-        var schema  = connection.GetSchema("COLUMNS");
-
+        //var schema  = connection.GetSchema("COLUMNS");
+        DataTable schema = new DataTable();
+        using (var cmd = factory.CreateCommand())
+        {
+            cmd.Connection = connection;
+            cmd.CommandText = COLUMN_SQL;
+            using (IDataReader rdr = cmd.ExecuteReader())
+            {
+                schema.Load(rdr);
+            }
+        }
         //loop again - but this time pull by table name
         foreach (var item in result)
         {
             item.Columns=new List<Column>();
 
             //pull the columns from the schema
-            var columns = schema.Select("TABLE_NAME='" + item.Name + "'");
+            var columns = schema.Select("TABLE_NAME='" + item.Name + "'", "ORDINAL_POSITION ASC");
             foreach (var row in columns)
             {
                 Column col=new Column();
-                col.Name=row["COLUMN_NAME"].ToString();
-                col.PropertyName=CleanUp(col.Name);
-                col.PropertyType=GetPropertyType(row);
-                col.IsNullable=row["IS_NULLABLE"].ToString()=="YES";
-                col.IsPK=row["COLUMN_KEY"].ToString()=="PRI";
-                col.IsAutoIncrement=row["extra"].ToString().ToLower().IndexOf("auto_increment")>=0;
+                col.Name = row["COLUMN_NAME"].ToString();
+                col.PropertyName = CleanUp(col.Name);
+                col.PropertyType = GetPropertyType(row);
+                col.IsNullable = row["IS_NULLABLE"].ToString()=="YES";
+                col.IsPK = row["COLUMN_KEY"].ToString()=="PRI";
+                col.IsAutoIncrement = row["EXTRA"].ToString().ToLower().IndexOf("auto_increment")>=0;
                 col.Comment = Inflector.ConvertHtmlEscape(row["COLUMN_COMMENT"].ToString());
-
                 item.Columns.Add(col);
             }
         }
 
         return result;
-
     }
 
+    // MySQLのデータ型変換
     static string GetPropertyType(DataRow row)
     {
-        bool bUnsigned = row["COLUMN_TYPE"].ToString().IndexOf("unsigned")>=0;
+        bool isUnsigned = row["COLUMN_TYPE"].ToString().IndexOf("unsigned")>=0;
         string propType="string";
         switch (row["DATA_TYPE"].ToString())
         {
             case "bigint":
-                propType= bUnsigned ? "ulong" : "long";
+                propType = isUnsigned ? "ulong" : "long";
                 break;
             case "int":
-                propType= bUnsigned ? "uint" : "int";
+                propType = isUnsigned ? "uint" : "int";
                 break;
             case "smallint":
-                propType= bUnsigned ? "ushort" : "short";
+                propType = isUnsigned ? "ushort" : "short";
                 break;
             case "tinyint":
+                if (row["COLUMN_TYPE"].ToString().ToLower() == "tinyint(1)")
+                {
+                    propType = "bool";
+                }
+                else
+                {
+                    propType = isUnsigned ? "byte" : "sbyte";
+                }
+                break;
+            case "bit":
             case "bool":
             case "boolean":
-                //***propType= bUnsigned ? "byte" : "sbyte";     // added by kirishu
-                propType=  "bool";
+                propType = "bool";
                 break;
             case "guid":
-                propType=  "Guid";
+                propType = "Guid";
                  break;
             case "smalldatetime":
             case "date":
             case "datetime":
             case "timestamp":
-                propType=  "DateTime";
+                propType = "DateTime";
                   break;
             case "time":
-                propType=  "TimeSpan";
+                propType = "TimeSpan";
                   break;
             case "float":
-                propType="float";
+                propType = "float";
                 break;
             case "double":
-                propType="double";
+                propType = "double";
                 break;
             case "numeric":
             case "smallmoney":
             case "decimal":
             case "money":
-                propType=  "decimal";
+                propType = "decimal";
                  break;
-            case "bit":
-                propType=  "int";
-                break;
             case "image":
             case "binary":
             case "blob":
             case "mediumblob":
             case "longblob":
             case "varbinary":
-                propType=  "byte[]";
+                propType = "byte[]";
                  break;
 
         }
@@ -1009,11 +997,30 @@ class MySqlSchemaReader : SchemaReader
     }
 
     const string TABLE_SQL=@"
-            SELECT *
-            FROM information_schema.tables
-            WHERE (table_type='BASE TABLE' OR table_type='VIEW')
-            AND table_schema IN (SELECT database())
-            ";
+        SELECT *
+        FROM information_schema.tables
+        WHERE (table_type='BASE TABLE' OR table_type='VIEW')
+        AND table_schema IN (SELECT database())
+    ";
+
+    const string COLUMN_SQL=@"
+        SELECT TABLE_SCHEMA
+             , TABLE_NAME
+             , COLUMN_NAME
+             , ORDINAL_POSITION
+             , IS_NULLABLE
+             , COLUMN_DEFAULT
+             , DATA_TYPE
+             , COLUMN_TYPE
+             , CHARACTER_MAXIMUM_LENGTH
+             , NUMERIC_PRECISION
+             , NUMERIC_SCALE
+             , COLUMN_KEY
+             , EXTRA
+             , COLUMN_COMMENT
+          FROM INFORMATION_SCHEMA.COLUMNS
+         WHERE TABLE_SCHEMA IN (SELECT database())
+    ";
 
 }
 
@@ -1074,7 +1081,6 @@ class OracleSchemaReader : SchemaReader
 
     DbConnection _connection;
     DbProviderFactory _factory;
-
 
     List<Column> LoadColumns(Table tbl)
     {
@@ -1149,6 +1155,7 @@ class OracleSchemaReader : SchemaReader
         return "";
     }
 
+    // Oracleのデータ型変換
     string GetPropertyType(string sqlType, string dataScale)
     {
         string sysType="string";

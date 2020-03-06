@@ -1,18 +1,18 @@
-<#@ include file="PetaPoco.Core.tt" #>
+<#@ include file="../../@SolutionFolder/PetaPoco.Core.tt" #>
 <#
     // ******** コマンド *********
-    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" SQLServer.tt -o SQLServer.cs
+    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" PostgreSql.tt -o PostgreSql.cs
     // ******** 設定ここから *********
     
-    DatabaseName = "Northwind";
-    ConnectionString = @"Data Source=192.168.1.210;Database=Northwind;Integrated Security=False;User ID=testman;Password=testpwd;Pooling=true;";
-    ProviderName = "System.Data.SqlClient";
-    Namespace = "PetaPoco4Core.Database.Northwind";
+    DatabaseName = "petapoco_sample";
+    ConnectionString = @"Server=localhost;Port=5432;Database=petapoco_sample;Encoding=UTF8;User Id=testman;Password=testpwd;";
+    ProviderName = "Npgsql";
+    Namespace = "PetaPocoAppFx.Database.PostgreSql";
 
-    ConvertPascalCase = false;      // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
+    ConvertPascalCase = true;       // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
+    RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
     IncludeViews = true;            // Viewも対象にするならtrue
     
-    RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
     ClassPrefix = "";
     ClassSuffix = "";
     // ******** 設定ここまで *********
@@ -40,6 +40,6 @@
     if (tables.Count>0)
     {
 #>
-<#@ include file="PetaPoco.Generator.tt" #>
+<#@ include file="../../@SolutionFolder/PetaPoco.Generator.tt" #>
 <# } #>
 

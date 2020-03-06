@@ -284,6 +284,33 @@ namespace PetaPoco4Core.Test.Unit
             Assert.Equal("は", _sql.Arguments[2]);
         }
 
+
+        [Fact]
+        public void Append_GivenArrayString()
+        {
+            var keys = new string[] { "10", "20", "30" };
+            _sql = PetaPoco.Sql.Builder.Append("IN (@0)", keys);
+
+            Assert.Equal("IN (@0,@1,@2)", _sql.SQL);
+            Assert.Equal(3, _sql.Arguments.Length);
+            Assert.Equal("10", _sql.Arguments[0]);
+            Assert.Equal("20", _sql.Arguments[1]);
+            Assert.Equal("30", _sql.Arguments[2]);
+        }
+
+        [Fact]
+        public void Append_GivenListString()
+        {
+            var keys = new List<string> { "い", "ろ", "は", };
+            _sql = PetaPoco.Sql.Builder.Append("IN (@0)", keys);
+
+            Assert.Equal("IN (@0,@1,@2)", _sql.SQL);
+            Assert.Equal(3, _sql.Arguments.Length);
+            Assert.Equal("い", _sql.Arguments[0]);
+            Assert.Equal("ろ", _sql.Arguments[1]);
+            Assert.Equal("は", _sql.Arguments[2]);
+        }
+
         [Fact]
         public void Append_GivenTwoArrays()
         {

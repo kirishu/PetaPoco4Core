@@ -8,8 +8,9 @@
  * and Adam Schroder (@schotime) for lots of suggestions, improvements and Oracle support
  */
 /* Modified by kirishu (zapshu@gmail.com)
-* https://github.com/kirishu/PetaPoco4Core
-*/
+ * v4.7.1
+ * https://github.com/kirishu/PetaPoco4Core
+ */
 
 using System;
 using System.Collections.Generic;

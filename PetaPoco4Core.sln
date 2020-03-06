@@ -9,17 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetaPoco4Core.Test", "PetaP
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@SolutionFolder", "@SolutionFolder", "{190E3FEE-2B28-49B0-9A43-BBA43B36601D}"
 	ProjectSection(SolutionItems) = preProject
-		@SolutionFolder\DvdRental.cs = @SolutionFolder\DvdRental.cs
-		@SolutionFolder\DvdRental.tt = @SolutionFolder\DvdRental.tt
-		@SolutionFolder\Employees.cs = @SolutionFolder\Employees.cs
-		@SolutionFolder\Employees.tt = @SolutionFolder\Employees.tt
-		@SolutionFolder\Northwind.cs = @SolutionFolder\Northwind.cs
-		@SolutionFolder\Northwind.tt = @SolutionFolder\Northwind.tt
 		@SolutionFolder\PetaPoco.Core.tt = @SolutionFolder\PetaPoco.Core.tt
 		@SolutionFolder\PetaPoco.Generator.tt = @SolutionFolder\PetaPoco.Generator.tt
 		@SolutionFolder\readme.txt = @SolutionFolder\readme.txt
-		@SolutionFolder\Scott.cs = @SolutionFolder\Scott.cs
-		@SolutionFolder\Scott.tt = @SolutionFolder\Scott.tt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@Documents", "@Documents", "{B55B9C00-1430-4FA9-8B42-5CCFEC6A8C19}"
@@ -29,6 +21,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@Documents", "@Documents", 
 		@Documents\Manual-PetaPoco4Core.html = @Documents\Manual-PetaPoco4Core.html
 		@Documents\memo.txt = @Documents\memo.txt
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestDatabases", "TestDatabases", "{5CF971B5-ED89-4856-A60E-AF45CDD5BADF}"
+	ProjectSection(SolutionItems) = preProject
+		@SolutionFolder\TestDatabases\MySql.sql = @SolutionFolder\TestDatabases\MySql.sql
+		@SolutionFolder\TestDatabases\Oracle.sql = @SolutionFolder\TestDatabases\Oracle.sql
+		@SolutionFolder\TestDatabases\PostgreSql.sql = @SolutionFolder\TestDatabases\PostgreSql.sql
+		@SolutionFolder\TestDatabases\SQLServer.sql = @SolutionFolder\TestDatabases\SQLServer.sql
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetaPocoAppFx", "PetaPocoAppFx\PetaPocoAppFx.csproj", "{9A185EA1-B622-4CBD-B07E-32888A663521}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,9 +46,16 @@ Global
 		{47A7A5B3-8AB5-4750-AB84-E7B3031D8C12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47A7A5B3-8AB5-4750-AB84-E7B3031D8C12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47A7A5B3-8AB5-4750-AB84-E7B3031D8C12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A185EA1-B622-4CBD-B07E-32888A663521}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A185EA1-B622-4CBD-B07E-32888A663521}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A185EA1-B622-4CBD-B07E-32888A663521}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A185EA1-B622-4CBD-B07E-32888A663521}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5CF971B5-ED89-4856-A60E-AF45CDD5BADF} = {190E3FEE-2B28-49B0-9A43-BBA43B36601D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CC57B479-9424-43DC-BF17-0A0E5DC2611B}
