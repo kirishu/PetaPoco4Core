@@ -1,9 +1,20 @@
 -- =======================================================================================
--- usage : 
+-- usage : mysql --user root < MySQL.sql
 -- =======================================================================================
 -- ---------------------------------------------------------------------------------------
 -- CREATE DATABASE
 -- ---------------------------------------------------------------------------------------
+DROP DATABASE IF EXISTS PetaPocoSample;
+
+CREATE DATABASE IF NOT EXISTS PetaPocoSample
+       CHARACTER SET utf8mb4
+       COLLATE utf8mb4_general_ci;
+
+CREATE USER 'testman'@'%' IDENTIFIED BY 'testpwd';
+GRANT ALL ON PetaPocoSample.* TO 'testman'@'%';
+FLUSH PRIVILEGES;
+
+USE PetaPocoSample;
 
 -- ---------------------------------------------------------------------------------------
 -- CREATE OBJECTS
@@ -45,24 +56,9 @@ INSERT INTO TrCompositeKey VALUES ('15',15,false, 999,123456.78,'新潟県','hog
 
 -- ---------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS TrAutoNumber (
-      Key03                 BIGINT            NOT NULL AUTO_INCREMENT COMMENT 'プライマリキー'
-    , ColVarchar            VARCHAR(50)                               COMMENT 'varcharの列'
-    , ColChar               CHAR(3)                                   COMMENT 'charの列'
-    , ColBigint             BIGINT                                    COMMENT 'bigintの列'
-    , ColInt                INT                                       COMMENT 'intの列'
-    , ColSmallint           SMALLINT                                  COMMENT 'smallintの列'
-    , ColBool               BIT              NOT NULL DEFAULT FALSE   COMMENT 'bitの列'
-    , ColDecimal            DECIMAL(10,2)                             COMMENT 'decimalの列'
-    , ColNumeric            NUMERIC(13,0)                             COMMENT 'numericの列'
-    , ColDate               DATE                                      COMMENT 'dateの列'
-    , ColTime               TIME                                      COMMENT 'timeの列'
-    , ColTimestamp          DATETIME         NOT NULL DEFAULT NOW()   COMMENT 'datetimeの列'
-    , ColText               LONGTEXT                                  COMMENT 'longtextの列'
-    , ColBytea              LONGBLOB                                  COMMENT 'longblobの列'
-    , ColUBigint            BIGINT UNSIGNED                           COMMENT 'bigint(UNSIGNED)の列'
-    , ColUInt               INT UNSIGNED                              COMMENT 'int(UNSIGNED)の列'
-    , ColUSmallint          SMALLINT UNSIGNED                         COMMENT 'smallint(UNSIGNED)の列'
-    , ColUTinyInt           TINYINT UNSIGNED                          COMMENT 'tinyint(UNSIGNED)の列'
+      Key03                 BIGINT            NOT NULL AUTO_INCREMENT COMMENT 'オートナンバーキー'
+    , Key01                 VARCHAR(2)        NOT NULL      COMMENT 'プライマリキーその１'
+    , ColInt                INT                             COMMENT 'intの列'
     , CONSTRAINT PRIMARY KEY (Key03)
 )
 COMMENT='テストテーブル - オートナンバー';
@@ -77,10 +73,39 @@ CREATE VIEW ViHogeFuga AS
        , tbl1.ColVarchar        AS Tbl1ColVarchar
        , tbl1.UpdateBy          AS Tbl1UpdateBy
        , tbl1.UpdateDt          AS Tbl1UpdateDt
-       , tbl2.ColBool           AS Tbl2ColBool
-       , tbl2.ColVarchar        AS Tbl2ColVarchar
-       , tbl2.ColTimestamp      AS Tbl2ColTimestamp
+       , tbl2.ColInt            AS Tbl2ColInt
     FROM TrCompositeKey tbl1
-         LEFT JOIN TrAutoNumber tbl2 ON tbl1.ColInt = tbl2.ColInt;
+         LEFT JOIN TrAutoNumber tbl2 ON tbl1.Key01 = tbl2.Key01;
 
 -- ※MySqlのViewには、コメントは付けられにゃい
+
+-- ---------------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS TrColumns (
+      Key01                 varchar(2)        NOT NULL      COMMENT 'プライマリキーその１'
+    , ColBigInt             bigint                          COMMENT 'bigintの列'
+    , ColBigIntU            bigint unsigned                 COMMENT 'bigint unsignedの列'
+    , ColInt                int                             COMMENT 'intの列'
+    , ColIntU               int unsigned                    COMMENT 'int unsignedの列'
+    , ColMediumInt          mediumint                       COMMENT 'mediumintの列'
+    , ColMediumIntU         mediumint unsigned              COMMENT 'mediumint unsignedの列'
+    , ColSmallInt           smallint                        COMMENT 'smallintの列'
+    , ColSmallIntU          smallint unsigned               COMMENT 'smallint unsignedの列'
+    , ColTinyInt            tinyint                         COMMENT 'tinyintの列'
+    , ColTinyIntU           tinyint unsigned                COMMENT 'tinyint unsignedの列'
+    , ColBit                bit                             COMMENT 'bitの列'
+    , ColBool               bool                            COMMENT 'boolの列'
+    , ColDecimal            decimal(10,2)                   COMMENT 'decimalの列'
+    , ColNumeric            numeric(12,3)                   COMMENT 'numericの列'
+    , ColDouble             double(6,2)                     COMMENT 'doubleの列'
+    , ColFloat              float(7,3)                      COMMENT 'floatの列'
+    , ColDate               date                            COMMENT 'dateの列'
+    , ColTime               time                            COMMENT 'timeの列'
+    , ColDateTime           datetime                        COMMENT 'datetimeの列'
+    , ColTimeStamp          timestamp                       COMMENT 'timestampの列'
+    , ColChar               char(5)                         COMMENT 'char(5)の列'
+    , ColVarchar            varchar(50)                     COMMENT 'varchar(50)の列'
+    , ColLongText           longtext                        COMMENT 'longtextの列'
+    , ColLongBlob           longblob                        COMMENT 'longblobの列'
+    , CONSTRAINT PRIMARY KEY (Key01)
+)
+COMMENT='テストテーブル - 列の型テスト';

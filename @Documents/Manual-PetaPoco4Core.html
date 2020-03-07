@@ -1552,17 +1552,17 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                     <td></td>
                 </tr>
                 <tr>
-                    <td>float</td>
-                    <td>-1.79E + 308 ～ 1.79E + 308</td>
-                    <td>1-24  : 7桁 : 4 byte<br />25-53 :15桁 : 8 byte</td>
-                    <td>double</td>
-                    <td></td>
-                </tr>
-                <tr>
                     <td>real</td>
                     <td>-3.40E + 38 ～ 3.40E + 38</td>
                     <td>4 byte</td>
                     <td>float</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>float</td>
+                    <td>-1.79E + 308 ～ 1.79E + 308</td>
+                    <td>1-24  : 7桁 : 4 byte<br />25-53 :15桁 : 8 byte</td>
+                    <td>double</td>
                     <td></td>
                 </tr>
                 <tr>
@@ -1696,216 +1696,216 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
             </thead>
             <tbody>
                 <tr>
-                    <td>BIGINT</td>
+                    <td>bigint</td>
                     <td>-9223372036854775808 ～ 9223372036854775807</td>
                     <td>8</td>
                     <td>long</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>BIGINT (UNSIGNED)</td>
+                    <td>bigint (unsigned)</td>
                     <td>0～18446744073709551615</td>
                     <td>8</td>
                     <td>ulong</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>INT</td>
+                    <td>int</td>
                     <td>-2147483648 ～ 2147483647</td>
                     <td>4</td>
                     <td>int</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>INT (UNSIGNED)</td>
+                    <td>int (unsigned)</td>
                     <td>0～4294967295</td>
                     <td>4</td>
                     <td>uint</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>MEDIUMINT</td>
+                    <td>mediumint</td>
                     <td>-8388608 ～ 8388607</td>
                     <td>3</td>
                     <td>int</td>
                     <td>*カスタマイズ</td>
                 </tr>
                 <tr>
-                    <td>MEDIUMINT (UNSIGNED)</td>
+                    <td>mediumint (unsigned)</td>
                     <td>0～16777215</td>
                     <td>3</td>
                     <td>uint</td>
                     <td>*カスタマイズ</td>
                 </tr>
                 <tr>
-                    <td>SMALLINT</td>
+                    <td>smallint</td>
                     <td>-32768 ～ 32767</td>
                     <td>2</td>
                     <td>short</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>SMALLINT (UNSIGNED)</td>
+                    <td>smallint (unsigned)</td>
                     <td>0～65535</td>
                     <td>2</td>
                     <td>ushort</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>TINYINT</td>
+                    <td>tinyint</td>
                     <td>-128 ～ 127</td>
                     <td>1</td>
                     <td>sbyte</td>
-                    <td rowspan="2">*カスタマイズ<br /><span style="color:#990000;">オリジナルは、TINYINTを無条件でboolにしてました<br />（ver5で直したみたい）</span></td>
+                    <td rowspan="2">*カスタマイズ<br /><span style="color:#990000;">オリジナルは、tinyintを無条件でboolにしてました<br />（ver5で直したみたい）</span></td>
                 </tr>
                 <tr>
-                    <td>TINYINT (UNSIGNED)</td>
+                    <td>tinyint (unsigned)</td>
                     <td>0～255</td>
                     <td>1</td>
                     <td>byte</td>
                 </tr>
                 <tr>
-                    <td>BIT</td>
+                    <td>bit</td>
                     <td>1 ～ 64</td>
-                    <td>(M+7)/8</td>
+                    <td>(m+7)/8</td>
                     <td><span style="color:red;">bool</span></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>BOOL</td>
-                    <td>TINYINT(1)のシノニム</td>
+                    <td>bool</td>
+                    <td>tinyint(1)のシノニム</td>
                     <td>1</td>
                     <td>bool</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>DECIMAL</td>
+                    <td>decimal</td>
                     <td>最大65桁</td>
-                    <td>(M/9)*4+(4)</td>
+                    <td>(m/9)*4+(4)</td>
                     <td>decimal</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>DOUBLE</td>
-                    <td>-1.79E + 308 ～ 1.79E + 308</td>
+                    <td>double</td>
+                    <td>-1.79e + 308 ～ 1.79e + 308</td>
                     <td></td>
                     <td>double</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>FLOAT</td>
-                    <td>-3.40E + 38 ～ 3.40E + 38</td>
+                    <td>float</td>
+                    <td>-3.40e + 38 ～ 3.40e + 38</td>
                     <td></td>
                     <td>float</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>DATE</td>
+                    <td>date</td>
                     <td>1000-01-01 ～ 9999-12-31</td>
                     <td>3</td>
                     <td>DateTime</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>DATETIME</td>
+                    <td>datetime</td>
                     <td>1000-01-01 00:00:00 ～ 9999-12-31 23:59:59</td>
                     <td>8</td>
                     <td>DateTime</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>TIMESTAMP</td>
+                    <td>timestamp</td>
                     <td>1970-01-01 00:00:01 ～ 2037-12-31 23:59:59</td>
                     <td>4</td>
                     <td>DateTime</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>TIME</td>
+                    <td>time</td>
                     <td>-838:59:59 ～ 838:59:59</td>
                     <td>3</td>
                     <td>TimeSpan</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>CHAR</td>
+                    <td>char</td>
                     <td>255</td>
                     <td></td>
                     <td>string</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>VARCHAR</td>
+                    <td>varchar</td>
                     <td>65535</td>
-                    <td>M*3+2</td>
+                    <td>m*3+2</td>
                     <td>string</td>
-                    <td>CHARACTER SET utf8なら1文字あたり3byte必要<br />※1レコード長は最大65535byte</td>
+                    <td>utf8なら1文字あたり3byte必要<br />※1レコード長は最大65535byte</td>
                 </tr>
                 <tr>
-                    <td>TINYTEXT</td>
+                    <td>tinytext</td>
                     <td>255</td>
                     <td></td>
                     <td>string</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>TEXT</td>
+                    <td>text</td>
                     <td>65,535</td>
                     <td></td>
                     <td>string</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>MEDIUMTEXT</td>
+                    <td>mediumtext</td>
                     <td>16,777,215</td>
                     <td></td>
                     <td>string</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>LONGTEXT</td>
+                    <td>longtext</td>
                     <td>4,294,967,295</td>
                     <td></td>
                     <td>string</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>TINYBLOB</td>
+                    <td>tinyblob</td>
                     <td></td>
                     <td></td>
                     <td>byte[]</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>BLOB</td>
+                    <td>blob</td>
                     <td></td>
                     <td></td>
                     <td>byte[]</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>MEDIUMBLOB</td>
+                    <td>mediumblob</td>
                     <td></td>
                     <td></td>
                     <td>byte[]</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>LONGBLOB</td>
+                    <td>longblob</td>
                     <td></td>
                     <td></td>
                     <td>byte[]</td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>ENUM</td>
+                    <td>enum</td>
                     <td>65535 選択肢</td>
                     <td></td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>SET</td>
+                    <td>set</td>
                     <td>64選択肢</td>
                     <td></td>
                     <td></td>
@@ -2001,7 +2001,7 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
                     <td>real</td>
                     <td>6桁精度</td>
                     <td>4</td>
-                    <td>single</td>
+                    <td>float</td>
                     <td></td>
                 </tr>
                 <tr>

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PetaPocoAppFx
 {
@@ -16,6 +12,8 @@ namespace PetaPocoAppFx
         {
             PetaPoco.Database.DBType dbType = PetaPoco.Database.DBType.NotSet;
 
+            ITest test = null;
+
             if (args != null && args.Length > 0)
             {
                 switch (args[0].ToUpper())
@@ -23,13 +21,23 @@ namespace PetaPocoAppFx
                     case "MYSQL":
                         dbType = PetaPoco.Database.DBType.MySql;
                         ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MySql"].ConnectionString;
+                        test = new TestMySql();
                         break;
                     case "POSTGRESQL":
                         dbType = PetaPoco.Database.DBType.PostgreSql;
                         ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSql"].ConnectionString;
+                        test = new TestPostgreSql();
                         break;
-                        //ConstrSQLServer = System.Configuration.ConfigurationManager.ConnectionStrings["SQLServer"].ConnectionString;
-                        //ConstrOracle = System.Configuration.ConfigurationManager.ConnectionStrings["Oracle"].ConnectionString;
+                    case "SQLSERVER":
+                        dbType = PetaPoco.Database.DBType.SqlServer;
+                        ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SQLServer"].ConnectionString;
+                        test = new TestSQLServer();
+                        break;
+                    case "ORACLE":
+                        dbType = PetaPoco.Database.DBType.Oracle;
+                        ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Oracle"].ConnectionString;
+                        test = new TestOracle();
+                        break;
                 }
             }
 
@@ -43,9 +51,18 @@ namespace PetaPocoAppFx
                 return;
             }
 
-            var select = new ProcsSelect();
-            select.Execute();
+            //try
+            //{
+            if (test != null)
+            {
+                test.Execute();
+            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.Error(ex.ToString());
 
+            //}
         }
     }
 }

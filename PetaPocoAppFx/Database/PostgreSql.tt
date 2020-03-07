@@ -5,7 +5,7 @@
     // ******** 設定ここから *********
     
     DatabaseName = "petapoco_sample";
-    ConnectionString = @"Server=localhost;Port=5432;Database=petapoco_sample;Encoding=UTF8;User Id=testman;Password=testpwd;";
+    ConnectionString = @"Server=CentOSdb;Port=5432;Database=petapoco_sample;Encoding=UTF8;User Id=testman;Password=testpwd;";
     ProviderName = "Npgsql";
     Namespace = "PetaPocoAppFx.Database.PostgreSql";
 

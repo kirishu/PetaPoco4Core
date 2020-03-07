@@ -25,7 +25,7 @@ namespace <#=Namespace #>
         /// <summary>
         /// <#=DatabaseName#> Database Object
         /// </summary>
-        public <#=RepoName#>() : base(Config.ConnectionString, "<#=DBType#>")
+        public <#=RepoName#>() : base(Config.ConnectionString, <#=DBType#>)
         {
         }
     }

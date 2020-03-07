@@ -1,15 +1,15 @@
 <#@ include file="../../@SolutionFolder/PetaPoco.Core.tt" #>
 <#
     // ******** コマンド *********
-    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" MySql.tt -o MySql.cs
+    // "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\TextTransform.exe" Oracle.tt -o Oracle.cs
     // ******** 設定ここから *********
     
     DatabaseName = "PetaPocoSample";
-    ConnectionString = @"server=CentOSdb;database=PetaPocoSample;uid=testman;pwd=testpwd;SslMode=None;";
-    ProviderName = "MySql.Data.MySqlClient";
-    Namespace = "PetaPocoAppFx.Database.MySql";
+    ConnectionString = @"Data Source=CentOSdb/XEPDB1;User Id=testman;Password=testpwd;Pooling=true;";
+    ProviderName = "Oracle.DataAccess.Client";
+    Namespace = "PetaPocoAppFx.Database.Oracle";
 
-    ConvertPascalCase = false;      // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
+    ConvertPascalCase = true;       // 強制的にオブジェクト名をパスカル形式にするならtrue（falseは無変換）
     RepoName = "";                  // DBクラス名。ブランクの時はただの "DB" になります
     IncludeViews = true;            // Viewも対象にするならtrue
     

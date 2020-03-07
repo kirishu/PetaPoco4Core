@@ -5,7 +5,7 @@
     /// </summary>
     public class DB : PetaPoco.DatabaseExtension
     {
-        public static readonly string Constr = "Server=192.168.1.212;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
+        public static readonly string Constr = "Server=CentOSdb;Port=5432;Database=petapoco_sample;Encoding=UTF8;User Id=testman;Password=testpwd;";
 
         /// <summary>
         /// dvdlental Database Object

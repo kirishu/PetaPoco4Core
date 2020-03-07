@@ -5,17 +5,6 @@
  * https://github.com/kirishu/PetaPoco4Core
  */
 
-#region 変更履歴
-// 25-Feb-2013 新規作成
-// 22-Dec-2013 [OnExecutingCommand] DEBUG時のSQLログをクエリアナライザから実行可能な形式にする
-// 21-Apr-2014 [CreateTemporaryFromTable] ユーザ一時表作成メソッド
-// 30-Oct-2014 AbstractRecordを追加しました
-// 19-Apr-2016 PageWithHavingを追加しました
-// 14-Mar-2017 DebugのSQL出力をMySQLに対応しました
-// 03-Nov-2018 DebugのSQL出力をPostgreSqlに対応しました
-// 21-Jun-2019 .NET Standard 2.0 に対応
-#endregion
-
 #pragma warning disable CA1305 // Specify IFormatProvider
 #pragma warning disable CA1303 // Do not pass literals as localized parameters
 
@@ -58,7 +47,6 @@ namespace PetaPoco
         public DatabaseExtension(string connectionString, DBType dbType)
             : base(connectionString, dbType)
         {
-            _dbType = dbType;
             base.CommandTimeout = 30;    // default 30sec
 
             _useA5Mk2Params = (dbType == DBType.PostgreSql);
@@ -114,10 +102,6 @@ namespace PetaPoco
             {
                 string logvalue = GetLogQuotedParameterValue(param.Value);
                 string typename = GetLogParameterType(param);
-                if (this._dbType != DBType.SqlServer && dateTypes.Contains(typename))
-                {
-                    logvalue = "'" + logvalue + "'";
-                }
 
                 if (_useA5Mk2Params)
                 {
@@ -130,9 +114,12 @@ namespace PetaPoco
                 {
                     if (this._dbType == DBType.SqlServer)
                     {
-                        log.AppendFormat("DECLARE {0} {1};", param.ParameterName, typename);
+                        log.AppendFormat("DECLARE {0} {1} = {2}", param.ParameterName, typename, logvalue);
                     }
-                    log.AppendFormat("SET {0} = {1};", param.ParameterName, logvalue);
+                    else
+                    {
+                        log.AppendFormat("SET {0} = {1};", param.ParameterName, logvalue);
+                    }
                 }
                 log.AppendLine();
             }
@@ -218,18 +205,16 @@ namespace PetaPoco
                     }
                     else if (value is byte[] data)
                     {
-                        if (data.Length == 0)
-                        {
-                            log.Append("NULL");
-                        }
-                        else
-                        {
-                            log.Append("0x");
-                            for (int i = 0; i < data.Length; i++)
-                            {
-                                log.Append(data[i].ToString("h2"));
-                            }
-                        }
+                        log.Append("/* BINARY */");
+                        //if (data == null || data.Length == 0)
+                        //{
+                        //    log.Append("NULL");
+                        //}
+                        //else
+                        //{
+                        //    log.Append("0x");
+                        //    log.Append(BitConverter.ToString(data).Replace("-", string.Empty));
+                        //}
                     }
                     else
                     {

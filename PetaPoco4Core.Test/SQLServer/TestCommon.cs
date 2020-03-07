@@ -5,7 +5,7 @@
     /// </summary>
     public class DB : PetaPoco.DatabaseExtension
     {
-        public static readonly string Constr = @"Data Source=192.168.1.210;Database=Northwind;Integrated Security=False;User ID=testman;Password=testpwd;Pooling=true;";
+        public static readonly string Constr = @"Data Source=192.168.1.210;Database=PetaPocoSample;Integrated Security=False;User ID=testman;Password=testpwd;Pooling=true;";
 
         /// <summary>
         /// employees Database Object

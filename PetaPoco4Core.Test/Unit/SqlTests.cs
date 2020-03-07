@@ -289,7 +289,8 @@ namespace PetaPoco4Core.Test.Unit
         public void Append_GivenArrayString()
         {
             var keys = new string[] { "10", "20", "30" };
-            _sql = PetaPoco.Sql.Builder.Append("IN (@0)", keys);
+            //_sql = PetaPoco.Sql.Builder.Append("IN (@0)", keys);   ←これはダメ。エラーになっちゃう
+            _sql = PetaPoco.Sql.Builder.Append("IN (@1)", null, keys);
 
             Assert.Equal("IN (@0,@1,@2)", _sql.SQL);
             Assert.Equal(3, _sql.Arguments.Length);

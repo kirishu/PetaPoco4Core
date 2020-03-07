@@ -60,6 +60,16 @@
     <Compile Include="..\PetaPoco4Core\PetaPocoAttributes.cs">
       <Link>PetaPoco\PetaPocoAttributes.cs</Link>
     </Compile>
+    <Compile Include="Database\Oracle.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Oracle.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Database\SQLServer.cs">
+      <DependentUpon>SQLServer.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Database\MySql.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -70,9 +80,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PostgreSql.tt</DependentUpon>
     </Compile>
-    <Compile Include="ProcsSelect.cs" />
+    <Compile Include="ITest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestOracle.cs" />
+    <Compile Include="TestSQLServer.cs" />
+    <Compile Include="TestMySql.cs" />
+    <Compile Include="TestPostgreSql.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -85,6 +99,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Database\Oracle.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Oracle.cs</LastGenOutput>
+    </Content>
+    <Content Include="Database\SQLServer.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SQLServer.cs</LastGenOutput>
+    </Content>
     <Content Include="Database\MySql.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>MySql.cs</LastGenOutput>

@@ -939,6 +939,7 @@ class MySqlSchemaReader : SchemaReader
                 propType = isUnsigned ? "ulong" : "long";
                 break;
             case "int":
+            case "mediumint":
                 propType = isUnsigned ? "uint" : "int";
                 break;
             case "smallint":
@@ -1032,20 +1033,20 @@ class OracleSchemaReader : SchemaReader
     // SchemaReader.ReadSchema
     public override Tables ReadSchema(DbConnection connection, DbProviderFactory factory)
     {
-        var result=new Tables();
+        var result = new Tables();
 
-        _connection=connection;
-        _factory=factory;
+        _connection = connection;
+        _factory = factory;
 
-        var cmd=_factory.CreateCommand();
-        cmd.Connection=connection;
-        cmd.CommandText=TABLE_SQL;
+        var cmd = _factory.CreateCommand();
+        cmd.Connection = connection;
+        cmd.CommandText = TABLE_SQL;
         cmd.GetType().GetProperty("BindByName").SetValue(cmd, true, null);
 
         //pull the tables in a reader
         using(cmd)
         {
-            using (var rdr=cmd.ExecuteReader())
+            using (var rdr = cmd.ExecuteReader())
             {
                 while(rdr.Read())
                 {
@@ -1064,10 +1065,10 @@ class OracleSchemaReader : SchemaReader
 
         foreach (var tbl in result)
         {
-            tbl.Columns=LoadColumns(tbl);
+            tbl.Columns = LoadColumns(tbl);
 
             // Mark the primary keys
-            string PrimaryKey=GetPK(tbl.Name);
+            string PrimaryKey = GetPK(tbl.Name);
             var pkColumn = tbl.Columns.Where(x => PrimaryKey.ToLower().Split(',').Any(p => p.Trim() == x.Name.ToLower().Trim()));
             foreach (Column col in pkColumn)
             {
@@ -1087,17 +1088,17 @@ class OracleSchemaReader : SchemaReader
 
         using (var cmd=_factory.CreateCommand())
         {
-            cmd.Connection=_connection;
-            cmd.CommandText=COLUMN_SQL;
+            cmd.Connection = _connection;
+            cmd.CommandText = COLUMN_SQL;
             cmd.GetType().GetProperty("BindByName").SetValue(cmd, true, null);
 
             var p = cmd.CreateParameter();
             p.ParameterName = ":tableName";
-            p.Value=tbl.Name;
+            p.Value = tbl.Name;
             cmd.Parameters.Add(p);
 
-            var result=new List<Column>();
-            using (IDataReader rdr=cmd.ExecuteReader())
+            var result = new List<Column>();
+            using (IDataReader rdr = cmd.ExecuteReader())
             {
                 while(rdr.Read())
                 {
@@ -1107,7 +1108,7 @@ class OracleSchemaReader : SchemaReader
                         PropertyName = CleanUp(rdr["ColumnName"].ToString()),
                         PropertyType = GetPropertyType(rdr["DataType"].ToString(), (rdr["DataType"] == DBNull.Value ? null : rdr["DataType"].ToString())),
                         IsNullable = rdr["IsNullable"].ToString() == "Y",
-                        IsAutoIncrement = (rdr["DataDefault"].ToString().IndexOf("NEXTVAL", StringComparison.CurrentCultureIgnoreCase) > 0),
+                        IsAutoIncrement = (rdr["DataDefault"].ToString().ToUpper().IndexOf("NEXTVAL", StringComparison.CurrentCultureIgnoreCase) > 0),
                         Comment = rdr["comments"].ToString(),
                         DefaultValue = rdr["DataDefault"].ToString(),
                     };
@@ -1133,22 +1134,22 @@ class OracleSchemaReader : SchemaReader
         string result = "";
         using (var cmd=_factory.CreateCommand())
         {
-            cmd.Connection=_connection;
-            cmd.CommandText=sql;
+            cmd.Connection = _connection;
+            cmd.CommandText = sql;
             cmd.GetType().GetProperty("BindByName").SetValue(cmd, true, null);
 
             var p = cmd.CreateParameter();
             p.ParameterName = ":tableName";
-            p.Value=table;
+            p.Value = table;
             cmd.Parameters.Add(p);
-            using (IDataReader rdr=cmd.ExecuteReader())
+            using (IDataReader rdr = cmd.ExecuteReader())
             {
                 while(rdr.Read())
                 {
                     result += "," + rdr["column_name"].ToString();
                 }
             }
-            if(!string.IsNullOrWhiteSpace(result))
+            if (!string.IsNullOrWhiteSpace(result))
                 return result.TrimStart(',');
         }
 
@@ -1161,46 +1162,25 @@ class OracleSchemaReader : SchemaReader
         string sysType="string";
         switch (sqlType.ToLower())
         {
-            case "bigint":
-                sysType = "long";
-                break;
-            case "smallint":
-                sysType= "short";
-                break;
-            case "int":
-                sysType= "int";
-                break;
-            case "uniqueidentifier":
-                sysType=  "Guid";
-                 break;
-            case "smalldatetime":
-            case "datetime":
-            case "date":
-                sysType=  "DateTime";
-                  break;
-            case "float":
-                sysType="double";
-                break;
-            case "real":
-            case "numeric":
-            case "smallmoney":
-            case "decimal":
-            case "money":
             case "number":
                 sysType=  "decimal";
-                 break;
-            case "tinyint":
-                sysType = "byte";
                 break;
-            case "bit":
-                sysType=  "bool";
-                   break;
-            case "image":
-            case "binary":
-            case "varbinary":
+            case "date":
             case "timestamp":
+            case "timestamp(6)":
+                sysType=  "DateTime";
+                break;
+            case "binary_float":
+                sysType="float";
+                break;
+            case "binary_double":
+                sysType="double";
+                break;
+            case "raw":
+            case "long raw":
+            case "blob":
                 sysType=  "byte[]";
-                 break;
+                break;
         }
 
         if (sqlType == "number" && dataScale == "0")

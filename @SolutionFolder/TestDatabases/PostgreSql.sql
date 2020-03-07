@@ -26,6 +26,7 @@ SET standard_conforming_strings = on;
 DROP VIEW IF EXISTS vi_hoge_fuga;
 DROP TABLE IF EXISTS tr_auto_number;
 DROP TABLE IF EXISTS tr_composite_key;
+DROP TABLE IF EXISTS tr_columns;
 
 -- ---------------------------------------------------------------------------------------
 CREATE TABLE tr_composite_key (
@@ -78,7 +79,7 @@ CREATE TABLE IF NOT EXISTS tr_auto_number (
 
 COMMENT ON TABLE tr_auto_number IS 'テストテーブル - オートナンバー';
 COMMENT ON COLUMN tr_auto_number.key03              IS 'オートナンバーキー';
-COMMENT ON COLUMN tr_auto_number.key02              IS 'プライマリキーその２';
+COMMENT ON COLUMN tr_auto_number.key01              IS 'プライマリキーその１';
 COMMENT ON COLUMN tr_auto_number.col_int            IS 'intの列';
 
 -- ---------------------------------------------------------------------------------------
@@ -93,7 +94,7 @@ CREATE VIEW vi_hoge_fuga AS
        , tbl1.update_dt          AS tbl1_update_dt
        , tbl2.col_int            AS tbl2_col_int
     FROM tr_composite_key tbl1
-         LEFT JOIN tr_auto_number tbl2 ON tbl1.key02 = tbl2.key02;
+         LEFT JOIN tr_auto_number tbl2 ON tbl1.key01 = tbl2.key01;
 
 COMMENT ON VIEW vi_hoge_fuga IS 'テストビュー その1';
 COMMENT ON COLUMN vi_hoge_fuga.tbl1_key01              IS 'ほげ';
@@ -108,14 +109,17 @@ CREATE TABLE IF NOT EXISTS tr_columns (
     , col_int                int
     , col_smallint           smallint
     , col_bool               boolean           NOT NULL DEFAULT FALSE
+    , col_bool2              bool
     , col_decimal            decimal(10,2)
     , col_numeric            decimal(13,0)
+    , col_real               real
+    , col_double             double precision
     , col_date               date
     , col_time               time
     , col_timestamp          timestamp         NOT NULL
+    , col_timestamp3         timestamp(3)      NOT NULL
     , col_text               text
     , col_bytea              bytea
-    , col_timestamp3         timestamp(3)      NOT NULL
     , PRIMARY KEY (key01)
 );
 COMMENT ON TABLE tr_columns IS 'テストテーブル - 列の型テスト';
@@ -125,12 +129,15 @@ COMMENT ON COLUMN tr_columns.col_char           IS 'charの列';
 COMMENT ON COLUMN tr_columns.col_bigint         IS 'bigintの列';
 COMMENT ON COLUMN tr_columns.col_int            IS 'intの列';
 COMMENT ON COLUMN tr_columns.col_smallint       IS 'smallintの列';
-COMMENT ON COLUMN tr_columns.col_bool           IS 'boolの列';
+COMMENT ON COLUMN tr_columns.col_bool           IS 'booleanの列';
+COMMENT ON COLUMN tr_columns.col_bool2          IS 'boolの列';
 COMMENT ON COLUMN tr_columns.col_decimal        IS 'decimalの列';
 COMMENT ON COLUMN tr_columns.col_numeric        IS 'numericの列';
+COMMENT ON COLUMN tr_columns.col_real           IS 'realの列';
+COMMENT ON COLUMN tr_columns.col_double         IS 'double precisionの列';
 COMMENT ON COLUMN tr_columns.col_date           IS 'dateの列';
 COMMENT ON COLUMN tr_columns.col_time           IS 'timeの列';
 COMMENT ON COLUMN tr_columns.col_timestamp      IS 'timestampの列';
+COMMENT ON COLUMN tr_columns.col_timestamp3     IS 'timestamp(3)の列';
 COMMENT ON COLUMN tr_columns.col_text           IS 'textの列';
 COMMENT ON COLUMN tr_columns.col_bytea          IS 'byteaの列';
-COMMENT ON COLUMN tr_columns.col_timestamp3     IS 'timestamp(3)の列';

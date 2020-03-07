@@ -145,11 +145,16 @@ namespace PetaPoco
         Func<object, object> GetFromDbConverter(PropertyInfo pi, Type SourceType);
         Func<object, object> GetToDbConverter(Type SourceType);
     }
+    public interface IMapper2 : IMapper
+    {
+        Func<object, object> GetFromDbConverter(Type DestType, Type SourceType);
+    }
+
 
     /// <summary>
     /// the default implementation of IMapper used by PetaPoco
     /// </summary>
-    public class DefaultMapper: IMapper
+    public class DefaultMapper: IMapper2
     {
         public virtual void GetTableInfo(Type t, TableInfo ti) { }
         public virtual bool MapPropertyToColumn(PropertyInfo pi, ref string columnName, ref bool resultColumn)
@@ -298,7 +303,7 @@ namespace PetaPoco
             Oracle,
             SQLite
         }
-        protected DBType _dbType = DBType.NotSet;
+        protected readonly DBType _dbType;
 
         public string ParamPrefix = "@";
 
@@ -337,6 +342,7 @@ namespace PetaPoco
             }
 
             _connectionString = connectionString;
+            _dbType = dbType;
             _dbFactory = GetDbFactory(dbType);
 
             _transactionDepth = 0;
@@ -382,7 +388,8 @@ namespace PetaPoco
             }
             else if (dbType == DBType.Oracle)
             {
-                providerName = "System.Data.OracleClient";
+                //providerName = "System.Data.OracleClient";
+                providerName = "Oracle.DataAccess.Client";
                 assemblyName = new string[] {
                     "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess, Culture=neutral, PublicKeyToken=89b483f429c47342",
                     "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess",
@@ -2837,13 +2844,13 @@ namespace PetaPoco
                     {
                         return converter;
                     }
-                    //else
-                    //{
-                    //    if (Database.Mapper is IMapper2 m2)
-                    //    {
-                    //        converter = m2.GetFromDbConverter(dstType, srcType);
-                    //    }
-                    //}
+                    else
+                    {
+                        if (Database.Mapper is IMapper2 m2)
+                        {
+                            converter = m2.GetFromDbConverter(dstType, srcType);
+                        }
+                    }
                 }
 
                 // Standard DateTime->Utc mapper
