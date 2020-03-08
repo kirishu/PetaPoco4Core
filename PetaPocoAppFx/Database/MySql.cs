@@ -32,7 +32,7 @@ namespace PetaPocoAppFx.Database.MySql
         /// <summary>
         /// PetaPocoSample Database Object
         /// </summary>
-        public DB() : base(Config.ConnectionString, DBType.MySql)
+        public DB() : base(Config.ConnectionString, RDBType.MySql)
         {
         }
     }

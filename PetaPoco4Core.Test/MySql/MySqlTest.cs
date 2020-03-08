@@ -1,4 +1,6 @@
-﻿namespace PetaPoco4Core.Test.MySql
+﻿using Xunit.Abstractions;
+
+namespace PetaPoco4Core.Test.MySql
 {
     /// <summary>
     /// Database Object
@@ -10,24 +12,20 @@
         /// <summary>
         /// employees Database Object
         /// </summary>
-        public DB() : base(Constr, DBType.MySql)
+        public DB() : base(Constr, RDBType.MySql)
         {
         }
     }
 
-    public class TestCommon: ITestCommon
+    [RequiresCleanUp]
+    public partial class MySqlTest : TestBase
     {
-        // singleton instance
-        private static readonly TestCommon _instance = new TestCommon();
-
-        public static TestCommon Instance {  get { return _instance; } }
-
-        private TestCommon() { }
+        public MySqlTest(ITestOutputHelper output) : base(output) { }
 
         /// <summary>
         /// 初期処理
         /// </summary>
-        public void Initialize()
+        internal override void Initialize()
         {
             // DB接続
             using (var db = new DB())
@@ -41,29 +39,18 @@
         /// <summary>
         /// 終了処理
         /// </summary>
-        public void Cleanup()
+        internal override void Cleanup()
         {
             // DB接続
             using (var db = new DB())
             {
-                //var checktable01 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "PtTable01");
-                //if (!string.IsNullOrWhiteSpace(checktable01))
-                //{
-                //    db.Execute("DROP TABLE PtTable01");
-                //}
-
-                //var checktable02 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "PtTable02");
-                //if (!string.IsNullOrWhiteSpace(checktable02))
-                //{
-                //    db.Execute("DROP TABLE PtTable02");
-                //}
                 db.Execute("DROP TABLE IF EXISTS PtTable01");
                 db.Execute("DROP TABLE IF EXISTS PtTable02");
                 db.Execute("DROP TABLE IF EXISTS PtTable03");   // AutoIncrement PK
             }
         }
 
-        private  void CreateTable01(DB db)
+        private void CreateTable01(DB db)
         {
             // 存在していたらDROP
             db.Execute("DROP TABLE IF EXISTS PtTable01");
@@ -171,6 +158,6 @@
 
         }
 
-    }
 
+    }
 }

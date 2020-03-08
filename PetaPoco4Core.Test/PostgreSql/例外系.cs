@@ -1,16 +1,12 @@
 ﻿using System.Text.RegularExpressions;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace PetaPoco4Core.Test.PostgreSql
 {
-    public class 例外系: TestBase
+    public partial class PostgreSqlTest
     {
-        public 例外系(ITestOutputHelper output): base(output, TestCommon.Instance) { }
-
-
         [Fact]
-        public void XCP001_SyntacError()
+        public void 例外系_SyntacError()
         {
 
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -31,7 +27,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void XCP002_オブジェクト無し()
+        public void 例外系_オブジェクト無し()
         {
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
             {
@@ -49,7 +45,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void XCP003_DuplicateInsert()
+        public void 例外系_DuplicateInsert()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -71,7 +67,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT008_クエリタイムアウト_Timeout3秒()
+        public void 例外系_クエリタイムアウト_Timeout3秒()
         {
             var ex = Assert.Throws<Npgsql.NpgsqlException>(() =>
             {
@@ -85,7 +81,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT009_クエリタイムアウト_Timeout10秒()
+        public void 例外系_クエリタイムアウト_Timeout10秒()
         {
             var ex = Assert.Throws<Npgsql.NpgsqlException>(() =>
             {
@@ -101,7 +97,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         ////[TestMethod]
         ////[ExpectedException(typeof(Npgsql.NpgsqlException))]
         //[Fact]
-        //public void XCP004_クエリタイムアウト_Timeout30秒()
+        //public void 例外系_クエリタイムアウト_Timeout30秒()
         //{
         //    // DB接続
         //    using (var db = new DB())
@@ -121,12 +117,12 @@ namespace PetaPoco4Core.Test.PostgreSql
         //}
 
         [Fact]
-        public void XCP005_接続タイムアウト_Timeout10秒()
+        public void 例外系_接続タイムアウト_Timeout10秒()
         {
             var ex = Assert.Throws<System.TimeoutException>(() =>
             {
                 var constr = "Server=8.8.8.8;Port=5432;Timeout=10;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -139,12 +135,12 @@ namespace PetaPoco4Core.Test.PostgreSql
             * */
         }
         [Fact]
-        public void XCP005_接続タイムアウト_Timeout30秒()
+        public void 例外系_接続タイムアウト_Timeout30秒()
         {
             var ex = Assert.Throws<System.Net.Sockets.SocketException>(() =>
             {
                 var constr = "Server=8.8.8.8;Port=5432;Timeout=30;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -158,7 +154,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void XCP006_マッピング型エラー()
+        public void 例外系_マッピング型エラー()
         {
             var ex = Assert.Throws<System.InvalidCastException>(() =>
             {
@@ -178,7 +174,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT002_SQLインジェクション_数値攻撃()
+        public void 例外系_SQLインジェクション_数値攻撃()
         {
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
             {
@@ -198,7 +194,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT002_SQLインジェクション_文字列攻撃()
+        public void 例外系_SQLインジェクション_文字列攻撃()
         {
             using (var db = new DB())
             {
@@ -214,13 +210,13 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT004_接続文字列_サービスダウンサーバ()
+        public void 例外系_接続文字列_サービスダウンサーバ()
         {
             var constr = "Server=localhost;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
 
             var ex = Assert.Throws<System.Net.Sockets.SocketException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -230,14 +226,14 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT005_接続文字列_認証不可アカウント()
+        public void 例外系_接続文字列_認証不可アカウント()
         {
             var rx = new Regex(";(User Id)=(.*?);", RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase);
             var constr = rx.Replace(DB.Constr, ";$1=**zapped**;");
 
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -247,14 +243,14 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void PT006_接続文字列_パスワード誤り()
+        public void 例外系_接続文字列_パスワード誤り()
         {
             var rx = new Regex(";(pwd|password)=(.*?);", RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase);
             var constr = rx.Replace(DB.Constr, ";$1=**zapped**;");
 
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.PostgreSql))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.PostgreSql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }

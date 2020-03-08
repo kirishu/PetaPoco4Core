@@ -32,7 +32,7 @@ namespace PetaPocoAppFx.Database.SQLServer
         /// <summary>
         /// PetaPocoSample Database Object
         /// </summary>
-        public DB() : base(Config.ConnectionString, DBType.SqlServer)
+        public DB() : base(Config.ConnectionString, RDBType.SqlServer)
         {
         }
     }

@@ -93,7 +93,7 @@ bool IncludeViews = false;
 bool GenerateCommon = true;
 bool GeneratePocos = true;
 bool TrackModifiedColumns = false;
-string DBType = "";
+string RDBType = "";
 
 public static bool ConvertPascalCase;
 
@@ -275,25 +275,25 @@ Tables LoadTables()
             if (_factory.GetType().Name == "MySqlClientFactory")
             {
                 // MySql
-				DBType = "DBType.MySql";
+				RDBType = "RDBType.MySql";
                 reader = new MySqlSchemaReader();
             }
             else if (_factory.GetType().Name == "NpgsqlFactory")
             {
                 // PostgreSQL
-				DBType = "DBType.PostgreSql";
+				RDBType = "RDBType.PostgreSql";
                 reader = new PostgreSqlSchemaReader();
             }
             else if (_factory.GetType().Name == "OracleClientFactory")
             {
                 // Oracle
-				DBType = "DBType.Oracle";
+				RDBType = "RDBType.Oracle";
                 reader = new OracleSchemaReader();
             }
             else
             {
                 // Assume SQL Server
-				DBType = "DBType.SqlServer";
+				RDBType = "RDBType.SqlServer";
                 reader = new SqlServerSchemaReader();
             }
 

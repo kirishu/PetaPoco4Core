@@ -8,46 +8,30 @@ namespace PetaPoco4Core.Test
     /// <summary>
     /// テスト基底クラス
     /// </summary>
-    public class TestBase: IDisposable
+    public abstract class TestBase : IDisposable
     {
         protected readonly ITestOutputHelper _output;
-        protected readonly ITestCommon _testCommon;
 
-        public TestBase(ITestOutputHelper output)
-        {
-            _output = output;
-        }
+        private TestBase() { }
 
         /// <summary>
         /// テストクラスの初期処理
         /// </summary>
         /// <param name="output"></param>
         /// <param name="testCommon"></param>
-        public TestBase(ITestOutputHelper output, ITestCommon testCommon)
+        public TestBase(ITestOutputHelper output)
         {
             _output = output;
-            // setup
-            _testCommon = testCommon;
-            _testCommon.Initialize();
+            Initialize();
         }
 
-        /// <summary>
-        /// テストクラスの終了処理
-        /// </summary>
         public void Dispose()
         {
-            // teardown
-            if (_testCommon != null)
-            {
-                _testCommon.Cleanup();
-            }
+            Cleanup();
         }
-    }
 
-    public interface ITestCommon
-    {
-        void Initialize();
-        void Cleanup();
+        internal virtual void Initialize() { }
+        internal virtual void Cleanup() { }
     }
 
     /// <summary>

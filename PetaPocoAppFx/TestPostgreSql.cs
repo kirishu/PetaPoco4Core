@@ -14,9 +14,9 @@ namespace PetaPocoAppFx
                     Key01 = "13",
                     Key02 = 13,
                 };
-                var rec1 = db.SingleOrDefaultById<Database.SQLServer.TrCompositeKey>(pk1);
-                var rec2 = db.SingleOrDefaultById<Database.SQLServer.TrAutoNumber>(123);
-                var rec3 = db.SingleOrDefaultById<Database.SQLServer.TrColumn>("AA");
+                var rec1 = db.SingleOrDefaultById<Database.PostgreSql.TrCompositeKey>(pk1);
+                var rec2 = db.SingleOrDefaultById<Database.PostgreSql.TrAutoNumber>(123);
+                var rec3 = db.SingleOrDefaultById<Database.PostgreSql.TrColumn>("AA");
 
                 db.BeginTransaction();
 
@@ -38,13 +38,23 @@ namespace PetaPocoAppFx
 
                 var rec6 = new Database.PostgreSql.TrColumn
                 {
-                    Key01 = "",
+                    Key01 = "AA",
+                    ColVarchar =  "ほげ",
+                    ColChar = "123",
+                    ColBigint = 123123123,
+                    ColInt = int.MaxValue,
+                    ColSmallint = short.MaxValue,
                     ColBool = true,
                     ColBool2 = false,
-                    ColTime = new TimeSpan(12, 24, 56),
+                    ColDecimal = 12345678.12m,
+                    ColNumeric = 1234567890123m,
+                    ColReal = 123123.123f,
+                    ColDouble = 123123.123d,
                     ColDate = DateTime.Now,
+                    ColTime = new TimeSpan(12, 24, 56),
                     ColTimestamp = DateTime.Now,
                     ColTimestamp3 = DateTime.Now,
+                    ColText = "ほげÄÄÄÄ",
                     ColBytea = new byte[64],
                 };
                 db.Insert(rec6);

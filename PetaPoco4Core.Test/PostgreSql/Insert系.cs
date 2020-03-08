@@ -1,21 +1,12 @@
 ﻿using System;
-using System.Linq;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace PetaPoco4Core.Test.PostgreSql
 {
-    public class Insert系: TestBase
+    public partial class PostgreSqlTest
     {
-        /// <summary>
-        /// constractor
-        /// </summary>
-        /// <param name="output"></param>
-        public Insert系(ITestOutputHelper output) : base(output, TestCommon.Instance) { }
-
-
         [Fact]
-        public void INS001_Execute_1件挿入DDL()
+        public void Insert系_Execute_1件挿入DDL()
         {
             using (var db = new DB())
             {
@@ -36,7 +27,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void INS002_Insert_1件挿入Entity()
+        public void Insert系_1件挿入Entity()
         {
             using (var db = new DB())
             {
@@ -73,7 +64,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void INS003_Execute_キー重複エラーDDL()
+        public void Insert系_Execute_キー重複エラーDDL()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -89,7 +80,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void INS004_Insert_キー重複エラーEntity()
+        public void Insert系_キー重複エラーEntity()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -118,7 +109,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
 
         [Fact]
-        public void INS005_Execute_サイズオーバーエラーDDL()
+        public void Insert系_Execute_サイズオーバーエラーDDL()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -134,7 +125,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void INS006_Insert_サイズオーバーエラーEntity()
+        public void Insert系_サイズオーバーエラーEntity()
         {
             // Npgsql.PostgresExceptionが発生したらOK
             var ex = Assert.Throws<Npgsql.PostgresException>(() =>
@@ -162,7 +153,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void INS007_Transaction_Commit()
+        public void Insert系_Transaction_Commit()
         {
             using (var db = new DB())
             {
@@ -194,7 +185,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void INS008_Transaction_Rollback()
+        public void Insert系_Transaction_Rollback()
         {
             using (var db = new DB())
             {
@@ -222,7 +213,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         }
 
         [Fact]
-        public void INS009_AutoInclementKey()
+        public void Insert系_AutoInclementKey()
         {
             using (var db = new DB())
             {

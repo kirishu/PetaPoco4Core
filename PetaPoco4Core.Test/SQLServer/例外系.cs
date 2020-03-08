@@ -4,13 +4,10 @@ using Xunit.Abstractions;
 
 namespace PetaPoco4Core.Test.SQLServer
 {
-    public class 例外系: TestBase
+    public partial class SQLServer
     {
-        public 例外系(ITestOutputHelper output): base(output, TestCommon.Instance) { }
-
-
         [Fact]
-        public void XCP001_SyntacError()
+        public void 例外系_SyntacError()
         {
 
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
@@ -27,7 +24,7 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void XCP002_オブジェクト無し()
+        public void 例外系_オブジェクト無し()
         {
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
             {
@@ -42,7 +39,7 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void XCP003_DuplicateInsert()
+        public void 例外系_DuplicateInsert()
         {
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
             {
@@ -59,7 +56,7 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void PT008_クエリタイムアウト_Timeout3秒()
+        public void 例外系_クエリタイムアウト_Timeout3秒()
         {
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
             {
@@ -75,7 +72,7 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void PT009_クエリタイムアウト_Timeout10秒()
+        public void 例外系_クエリタイムアウト_Timeout10秒()
         {
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
             {
@@ -91,12 +88,12 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void XCP005_接続タイムアウト_Timeout10秒()
+        public void 例外系_接続タイムアウト_Timeout10秒()
         {
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
             {
                 var constr = @"Data Source=8.8.8.8;Database=Northwind;Integrated Security=False;User ID=testman;Password=testpwd;Pooling=true;Connection Timeout=10;";
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.SqlServer))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.SqlServer))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -107,12 +104,12 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void XCP005_接続タイムアウト_Timeout30秒()
+        public void 例外系_接続タイムアウト_Timeout30秒()
         {
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
             {
                 var constr = @"Data Source=8.8.8.8;Database=Northwind;Integrated Security=False;User ID=testman;Password=testpwd;Pooling=true;Connection Timeout=30;";
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.SqlServer))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.SqlServer))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -123,7 +120,7 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void XCP006_マッピング型エラー()
+        public void 例外系_マッピング型エラー()
         {
             var ex = Assert.Throws<System.InvalidCastException>(() =>
             {
@@ -136,7 +133,7 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void PT002_SQLインジェクション_数値攻撃()
+        public void 例外系_SQLインジェクション_数値攻撃()
         {
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
             {
@@ -154,7 +151,7 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void PT002_SQLインジェクション_文字列攻撃()
+        public void 例外系_SQLインジェクション_文字列攻撃()
         {
             using (var db = new DB())
             {
@@ -168,13 +165,13 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void PT004_接続文字列_サービスダウンサーバ()
+        public void 例外系_接続文字列_サービスダウンサーバ()
         {
             var constr = @"Data Source=localhost;Database=Northwind;Integrated Security=False;User ID=testman;Password=testpwd;Pooling=true;";
 
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.SqlServer))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.SqlServer))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -185,14 +182,14 @@ namespace PetaPoco4Core.Test.SQLServer
         }
 
         [Fact]
-        public void PT005_接続文字列_認証不可アカウント()
+        public void 例外系_接続文字列_認証不可アカウント()
         {
             var rx = new Regex(";(pwd|password)=(.*?);", RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase);
             var constr = rx.Replace(DB.Constr, ";$1=**zapped**;");
 
             var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.SqlServer))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.SqlServer))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }

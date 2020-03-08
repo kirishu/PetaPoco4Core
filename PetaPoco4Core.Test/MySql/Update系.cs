@@ -1,17 +1,13 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using Xunit;
-using Xunit.Abstractions;
-using MySql.Data.MySqlClient;
 
 namespace PetaPoco4Core.Test.MySql
 {
-    public class Update系: TestBase
+    public partial class MySqlTest
     {
-        public Update系(ITestOutputHelper output) : base(output, TestCommon.Instance) { }
-
-
         [Fact]
-        public void UDP001_Execute_1件更新DDL()
+        public void Update系_Execute_1件更新DDL()
         {
             using (var db = new DB())
             {
@@ -47,7 +43,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP002_Execute_1件更新Entity()
+        public void Update系_Execute_1件更新Entity()
         {
             using (var db = new DB())
             {
@@ -80,7 +76,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP003_Execute_5件更新DDL()
+        public void Update系_Execute_5件更新DDL()
         {
             using (var db = new DB())
             {
@@ -105,7 +101,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP004_更新対象無し_DDL発行()
+        public void Update系_更新対象無し_DDL発行()
         {
             using (var db = new DB())
             {
@@ -126,7 +122,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         //[Fact]
-        //public void UDP005_カラムサイズオーバーエラー_DDL発行()
+        //public void Update系_カラムサイズオーバーエラー_DDL発行()
         //{
         //    // MySqlExceptionが発生したらOK
         //    var ex = Assert.Throws<MySqlException>(() =>
@@ -149,7 +145,7 @@ namespace PetaPoco4Core.Test.MySql
         //}
 
         //[Fact]
-        //public void UDP006_カラムサイズオーバーエラー_Entity利用()
+        //public void Update系_カラムサイズオーバーエラー_Entity利用()
         //{
         //    // MySqlExceptionが発生したらOK
         //    var ex = Assert.Throws<MySqlException>(() =>
@@ -170,7 +166,7 @@ namespace PetaPoco4Core.Test.MySql
         //}
 
         //[Fact]
-        //public void UDP007_カラムサイズオーバーエラー_INT()
+        //public void Update系_カラムサイズオーバーエラー_INT()
         //{
         //    // MySqlExceptionが発生したらOK
         //    var ex = Assert.Throws<MySqlException>(() =>
@@ -193,7 +189,7 @@ namespace PetaPoco4Core.Test.MySql
         //}
 
         [Fact]
-        public void UDP008_NULL制約エラー()
+        public void Update系_NULL制約エラー()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -215,7 +211,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP009_更新列のみ更新_事前読込あり()
+        public void Update系_更新列のみ更新_事前読込あり()
         {
             using (var db = new DB())
             {
@@ -244,7 +240,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP011_変更列のみ更新_事前読込なし_Key1_1()
+        public void Update系_変更列のみ更新_事前読込なし_Key1_1()
         {
             using (var db = new DB())
             {
@@ -276,7 +272,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP011_変更列のみ更新_事前読込なし_Key1_2()
+        public void Update系_変更列のみ更新_事前読込なし_Key1_2()
         {
             using (var db = new DB())
             {
@@ -309,7 +305,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP011_変更列のみ更新_事前読込なし_Key2_1()
+        public void Update系_変更列のみ更新_事前読込なし_Key2_1()
         {
             using (var db = new DB())
             {
@@ -348,7 +344,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP011_変更列のみ更新_事前読込なし_Key2_2()
+        public void Update系_変更列のみ更新_事前読込なし_Key2_2()
         {
             using (var db = new DB())
             {
@@ -382,7 +378,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP012_Transaction_Commit()
+        public void Update系_Transaction_Commit()
         {
             using (var db = new DB())
             {
@@ -417,7 +413,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void UDP013_Transaction_Rollback()
+        public void Update系_Transaction_Rollback()
         {
             using (var db = new DB())
             {

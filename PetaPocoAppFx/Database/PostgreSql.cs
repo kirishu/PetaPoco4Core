@@ -32,7 +32,7 @@ namespace PetaPocoAppFx.Database.PostgreSql
         /// <summary>
         /// petapoco_sample Database Object
         /// </summary>
-        public DB() : base(Config.ConnectionString, DBType.PostgreSql)
+        public DB() : base(Config.ConnectionString, RDBType.PostgreSql)
         {
         }
     }

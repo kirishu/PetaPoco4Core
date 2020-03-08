@@ -38,7 +38,7 @@ namespace PetaPocoAppFx
 
                 var rec6 = new Database.SQLServer.TrColumn
                 {
-                    Key01 = "",
+                    Key01 = "AA",
                     ColBit = true,
                     ColBigInt = long.MaxValue,
                     ColTime = new TimeSpan(12, 24, 56),

@@ -1,17 +1,13 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using Xunit;
-using Xunit.Abstractions;
-using MySql.Data.MySqlClient;
 
 namespace PetaPoco4Core.Test.MySql
 {
-    public class Insert系: TestBase
+    public partial class MySqlTest
     {
-        public Insert系(ITestOutputHelper output) : base(output, TestCommon.Instance) { }
-
-
         [Fact]
-        public void INS001_Execute_1件挿入DDL()
+        public void Insert系_Execute_1件挿入DDL()
         {
             using (var db = new DB())
             {
@@ -32,7 +28,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void INS002_Insert_1件挿入Entity()
+        public void Insert系_Insert_1件挿入Entity()
         {
             using (var db = new DB())
             {
@@ -68,7 +64,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void INS003_Execute_キー重複エラーDDL()
+        public void Insert系_Execute_キー重複エラーDDL()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -84,7 +80,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void INS004_Insert_キー重複エラーEntity()
+        public void Insert系_Insert_キー重複エラーEntity()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -160,7 +156,7 @@ namespace PetaPoco4Core.Test.MySql
         //}
 
         [Fact]
-        public void INS007_Transaction_Commit()
+        public void Insert系_Transaction_Commit()
         {
             using (var db = new DB())
             {
@@ -192,7 +188,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void INS008_Transaction_Rollback()
+        public void Insert系_Transaction_Rollback()
         {
             using (var db = new DB())
             {
@@ -221,7 +217,7 @@ namespace PetaPoco4Core.Test.MySql
 
 
         [Fact]
-        public void INS009_AutoInclementKey()
+        public void Insert系_AutoInclementKey()
         {
             using (var db = new DB())
             {

@@ -10,7 +10,7 @@ namespace PetaPocoAppFx
 
         public static void Main(string[] args)
         {
-            PetaPoco.Database.DBType dbType = PetaPoco.Database.DBType.NotSet;
+            PetaPoco.Database.RDBType rdbType = PetaPoco.Database.RDBType.NotSet;
 
             ITest test = null;
 
@@ -19,29 +19,29 @@ namespace PetaPocoAppFx
                 switch (args[0].ToUpper())
                 {
                     case "MYSQL":
-                        dbType = PetaPoco.Database.DBType.MySql;
+                        rdbType = PetaPoco.Database.RDBType.MySql;
                         ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MySql"].ConnectionString;
                         test = new TestMySql();
                         break;
                     case "POSTGRESQL":
-                        dbType = PetaPoco.Database.DBType.PostgreSql;
+                        rdbType = PetaPoco.Database.RDBType.PostgreSql;
                         ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["PostgreSql"].ConnectionString;
                         test = new TestPostgreSql();
                         break;
                     case "SQLSERVER":
-                        dbType = PetaPoco.Database.DBType.SqlServer;
+                        rdbType = PetaPoco.Database.RDBType.SqlServer;
                         ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SQLServer"].ConnectionString;
                         test = new TestSQLServer();
                         break;
                     case "ORACLE":
-                        dbType = PetaPoco.Database.DBType.Oracle;
+                        rdbType = PetaPoco.Database.RDBType.Oracle;
                         ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Oracle"].ConnectionString;
                         test = new TestOracle();
                         break;
                 }
             }
 
-            if (dbType == PetaPoco.Database.DBType.NotSet)
+            if (rdbType == PetaPoco.Database.RDBType.NotSet)
             {
                 Console.WriteLine("Require Arguments");
                 Console.WriteLine("    MySql");

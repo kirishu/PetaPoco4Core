@@ -1,4 +1,6 @@
-﻿namespace PetaPoco4Core.Test.PostgreSql
+﻿using Xunit.Abstractions;
+
+namespace PetaPoco4Core.Test.PostgreSql
 {
     /// <summary>
     /// Database Object
@@ -10,27 +12,21 @@
         /// <summary>
         /// dvdlental Database Object
         /// </summary>
-        public DB() : base(Constr, DBType.PostgreSql)
+        public DB() : base(Constr, RDBType.PostgreSql)
         {
         }
     }
 
-    /// <summary>
-    /// テスト共通
-    /// </summary>
-    public sealed class TestCommon: ITestCommon
+    [RequiresCleanUp]
+    public partial class PostgreSqlTest : TestBase
     {
-        // singleton instance
-        private static readonly TestCommon _instance = new TestCommon();
+        public PostgreSqlTest(ITestOutputHelper output) : base(output) { }
 
-        public static TestCommon Instance {  get { return _instance; } }
-
-        private TestCommon() { }
 
         /// <summary>
         /// 初期処理
         /// </summary>
-        public void Initialize()
+        internal override void Initialize()
         {
             // DB接続
             using (var db = new DB())
@@ -44,7 +40,7 @@
         /// <summary>
         /// 終了処理
         /// </summary>
-        public void Cleanup()
+        internal override void Cleanup()
         {
             // DB接続
             using (var db = new DB())
@@ -53,17 +49,6 @@
                 db.Execute("DROP TABLE IF EXISTS pt_table01");
                 db.Execute("DROP TABLE IF EXISTS pt_table02");
                 db.Execute("DROP TABLE IF EXISTS pt_table03");
-                //var checktable01 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table01");
-                //if (!string.IsNullOrWhiteSpace(checktable01))
-                //{
-                //    db.Execute("DROP TABLE pt_table01");
-                //}
-
-                //var checktable02 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "pt_table02");
-                //if (!string.IsNullOrWhiteSpace(checktable02))
-                //{
-                //    db.Execute("DROP TABLE pt_table02");
-                //}
             }
         }
 
@@ -188,7 +173,5 @@
             db.Execute(sql);
         }
 
-
     }
-
 }

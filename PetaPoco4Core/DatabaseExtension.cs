@@ -43,13 +43,13 @@ namespace PetaPoco
         /// constractor
         /// </summary>s
         /// <param name="connectionString"></param>
-        /// <param name="dbType"></param>
-        public DatabaseExtension(string connectionString, DBType dbType)
-            : base(connectionString, dbType)
+        /// <param name="rdbType"></param>
+        public DatabaseExtension(string connectionString, RDBType rdbType)
+            : base(connectionString, rdbType)
         {
             base.CommandTimeout = 30;    // default 30sec
 
-            _useA5Mk2Params = (dbType == DBType.PostgreSql);
+            _useA5Mk2Params = (rdbType == RDBType.PostgreSql);
 
             _logger.Debug("[New Instance] {0}", connectionString);
         }
@@ -62,13 +62,13 @@ namespace PetaPoco
         {
             if (cmd == null) { throw new ArgumentNullException(nameof(cmd)); }
 
-            var text = cmd.CommandText;
+            var sql = cmd.CommandText;
             if (_useA5Mk2Params)
             {
                 var regex = new Regex("@([0-9]+)");
-                while (regex.IsMatch(text))
+                while (regex.IsMatch(sql))
                 {
-                    text = regex.Replace(text, ":p$1");
+                    sql = regex.Replace(sql, ":p$1");
                 }
             }
 
@@ -77,7 +77,7 @@ namespace PetaPoco
             log.AppendLine("-- BEGIN COMMAND");
             log.AppendLine(GetLogParameterDeclare(cmd.Parameters));
             log.AppendLine("--");
-            log.AppendLine(text);
+            log.AppendLine(sql);
             log.AppendLine("-- END COMMAND");
 
             _logger.Debug(log.ToString());
@@ -89,10 +89,14 @@ namespace PetaPoco
 
         #region private methods for DEBUG log
         /// <summary>
-        /// DEBUG時に[A5:SQL Mk-2]で実行可能なSQL文を出力する
+        /// DEBUG時に実行可能なSQL文を出力する
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// 実際に発行されるSQL文とは異なる場合があるので、参考程度にする
+        /// 例：ここではパラメータ値が"True"と出るけど、実際には"1"が出力される・・・など
+        /// </remarks>
         private string GetLogParameterDeclare(IDataParameterCollection parameters)
         {
             var log = new StringBuilder();
@@ -100,19 +104,19 @@ namespace PetaPoco
 
             foreach (IDataParameter param in parameters)
             {
-                string logvalue = GetLogQuotedParameterValue(param.Value);
                 string typename = GetLogParameterType(param);
+                string logvalue = GetLogQuotedParameterValue(typename, param.Value);
 
                 if (_useA5Mk2Params)
                 {
                     log.AppendFormat("SetParameter {0} {1}",
                         param.ParameterName.Replace(this.ParamPrefix, "p"),     // "@"を"p"に変更する
-                        dateTypes.Contains(typename) ? "'" + logvalue + "'" : logvalue
+                        logvalue
                     );    
                 }
                 else
                 {
-                    if (this._dbType == DBType.SqlServer)
+                    if (this._rdbType == RDBType.SqlServer)
                     {
                         log.AppendFormat("DECLARE {0} {1} = {2}", param.ParameterName, typename, logvalue);
                     }
@@ -133,7 +137,7 @@ namespace PetaPoco
         }
 
         //const string DATETIME_FORMAT_ROUNDTRIP = "o";
-        private string GetLogQuotedParameterValue(object value)
+        private string GetLogQuotedParameterValue(string typename, object value)
         {
             var log = new StringBuilder();
             try
@@ -162,8 +166,15 @@ namespace PetaPoco
                     }
                     else if (value is bool)
                     {
-                        // True -> 1, False -> 0
-                        log.Append(Convert.ToInt32(value));
+                        if (_rdbType == RDBType.MySql || _rdbType == RDBType.PostgreSql)
+                        {
+                            log.Append(value.ToString());
+                        }
+                        else
+                        {
+                            // True -> 1, False -> 0
+                            log.Append(Convert.ToInt32(value));
+                        }
                     }
                     else if (value is sbyte
                         || value is byte
@@ -181,21 +192,22 @@ namespace PetaPoco
                     }
                     else if (value is DateTime || value is DateTimeOffset)
                     {
-                        if (_dbType == DBType.SqlServer)
+                        log.Append('\'');
+                        if (typename.Equals("DATE", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            // MSSQL
-                            log.Append("CAST('");
-                            log.Append(((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff"));
-                            log.Append("' as datetime)");
+                            log.Append(((DateTime)value).ToString("yyyy/MM/dd"));
                         }
                         else
                         {
                             log.Append(((DateTime)value).ToString("yyyy/MM/dd HH:mm:ss.fff"));
                         }
+                        log.Append('\'');
                     }
                     else if (value is TimeSpan)
                     {
+                        log.Append('\'');
                         log.Append(((TimeSpan)value).ToString("g"));    //g [-][d:]h:mm:ss[.FFFFFFF]
+                        log.Append('\'');
                     }
                     else if (value is Guid)
                     {
@@ -226,12 +238,6 @@ namespace PetaPoco
                     }
                 }
             }
-            //catch (Exception ex)
-            //{
-            //    log.AppendLine("/* Exception occurred while converting parameter: ");
-            //    log.AppendLine(ex.ToString());
-            //    log.AppendLine("*/");
-            //}
             finally { }
 
             return log.ToString();
@@ -261,9 +267,9 @@ namespace PetaPoco
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        private string GetLogParameterType(System.Data.IDataParameter param)
+        private string GetLogParameterType(IDataParameter param)
         {
-            string dbtype = string.Empty;
+            string datatype = string.Empty;
 
             switch (param.DbType)
             {
@@ -271,61 +277,61 @@ namespace PetaPoco
                 case DbType.AnsiStringFixedLength:
                 case DbType.String:
                 case DbType.StringFixedLength:
-                    dbtype = _useA5Mk2Params ? "String" : "NVARCHAR(4000)";
+                    datatype = _useA5Mk2Params ? "String" : "NVARCHAR(4000)";
                     break;
                 case DbType.Boolean:
-                    dbtype = "BOOLEAN";
+                    datatype = "BOOLEAN";
                     break;
                 case DbType.Byte:
-                    dbtype = "TINYINT";
+                    datatype = "TINYINT";
                     break;
                 case DbType.Int16:
                 case DbType.SByte:
-                    dbtype = "SMALLINT";
+                    datatype = "SMALLINT";
                     break;
                 case DbType.Int32:
                 case DbType.UInt16:
-                    dbtype = "INT";
+                    datatype = "INT";
                     break;
                 case DbType.Int64:
                 case DbType.UInt32:
-                    dbtype = "BIGINT";
+                    datatype = "BIGINT";
                     break;
                 case DbType.UInt64:
                 case DbType.Currency:
                 case DbType.Decimal:
                 case DbType.VarNumeric:
-                    dbtype = "DECIMAL";
+                    datatype = "DECIMAL";
                     break;
                 case DbType.Single:
-                    dbtype = "FLOAT";
+                    datatype = "FLOAT";
                     break;
                 case DbType.Double:
-                    dbtype = "REAL";
+                    datatype = "REAL";
                     break;
                 case DbType.Time:
-                    dbtype = "TIME";
+                    datatype = "TIME";
                     break;
                 case DbType.Date:
-                    dbtype = "DATE";
+                    datatype = "DATE";
                     break;
                 case DbType.DateTime:
                 case DbType.DateTime2:
                 case DbType.DateTimeOffset:
-                    dbtype = "DATETIME";
+                    datatype = "DATETIME";
                     break;
                 case DbType.Binary:
                 case DbType.Guid:
                 case DbType.Object:
                 case DbType.Xml:
                     // バイナリ
-                    dbtype = _useA5Mk2Params ? "String" : param.DbType.ToString().ToUpper(System.Globalization.CultureInfo.CurrentCulture);
+                    datatype = _useA5Mk2Params ? "String" : param.DbType.ToString().ToUpper(System.Globalization.CultureInfo.CurrentCulture);
                     break;
                 default:
                     // なんだかわかんないもの
                     break;
             }
-            return dbtype;
+            return datatype;
         }
         #endregion
 
@@ -414,7 +420,7 @@ namespace PetaPoco
         /// <param name="sourcename">参照元のテーブル名</param>
         public void CreateTemporaryFromTable(string tempname, string sourcename)
         {
-            if (_dbType != DBType.SqlServer)
+            if (_rdbType != RDBType.SqlServer)
             {
                 const string message = "SQL Serverのみです";
                 throw new ArgumentException(message);

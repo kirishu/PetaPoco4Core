@@ -32,7 +32,7 @@ namespace PetaPocoAppFx.Database.Oracle
         /// <summary>
         /// PetaPocoSample Database Object
         /// </summary>
-        public DB() : base(Config.ConnectionString, DBType.Oracle)
+        public DB() : base(Config.ConnectionString, RDBType.Oracle)
         {
         }
     }

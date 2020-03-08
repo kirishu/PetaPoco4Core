@@ -15,11 +15,29 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SQLServer\**" />
+    <EmbeddedResource Remove="SQLServer\**" />
+    <None Remove="SQLServer\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="MySql\TestCommon.cs" />
+    <Compile Remove="PostgreSql\TestCommon.cs" />
     <Compile Remove="Unit\StandardMapperTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="nlog.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="SQLServer\Delete系.cs" />
+    <Compile Include="SQLServer\Entities.cs" />
+    <Compile Include="SQLServer\Insert系.cs" />
+    <Compile Include="SQLServer\Select系.cs" />
+    <Compile Include="SQLServer\SQLServer.cs" />
+    <Compile Include="SQLServer\Update系.cs" />
+    <Compile Include="SQLServer\例外系.cs" />
   </ItemGroup>
 
   <ItemGroup>

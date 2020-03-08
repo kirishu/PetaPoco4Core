@@ -1,16 +1,11 @@
-﻿using System;
-using Xunit;
-using Xunit.Abstractions;
+﻿using Xunit;
 
 namespace PetaPoco4Core.Test.MySql
 {
-    public class Delete系: TestBase
+    public partial class MySqlTest
     {
-        public Delete系(ITestOutputHelper output) : base(output, TestCommon.Instance) { }
-
-
         [Fact]
-        public void DEL001_Execute_1件削除DDL()
+        public void Delete系_Execute_1件削除DDL()
         {
             using (var db = new DB())
             {
@@ -32,7 +27,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL002_Execute_5件削除DDL()
+        public void Delete系_Execute_5件削除DDL()
         {
             using (var db = new DB())
             {
@@ -53,7 +48,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL003_削除対象無し_DDL発行()
+        public void Delete系_削除対象無し_DDL発行()
         {
             using (var db = new DB())
             {
@@ -74,7 +69,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL004_DeleteById_1件削除Entity_1列PK()
+        public void Delete系_DeleteById_1件削除Entity_1列PK()
         {
             using (var db = new DB())
             {
@@ -93,7 +88,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL005_Delete_1件削除Entity_2列PK()
+        public void Delete系_1件削除Entity_2列PK()
         {
             using (var db = new DB())
             {
@@ -118,7 +113,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL006_Delete_1件削除Entity_2列PK_ヒットなし()
+        public void Delete系_1件削除Entity_2列PK_ヒットなし()
         {
             using (var db = new DB())
             {
@@ -140,7 +135,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL007_Delete_5件削除Entity()
+        public void Delete系_5件削除Entity()
         {
             var pk = new
             {
@@ -162,7 +157,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL008_Delete_5件削除Entity_SQLオブジェクト()
+        public void Delete系_5件削除Entity_SQLオブジェクト()
         {
             var pk = new
             {
@@ -186,7 +181,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL009_Transaction_Commit()
+        public void Delete系_Transaction_Commit()
         {
             using (var db = new DB())
             {
@@ -217,7 +212,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL010_Transaction_Rollback()
+        public void Delete系_Transaction_Rollback()
         {
             using (var db = new DB())
             {
@@ -249,7 +244,7 @@ namespace PetaPoco4Core.Test.MySql
 
 
         [Fact]
-        public void DEL011_Delete_1件読んで削除_PK1()
+        public void Delete系_1件読んで削除_PK1()
         {
             using (var db = new DB())
             {
@@ -268,7 +263,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void DEL012_Delete_1件読んで削除_PK2()
+        public void Delete系_1件読んで削除_PK2()
         {
             using (var db = new DB())
             {

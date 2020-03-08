@@ -62,7 +62,7 @@ namespace PetaPoco
     }
 
     /// <summary>
-    /// Wrap strings in an instance of this class to force use of DBType.AnsiString
+    /// Wrap strings in an instance of this class to force use of DbType.AnsiString
     /// </summary>
     public class AnsiString
     {
@@ -294,7 +294,7 @@ namespace PetaPoco
     /// </summary>
     public class Database : IDisposable, IDatabase
     {
-        public enum DBType
+        public enum RDBType
         {
             NotSet,
             SqlServer,
@@ -303,7 +303,7 @@ namespace PetaPoco
             Oracle,
             SQLite
         }
-        protected readonly DBType _dbType;
+        protected readonly RDBType _rdbType;
 
         public string ParamPrefix = "@";
 
@@ -329,12 +329,12 @@ namespace PetaPoco
         ///     Constructs an instance using a supplied connections string and provider name.
         /// </summary>
         /// <param name="connectionString">The database connection string.</param>
-        /// <param name="dbType">The database type.</param>
+        /// <param name="rdbType">The database type.</param>
         /// <remarks>
         ///     PetaPoco will automatically close and dispose any connections it creates.
         /// </remarks>
         /// <exception cref="ArgumentException">Thrown when <paramref name="connectionString" /> is null or empty.</exception>
-        public Database(string connectionString, DBType dbType)
+        public Database(string connectionString, RDBType rdbType)
         {
             if (string.IsNullOrEmpty(connectionString))
             {
@@ -342,20 +342,20 @@ namespace PetaPoco
             }
 
             _connectionString = connectionString;
-            _dbType = dbType;
-            _dbFactory = GetDbFactory(dbType);
+            _rdbType = rdbType;
+            _dbFactory = GetDbFactory(rdbType);
 
             _transactionDepth = 0;
             ForceDateTimesToUtc = true;
             EnableAutoSelect = true;
 
-            if (_dbType == DBType.MySql
+            if (_rdbType == RDBType.MySql
                 && _connectionString != null
                 && _connectionString.IndexOf("Allow User Variables=true", StringComparison.CurrentCulture) >= 0)
             {
                 ParamPrefix = "?";
             }
-            else if (_dbType == DBType.Oracle)
+            else if (_rdbType == RDBType.Oracle)
             {
                 ParamPrefix = ":";
             }
@@ -364,29 +364,29 @@ namespace PetaPoco
         /// <summary>
         /// Returns the .NET standard conforming DbProviderFactory. [kirishu]
         /// </summary>
-        /// <param name="dbType">The database type.</param>
+        /// <param name="rdbType">The database type.</param>
         /// <returns>The db provider factory.</returns>
         /// <exception cref="ArgumentException">Thrown when AssemblyName does not match a type.</exception>
-        protected DbProviderFactory GetDbFactory(DBType dbType)
+        protected DbProviderFactory GetDbFactory(RDBType rdbType)
         {
             string providerName = string.Empty;
             string[] assemblyName;
 
-            if (dbType == DBType.SqlServer)
+            if (rdbType == RDBType.SqlServer)
             {
                 providerName = "System.Data.SqlClient";
                 assemblyName = new string[] {
                     "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 };
             }
-            else if (dbType == DBType.MySql)
+            else if (rdbType == RDBType.MySql)
             {
                 providerName = "MySql.Data.MySqlClient";
                 assemblyName = new string[] {
                     "MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Culture=neutral, PublicKeyToken=c5687fc88969c44d",
                 };
             }
-            else if (dbType == DBType.Oracle)
+            else if (rdbType == RDBType.Oracle)
             {
                 //providerName = "System.Data.OracleClient";
                 providerName = "Oracle.DataAccess.Client";
@@ -395,14 +395,14 @@ namespace PetaPoco
                     "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess",
                 };
             }
-            else if (dbType == DBType.PostgreSql)
+            else if (rdbType == RDBType.PostgreSql)
             {
                 providerName = "Npgsql";
                 assemblyName = new string[] {
                     "Npgsql.NpgsqlFactory, Npgsql, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
                 };
             }
-            else if (dbType == DBType.SQLite)
+            else if (rdbType == RDBType.SQLite)
             {
                 providerName = "System.Data.SQLite";
                 assemblyName = new string[] {
@@ -730,7 +730,7 @@ namespace PetaPoco
                     p.Value = (item as AnsiString).Value;
                     p.DbType = DbType.AnsiString;
                 }
-                else if (t == typeof(bool) && _dbType != DBType.PostgreSql)
+                else if (t == typeof(bool) && _rdbType != RDBType.PostgreSql)
                 {
                     p.Value = ((bool)item) ? 1 : 0;
                 }
@@ -799,10 +799,10 @@ namespace PetaPoco
                 AddParam(cmd, item, ParamPrefix);
             }
 
-            if (_dbType == DBType.Oracle)
+            if (_rdbType == RDBType.Oracle)
                 cmd.GetType().GetProperty("BindByName").SetValue(cmd, true, null);
 
-            if (_dbType == DBType.Oracle || _dbType == DBType.MySql)
+            if (_rdbType == RDBType.Oracle || _rdbType == RDBType.MySql)
                 cmd.CommandText = cmd.CommandText.Replace("/*peta_dual*/", "from dual");
 
             if (!String.IsNullOrEmpty(sql))
@@ -983,11 +983,11 @@ namespace PetaPoco
             // Split the SQL into the bits we need
             if (!SplitSqlForPaging(sql, out sqlCount, out string sqlSelectRemoved, out string sqlOrderBy))
                 throw new Exception("Unable to parse SQL statement for paged query");
-            if (_dbType == DBType.Oracle && sqlSelectRemoved.StartsWith("*", StringComparison.CurrentCulture))
+            if (_rdbType == RDBType.Oracle && sqlSelectRemoved.StartsWith("*", StringComparison.CurrentCulture))
                 throw new Exception("Query must alias '*' when performing a paged query.\neg. select t.* from table t order by t.id");
 
             // Build the SQL for the actual final result
-            if (_dbType == DBType.SqlServer || _dbType == DBType.Oracle)
+            if (_rdbType == RDBType.SqlServer || _rdbType == RDBType.Oracle)
             {
                 sqlSelectRemoved = rxOrderBy.Replace(sqlSelectRemoved, "");
                 if (rxDistinct.IsMatch(sqlSelectRemoved))
@@ -1663,15 +1663,15 @@ namespace PetaPoco
 
         public string EscapeSqlIdentifier(string str)
         {
-            switch (_dbType)
+            switch (_rdbType)
             {
-                case DBType.MySql:
+                case RDBType.MySql:
                     return string.Format("`{0}`", str);
 
-                case DBType.PostgreSql:
+                case RDBType.PostgreSql:
                     return string.Format("\"{0}\"", str);
 
-                case DBType.Oracle:
+                case RDBType.Oracle:
                     return string.Format("\"{0}\"", str.ToUpperInvariant());
 
                 default:
@@ -1732,7 +1732,7 @@ namespace PetaPoco
                             && primaryKeyName != null
                             && string.Compare(i.Key, primaryKeyName, true, System.Globalization.CultureInfo.CurrentCulture) == 0)
                         {
-                            if (_dbType == DBType.Oracle && !string.IsNullOrEmpty(pd.TableInfo.SequenceName))
+                            if (_rdbType == RDBType.Oracle && !string.IsNullOrEmpty(pd.TableInfo.SequenceName))
                             {
                                 names.Add(i.Key);
                                 values.Add(string.Format("{0}.nextval", pd.TableInfo.SequenceName));
@@ -1756,7 +1756,7 @@ namespace PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, ""))
                     {
                         var sql = string.Empty;
-                        if (names.Count > 0 || _dbType == DBType.MySql)
+                        if (names.Count > 0 || _rdbType == RDBType.MySql)
                         {
                             sql = string.Format("INSERT INTO {0} ({1}) VALUES ({2})", EscapeTableName(tableName), string.Join(",", names.ToArray()), string.Join(",", values.ToArray()));
                         }
@@ -1780,21 +1780,21 @@ namespace PetaPoco
                         else
                         {
 
-                            switch (_dbType)
+                            switch (_rdbType)
                             {
-                                case DBType.SqlServer:
+                                case RDBType.SqlServer:
                                     cmd.CommandText += ";\nSELECT SCOPE_IDENTITY() AS NewID;";
                                     DoPreExecute(cmd);
                                     id = cmd.ExecuteScalar();
                                     OnExecutedCommand(cmd);
                                     break;
-                                case DBType.MySql:
+                                case RDBType.MySql:
                                     cmd.CommandText += ";\nSELECT LAST_INSERT_ID();";
                                     DoPreExecute(cmd);
                                     id = cmd.ExecuteScalar();
                                     OnExecutedCommand(cmd);
                                     break;
-                                case DBType.PostgreSql:
+                                case RDBType.PostgreSql:
                                     if (primaryKeyName != null)
                                     {
                                         cmd.CommandText += string.Format(" returning {0} as NewID", EscapeSqlIdentifier(primaryKeyName));
@@ -1809,7 +1809,7 @@ namespace PetaPoco
                                     }
                                     OnExecutedCommand(cmd);
                                     break;
-                                case DBType.Oracle:
+                                case RDBType.Oracle:
                                     if (primaryKeyName != null)
                                     {
                                         cmd.CommandText += string.Format(" returning {0} into :newid", EscapeSqlIdentifier(primaryKeyName));
@@ -1831,7 +1831,7 @@ namespace PetaPoco
                                     }
                                     OnExecutedCommand(cmd);
                                     break;
-                                case DBType.SQLite:
+                                case RDBType.SQLite:
                                     if (primaryKeyName != null)
                                     {
                                         cmd.CommandText += ";\nSELECT last_insert_rowid();";

@@ -110,7 +110,7 @@ namespace PetaPoco4Core.Test.Unit
         [Fact]
         public void DMP005_GetPrimaryKeyValues_Mono()
         {
-            var db = new PetaPoco.Database("test", PetaPoco.Database.DBType.MySql);
+            var db = new PetaPoco.Database("test", PetaPoco.Database.RDBType.MySql);
 
             // Invoke refrectionを使ってprivateメソッドを実行する
             MethodInfo methodInfo = typeof(PetaPoco.Database).GetMethod("GetPrimaryKeyValues", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -139,7 +139,7 @@ namespace PetaPoco4Core.Test.Unit
                 Id3 = 300,
             };
 
-            var db = new PetaPoco.Database("test", PetaPoco.Database.DBType.MySql);
+            var db = new PetaPoco.Database("test", PetaPoco.Database.RDBType.MySql);
 
             // Invoke refrectionを使ってprivateメソッドを実行する
             MethodInfo methodInfo = typeof(PetaPoco.Database).GetMethod("GetPrimaryKeyValues", BindingFlags.NonPublic | BindingFlags.Instance);

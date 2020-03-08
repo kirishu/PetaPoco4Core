@@ -1,17 +1,13 @@
-﻿using System.Text.RegularExpressions;
+﻿using MySql.Data.MySqlClient;
+using System.Text.RegularExpressions;
 using Xunit;
-using Xunit.Abstractions;
-using MySql.Data.MySqlClient;
 
 namespace PetaPoco4Core.Test.MySql
 {
-    public class 例外系: TestBase
+    public partial class MySqlTest
     {
-        public 例外系(ITestOutputHelper output): base(output, TestCommon.Instance) { }
-
-
         [Fact]
-        public void XCP001_SyntacError()
+        public void 例外系_SyntacError()
         {
 
             var ex = Assert.Throws<MySqlException>(() =>
@@ -28,7 +24,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void XCP002_オブジェクト無し()
+        public void 例外系_オブジェクト無し()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -43,7 +39,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void XCP003_DuplicateInsert()
+        public void 例外系_DuplicateInsert()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -60,7 +56,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT008_クエリタイムアウト_Timeout3秒()
+        public void 例外系_クエリタイムアウト_Timeout3秒()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -76,7 +72,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT009_クエリタイムアウト_Timeout10秒()
+        public void 例外系_クエリタイムアウト_Timeout10秒()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -92,12 +88,12 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void XCP005_接続タイムアウト_Timeout10秒()
+        public void 例外系_接続タイムアウト_Timeout10秒()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
                 var constr = "Server=8.8.8.8;Connection Timeout=10;Database=employees;uid=testman;pwd=testman;SslMode=None;";
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.MySql))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.MySql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -108,12 +104,12 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void XCP005_接続タイムアウト_Timeout30秒()
+        public void 例外系_接続タイムアウト_Timeout30秒()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
                 var constr = "Server=8.8.8.8;Connection Timeout=30;Database=employees;uid=testman;pwd=testman;SslMode=None;";
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.MySql))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.MySql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -124,7 +120,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void XCP006_マッピング型エラー()
+        public void 例外系_マッピング型エラー()
         {
             var ex = Assert.Throws<System.InvalidCastException>(() =>
             {
@@ -137,7 +133,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT002_SQLインジェクション_数値攻撃()
+        public void 例外系_SQLインジェクション_数値攻撃()
         {
             var ex = Assert.Throws<MySqlException>(() =>
             {
@@ -155,7 +151,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT002_SQLインジェクション_文字列攻撃()
+        public void 例外系_SQLインジェクション_文字列攻撃()
         {
             using (var db = new DB())
             {
@@ -169,13 +165,13 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT004_接続文字列_サービスダウンサーバ()
+        public void 例外系_接続文字列_サービスダウンサーバ()
         {
             var constr = "Server=localhost;Database=employees;uid=testman;pwd=testman;SslMode=None;";
 
             var ex = Assert.Throws<MySqlException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.MySql))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.MySql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }
@@ -186,14 +182,14 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void PT005_接続文字列_認証不可アカウント()
+        public void 例外系_接続文字列_認証不可アカウント()
         {
             var rx = new Regex(";(pwd|password)=(.*?);", RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase);
             var constr = rx.Replace(DB.Constr, ";$1=**zapped**;");
 
             var ex = Assert.Throws<MySqlException>(() =>
             {
-                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.DBType.MySql))
+                using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.MySql))
                 {
                     var rec = db.SingleOrDefaultById<PtTable01>("01");
                 }

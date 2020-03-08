@@ -1,4 +1,6 @@
-﻿namespace PetaPoco4Core.Test.SQLServer
+﻿using Xunit.Abstractions;
+
+namespace PetaPoco4Core.Test.SQLServer
 {
     /// <summary>
     /// Database Object
@@ -10,24 +12,21 @@
         /// <summary>
         /// employees Database Object
         /// </summary>
-        public DB() : base(Constr, DBType.SqlServer)
+        public DB() : base(Constr, RDBType.SqlServer)
         {
         }
     }
 
-    public class TestCommon: ITestCommon
+    [RequiresCleanUp]
+    public partial class SQLServer : TestBase
     {
-        // singleton instance
-        private static readonly TestCommon _instance = new TestCommon();
+        public SQLServer(ITestOutputHelper output) : base(output) { }
 
-        public static TestCommon Instance {  get { return _instance; } }
-
-        private TestCommon() { }
 
         /// <summary>
         /// 初期処理
         /// </summary>
-        public void Initialize()
+        internal override void Initialize()
         {
             // DB接続
             using (var db = new DB())
@@ -41,29 +40,18 @@
         /// <summary>
         /// 終了処理
         /// </summary>
-        public void Cleanup()
+        internal override void Cleanup()
         {
             // DB接続
             using (var db = new DB())
             {
-                //var checktable01 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "PtTable01");
-                //if (!string.IsNullOrWhiteSpace(checktable01))
-                //{
-                //    db.Execute("DROP TABLE PtTable01");
-                //}
-
-                //var checktable02 = db.ExecuteScalar<string>("SELECT relname FROM pg_class WHERE relkind = 'r' AND relname = @0", "PtTable02");
-                //if (!string.IsNullOrWhiteSpace(checktable02))
-                //{
-                //    db.Execute("DROP TABLE PtTable02");
-                //}
                 db.Execute("IF OBJECT_ID(N'PtTable01', N'U') IS NOT NULL    DROP TABLE PtTable01");
                 db.Execute("IF OBJECT_ID(N'PtTable02', N'U') IS NOT NULL    DROP TABLE PtTable02");
                 db.Execute("IF OBJECT_ID(N'PtTable03', N'U') IS NOT NULL    DROP TABLE PtTable03");
             }
         }
 
-        private  void CreateTable01(DB db)
+        private void CreateTable01(DB db)
         {
             // 存在していたらDROP
             db.Execute("IF OBJECT_ID(N'PtTable01', N'U') IS NOT NULL    DROP TABLE PtTable01");
@@ -170,6 +158,7 @@
             db.Execute(sql);
 
         }
+
 
     }
 
