@@ -33,6 +33,11 @@ namespace PetaPocoAppFx
                         ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SQLServer"].ConnectionString;
                         test = new TestSQLServer();
                         break;
+                    case "SQLITE":
+                        rdbType = PetaPoco.Database.RDBType.SQLite;
+                        ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SQLite"].ConnectionString;
+                        test = new TestSQLite();
+                        break;
                     case "ORACLE":
                         rdbType = PetaPoco.Database.RDBType.Oracle;
                         ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Oracle"].ConnectionString;
@@ -47,6 +52,7 @@ namespace PetaPocoAppFx
                 Console.WriteLine("    MySql");
                 Console.WriteLine("    PostgreSql");
                 Console.WriteLine("    SqlServer");
+                Console.WriteLine("    SQLite");
                 Console.WriteLine("    Oracle");
                 return;
             }

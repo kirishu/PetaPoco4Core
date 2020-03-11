@@ -429,12 +429,24 @@ namespace PetaPoco
             }
             return (DbProviderFactory)ft.GetField("Instance").GetValue(null);
 #else
-            // .NET Frameworkのとき
-            if (string.IsNullOrEmpty(providerName))
+            //// .NET Frameworkのとき
+            //if (string.IsNullOrEmpty(providerName))
+            //{
+            //    throw new ArgumentException("Could not load the " + providerName + " DbProviderFactory.");
+            //}
+            //return DbProviderFactories.GetFactory(providerName);
+
+            Type ft = null;
+            foreach (var asm in assemblyName)
             {
-                throw new ArgumentException("Could not load the " + providerName + " DbProviderFactory.");
+                ft = Type.GetType(asm);
+                if (ft != null) break;
             }
-            return DbProviderFactories.GetFactory(providerName);
+            if (ft == null)
+            {
+                throw new ArgumentException("Could not load the " + GetType().Name + " DbProviderFactory.");
+            }
+            return (DbProviderFactory)ft.GetField("Instance").GetValue(null);
 #endif
         }
 

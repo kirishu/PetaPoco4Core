@@ -37,7 +37,7 @@ namespace PetaPoco
         private DateTime _execTime = DateTime.MinValue;
 
         /// <summary> デバッグ出力にA5Mk2のSetParameter構文を使用する </summary>
-        private readonly bool _useA5Mk2Params;
+        protected bool UseA5Mk2Params { get; set; }
 
         /// <summary>
         /// constractor
@@ -49,7 +49,7 @@ namespace PetaPoco
         {
             base.CommandTimeout = 30;    // default 30sec
 
-            _useA5Mk2Params = (rdbType == RDBType.PostgreSql);
+            UseA5Mk2Params = (rdbType == RDBType.PostgreSql);
 
             _logger.Debug("[New Instance] {0}", connectionString);
         }
@@ -63,7 +63,7 @@ namespace PetaPoco
             if (cmd == null) { throw new ArgumentNullException(nameof(cmd)); }
 
             var sql = cmd.CommandText;
-            if (_useA5Mk2Params)
+            if (UseA5Mk2Params)
             {
                 var regex = new Regex("@([0-9]+)");
                 while (regex.IsMatch(sql))
@@ -107,7 +107,7 @@ namespace PetaPoco
                 string typename = GetLogParameterType(param);
                 string logvalue = GetLogQuotedParameterValue(typename, param.Value);
 
-                if (_useA5Mk2Params)
+                if (UseA5Mk2Params)
                 {
                     log.AppendFormat("SetParameter {0} {1}",
                         param.ParameterName.Replace(this.ParamPrefix, "p"),     // "@"を"p"に変更する
@@ -128,7 +128,7 @@ namespace PetaPoco
                 log.AppendLine();
             }
 
-            if (_useA5Mk2Params)
+            if (UseA5Mk2Params)
             {
                 log.Insert(0, "/**\n");
                 log.Append("*/");
@@ -277,7 +277,7 @@ namespace PetaPoco
                 case DbType.AnsiStringFixedLength:
                 case DbType.String:
                 case DbType.StringFixedLength:
-                    datatype = _useA5Mk2Params ? "String" : "NVARCHAR(4000)";
+                    datatype = UseA5Mk2Params ? "String" : "NVARCHAR(4000)";
                     break;
                 case DbType.Boolean:
                     datatype = "BOOLEAN";
@@ -325,7 +325,7 @@ namespace PetaPoco
                 case DbType.Object:
                 case DbType.Xml:
                     // バイナリ
-                    datatype = _useA5Mk2Params ? "String" : param.DbType.ToString().ToUpper(System.Globalization.CultureInfo.CurrentCulture);
+                    datatype = UseA5Mk2Params ? "String" : param.DbType.ToString().ToUpper(System.Globalization.CultureInfo.CurrentCulture);
                     break;
                 default:
                     // なんだかわかんないもの
