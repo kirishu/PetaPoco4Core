@@ -1,23 +1,14 @@
+-- ----------------------------------------------------------------------------
 .NET Core SDK 2.2.104以上が必要（.NET Core Test Explorerが必要とする）
 
 -- ----------------------------------------------------------------------------
-TODO：
+DefaultMapper
+	クラス
 
-SQLServerでdatetiime型は使えない
-Ignoreを自動付与しようかな・・・
 
---
 
-OracleのTTでAutoIncrementがうまく取得できない
 
---
 
-Oracleでnumber(5) nullable は int? にしないとだめ？
-またnumber?はdboule?にしないとだめ？
-
-どうもOracle.DataAccessのコネクタが勝手に型を決めて、PetaPocoのマッパでうまく行かないみたい・・・
-
---
 
 
 

@@ -32,3 +32,5 @@ Thumbs.db
 [Ll]og/
 [Ll]ogs/
 *.[Ll]og
+
+*.sqlite3-journal

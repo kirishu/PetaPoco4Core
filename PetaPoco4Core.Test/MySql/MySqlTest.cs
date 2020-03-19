@@ -10,7 +10,7 @@ namespace PetaPoco4Core.Test.MySql
         public static readonly string Constr = "Server=CentOSdb;Database=PetaPocoSample;uid=testman;pwd=testpwd;SslMode=None;";
 
         /// <summary>
-        /// employees Database Object
+        /// Database Object
         /// </summary>
         public DB() : base(Constr, RDBType.MySql)
         {

@@ -142,34 +142,50 @@ namespace PetaPoco
     {
         void GetTableInfo(Type t, TableInfo ti);
         bool MapPropertyToColumn(PropertyInfo pi, ref string columnName, ref bool resultColumn);
-        Func<object, object> GetFromDbConverter(PropertyInfo pi, Type SourceType);
+        /// <summary>
+        /// Supply a function to convert a database value to the correct property value
+        /// </summary>
+        /// <param name="targetProperty">The target property</param>
+        /// <param name="sourceType">The type of data returned by the DB</param>
+        /// <returns>A Func that can do the conversion, or null for no conversion</returns>
+        Func<object, object> GetFromDbConverter(PropertyInfo targetProperty, Type sourceType);
+
+        /// <summary>
+        /// Supply a function to convert a property value into a database value
+        /// </summary>
+        /// <param name="SourceType">The type of data returned by the DB</param>
+        /// <returns>A Func that can do the conversion</returns>
         Func<object, object> GetToDbConverter(Type SourceType);
     }
-    public interface IMapper2 : IMapper
-    {
-        Func<object, object> GetFromDbConverter(Type DestType, Type SourceType);
-    }
-
 
     /// <summary>
     /// the default implementation of IMapper used by PetaPoco
     /// </summary>
-    public class DefaultMapper: IMapper2
+    public class DefaultMapper : IMapper
     {
         public virtual void GetTableInfo(Type t, TableInfo ti) { }
         public virtual bool MapPropertyToColumn(PropertyInfo pi, ref string columnName, ref bool resultColumn)
         {
             return true;
         }
-        public virtual Func<object, object> GetFromDbConverter(PropertyInfo pi, Type SourceType)
-        {
-            return GetFromDbConverter(pi.PropertyType, SourceType);
-        }
-        public virtual Func<object, object> GetToDbConverter(Type SourceType)
+
+        /// <summary>
+        /// Supply a function to convert a database value to the correct property value
+        /// </summary>
+        /// <param name="targetProperty">The target property</param>
+        /// <param name="sourceType">The type of data returned by the DB</param>
+        /// <returns>A Func that can do the conversion, or null for no conversion</returns>
+        public virtual Func<object, object> GetFromDbConverter(PropertyInfo targetProperty, Type sourceType)
         {
             return null;
         }
-        public virtual Func<object, object> GetFromDbConverter(Type DestType, Type SourceType)
+
+        /// <summary>
+        /// Supply a function to convert a property value into a database value
+        /// </summary>
+        /// <param name="sourceType">he type of data returned by the DB</param>
+        /// <returns>A Func that can do the conversion</returns>
+        public virtual Func<object, object> GetToDbConverter(Type sourceType)
         {
             return null;
         }
@@ -288,7 +304,6 @@ namespace PetaPoco
         int Delete<T>(T poco) where T : IPetaPocoRecord<T>;
     }
 
-
     /// <summary>
     /// The main PetaPoco Database class.  You can either use this class directly, or derive from it.
     /// </summary>
@@ -312,6 +327,8 @@ namespace PetaPoco
 
         public int CommandTimeout { get; set; }
         public int OneTimeCommandTimeout { get; set; }
+        
+        public static IMapper Mapper { get; set; }
 
         // Member variables
         private string _connectionString;
@@ -326,12 +343,12 @@ namespace PetaPoco
         private VersionExceptionHandling _versionException = VersionExceptionHandling.Ignore;
 
         /// <summary>
-        ///     Constructs an instance using a supplied connections string and provider name.
+        /// Constructs an instance using a supplied connections string and provider name.
         /// </summary>
         /// <param name="connectionString">The database connection string.</param>
         /// <param name="rdbType">The database type.</param>
         /// <remarks>
-        ///     PetaPoco will automatically close and dispose any connections it creates.
+        /// PetaPoco will automatically close and dispose any connections it creates.
         /// </remarks>
         /// <exception cref="ArgumentException">Thrown when <paramref name="connectionString" /> is null or empty.</exception>
         public Database(string connectionString, RDBType rdbType)
@@ -362,7 +379,7 @@ namespace PetaPoco
         }
 
         /// <summary>
-        /// Returns the .NET standard conforming DbProviderFactory. [kirishu]
+        /// Returns the .NET conforming DbProviderFactory.
         /// </summary>
         /// <param name="rdbType">The database type.</param>
         /// <returns>The db provider factory.</returns>
@@ -388,7 +405,6 @@ namespace PetaPoco
             }
             else if (rdbType == RDBType.Oracle)
             {
-                //providerName = "System.Data.OracleClient";
                 providerName = "Oracle.DataAccess.Client";
                 assemblyName = new string[] {
                     "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess, Culture=neutral, PublicKeyToken=89b483f429c47342",
@@ -407,7 +423,6 @@ namespace PetaPoco
                 providerName = "System.Data.SQLite";
                 assemblyName = new string[] {
                     "System.Data.SQLite.SQLiteFactory, System.Data.SQLite",
-                    "Microsoft.Data.Sqlite.SqliteFactory, Microsoft.Data.Sqlite",
                 };
             }
             else
@@ -415,8 +430,6 @@ namespace PetaPoco
                 throw new ArgumentException("DBType is not exist");
             }
 
-#if (NETSTANDARD || NETCOREAPP)
-            // .NET Core または .NET Standardのとき
             Type ft = null;
             foreach (var asm in assemblyName)
             {
@@ -428,26 +441,6 @@ namespace PetaPoco
                 throw new ArgumentException("Could not load the " + GetType().Name + " DbProviderFactory.");
             }
             return (DbProviderFactory)ft.GetField("Instance").GetValue(null);
-#else
-            //// .NET Frameworkのとき
-            //if (string.IsNullOrEmpty(providerName))
-            //{
-            //    throw new ArgumentException("Could not load the " + providerName + " DbProviderFactory.");
-            //}
-            //return DbProviderFactories.GetFactory(providerName);
-
-            Type ft = null;
-            foreach (var asm in assemblyName)
-            {
-                ft = Type.GetType(asm);
-                if (ft != null) break;
-            }
-            if (ft == null)
-            {
-                throw new ArgumentException("Could not load the " + GetType().Name + " DbProviderFactory.");
-            }
-            return (DbProviderFactory)ft.GetField("Instance").GetValue(null);
-#endif
         }
 
         /// <summary>
@@ -2121,7 +2114,7 @@ namespace PetaPoco
         ///     int cnt = db.Update(pk);
         /// ]]>
         /// </example>
-        public int Update<T>(T poco, object primaryKey, IEnumerable<string> columns) where T: IPetaPocoRecord<T>
+        public int Update<T>(T poco, object primaryKey, IEnumerable<string> columns) where T : IPetaPocoRecord<T>
         {
             if (poco == null) { throw new ArgumentNullException(nameof(poco)); }
             if (columns != null && !columns.Any()) { return 0; }
@@ -2362,8 +2355,6 @@ namespace PetaPoco
             Ignore,
             Exception
         }
-
-        public static IMapper Mapper { get; set; }
 
         public class PocoColumn
         {
@@ -2846,56 +2837,60 @@ namespace PetaPoco
                 Func<object, object> converter = null;
 
                 // Get converter from the mapper
-                if (Database.Mapper != null)
+                if (Database.Mapper != null && pc != null)
                 {
-                    if (pc != null)
-                    {
-                        converter = Database.Mapper.GetFromDbConverter(pc.PropertyInfo, srcType);
-                    }
+                    converter = Database.Mapper.GetFromDbConverter(pc.PropertyInfo, srcType);
                     if (converter != null)
                     {
                         return converter;
                     }
-                    else
-                    {
-                        if (Database.Mapper is IMapper2 m2)
-                        {
-                            converter = m2.GetFromDbConverter(dstType, srcType);
-                        }
-                    }
                 }
 
                 // Standard DateTime->Utc mapper
-                if (forceDateTimesToUtc && converter == null && srcType == typeof(DateTime) && (dstType == typeof(DateTime) || dstType == typeof(DateTime?)))
+                if (pc != null && forceDateTimesToUtc && srcType == typeof(DateTime) && (dstType == typeof(DateTime) || dstType == typeof(DateTime?)))
                 {
-                    converter = delegate (object src) { return new DateTime(((DateTime)src).Ticks, DateTimeKind.Utc); };
+                    return delegate (object src) { return new DateTime(((DateTime)src).Ticks, DateTimeKind.Utc); };
+                }
+
+                // added by [kirishu]
+                // unwrap nullable types
+                Type underlyingDstType = Nullable.GetUnderlyingType(dstType);
+                if (underlyingDstType != null)
+                {
+                    dstType = underlyingDstType;
                 }
 
                 // Forced type conversion including integral types -> enum
-                if (converter == null)
+                if (dstType.IsEnum && IsIntegralType(srcType))
                 {
-                    if (dstType.IsEnum && IsIntegralType(srcType))
+                    var backingDstType = Enum.GetUnderlyingType(dstType);
+                    if (underlyingDstType != null)
                     {
-                        if (srcType != typeof(int))
-                        {
-                            converter = src => Convert.ChangeType(src, typeof(int), null);
-                        }
+                        // if dstType is Nullable<Enum>, convert to enum value
+                        return delegate (object src) { return Enum.ToObject(dstType, src); };
                     }
-                    else if (!dstType.IsAssignableFrom(srcType))
+                    else if (srcType != backingDstType)
                     {
-                        if (dstType.IsEnum && srcType == typeof(string))
-                        {
-                            converter = src => EnumMapper.EnumFromString(dstType, (string)src);
-                        }
-                        else
-                        {
-                            converter = src => Convert.ChangeType(src, dstType, null);
-                        }
+                        return delegate (object src) { return Convert.ChangeType(src, backingDstType, null); };
                     }
                 }
-                return converter;
-            }
+                else if (!dstType.IsAssignableFrom(srcType))
+                {
+                    if (dstType.IsEnum && srcType == typeof(string))
+                    {
+                        return delegate (object src) { return EnumMapper.EnumFromString(dstType, (string)src); };
+                    }
 
+                    if (dstType == typeof(Guid) && srcType == typeof(string))
+                    {
+                        return delegate (object src) { return Guid.Parse((string)src); };
+                    }
+
+                    return delegate (object src) { return Convert.ChangeType(src, dstType, null); };
+                }
+
+                return null;
+            }
 
             static T RecurseInheritedTypes<T>(Type t, Func<Type, T> cb)
             {

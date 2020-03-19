@@ -1,9 +1,9 @@
 ﻿using System;
 using Xunit;
 
-namespace PetaPoco4Core.Test.SQLServer
+namespace PetaPoco4Core.Test.SQLite
 {
-    public partial class SQLServer
+    public partial class SQLite
     {
         [Fact]
         public void Insert系_Execute_1件挿入DDL()
@@ -12,7 +12,7 @@ namespace PetaPoco4Core.Test.SQLServer
             {
                 db.BeginTransaction();
 
-                var cnt = db.Execute("INSERT INTO PtTable01 values ('91','true', 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
+                var cnt = db.Execute("INSERT INTO PtTable01 values ('91',true, 123,9999.99,'Insert''テスト''その１','pt_test001',datetime('2018-12-18 00:00:00'),'pt_test001',datetime('2018-12-18 18:00:00'))");
 
                 Assert.Equal(1, cnt);
 
@@ -22,7 +22,7 @@ namespace PetaPoco4Core.Test.SQLServer
                 Assert.Equal(9999.99m, rec.ColDec.Value);
                 Assert.Equal("Insert'テスト'その１", rec.ColVarchar);
                 Assert.Equal("pt_test001", rec.CreateBy);
-                Assert.Equal(DateTime.Parse("2018/12/18 00:00:00"), rec.CreateDt);
+                Assert.Equal(DateTime.Parse("2018-12-18 00:00:00"), rec.CreateDt);
             }
         }
 
@@ -42,9 +42,9 @@ namespace PetaPoco4Core.Test.SQLServer
                     ColDec = 987654.32m,
                     ColVarchar = "Insert'テスト'その２",
                     CreateBy = "pt_test001",
-                    CreateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    CreateDt = DateTime.Parse("2018-12-18 18:00:00"),
                     UpdateBy = "pt_test001",
-                    UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    UpdateDt = DateTime.Parse("2018-12-18 18:00:00"),
                 };
                 var result = db.Insert(rec);
                 _output.WriteLine(db.LastSQL);
@@ -58,7 +58,7 @@ namespace PetaPoco4Core.Test.SQLServer
                 Assert.Equal(987654.32m, rec2.ColDec.Value);
                 Assert.Equal("Insert'テスト'その２", rec2.ColVarchar);
                 Assert.Equal("pt_test001", rec2.CreateBy);
-                Assert.Equal(DateTime.Parse("2018/12/18 18:00:00"), rec2.CreateDt);
+                Assert.Equal(DateTime.Parse("2018-12-18 18:00:00"), rec2.CreateDt);
             }
 
         }
@@ -66,23 +66,24 @@ namespace PetaPoco4Core.Test.SQLServer
         [Fact]
         public void Insert系_Execute_キー重複エラーDDL()
         {
-            var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
+            var ex = Assert.Throws<System.Data.SQLite.SQLiteException>(() =>
             {
                 using (var db = new DB())
                 {
                     db.BeginTransaction();
 
-                    var cnt = db.Execute("INSERT INTO PtTable01 values ('01','false', 123,9999.99,'Insert''テスト''その１','pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
+                    var cnt = db.Execute("INSERT INTO PtTable01 values ('01',false, 123,9999.99,'Insert''テスト''その１','pt_test001',datetime('2018-12-18 00:00:00'),'pt_test001',datetime('2018-12-18 18:00:00'))");
                 }
             });
             _output.WriteLine(ex.ToString());
-            Assert.Equal(2627, ex.Number);
+            _output.WriteLine(ex.ErrorCode.ToString());
+            Assert.Equal(19, ex.ErrorCode);
         }
 
         [Fact]
         public void Insert系_キー重複エラーEntity()
         {
-            var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
+            var ex = Assert.Throws<System.Data.SQLite.SQLiteException>(() =>
             {
                 using (var db = new DB())
                 {
@@ -105,54 +106,62 @@ namespace PetaPoco4Core.Test.SQLServer
                 }
             });
             _output.WriteLine(ex.ToString());
-            Assert.Equal(2627, ex.Number);
+            _output.WriteLine(ex.ErrorCode.ToString());
+            Assert.Equal(19, ex.ErrorCode);
         }
 
 
         [Fact]
         public void Insert系_Execute_サイズオーバーエラーDDL()
         {
-            var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
-            {
-                using (var db = new DB())
-                {
-                    db.BeginTransaction();
+            // MySQLのようにエラーにならない
 
-                    var cnt = db.Execute("INSERT INTO PtTable01 values ('93','true', 123,9999.99, '123456789012345678901233456789012334567890123345678901233456789012334567890123345678901233456789012334567890123', 'pt_test001','2018/12/18 00:00:00','pt_test001','2018/12/18 18:00:00')");
-                }
-            });
-            _output.WriteLine(ex.ToString());
-            _output.WriteLine(ex.Number.ToString());
-            Assert.Equal(8152, ex.Number);
+            //var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
+            //{
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                var cnt = db.Execute("INSERT INTO PtTable01 values ('93',true, 123,9999.99, '123456789012345678901233456789012334567890123345678901233456789012334567890123345678901233456789012334567890123', 'pt_test001',datetime('2018-12-18 00:00:00'),'pt_test001',datetime('2018-12-18 18:00:00'))");
+
+                var rec2 = db.SingleById<PtTable01>("93");
+                Assert.Equal("123456789012345678901233456789012334567890123345678901233456789012334567890123345678901233456789012334567890123", rec2.ColVarchar);
+            }
+            //});
+            //_output.WriteLine(ex.ToString());
+            //_output.WriteLine(ex.Number.ToString());
+            //Assert.Equal(8152, ex.Number);
         }
 
         [Fact]
         public void Insert系_サイズオーバーエラーEntity()
         {
-            var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
-            {
-                using (var db = new DB())
-                {
-                    db.BeginTransaction();
+            // MySQLのようにエラーにならない
 
-                    var rec = new PtTable01
-                    {
-                        Key01 = "94",
-                        ColBool = true,
-                        ColInt = 123,
-                        ColDec = 987654.32m,
-                        ColVarchar = "12345678901234567890123",
-                        CreateBy = "pt_test001",
-                        CreateDt = DateTime.Now,
-                        UpdateBy = "pt_test001",
-                        UpdateDt = DateTime.Now,
-                    };
-                    db.Insert(rec);
-                }
-            });
-            _output.WriteLine(ex.ToString());
-            Assert.Equal(8152, ex.Number);
-            _output.WriteLine(ex.Number.ToString());
+            //var ex = Assert.Throws<System.Data.SqlClient.SqlException>(() =>
+            //{
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                var rec = new PtTable01
+                {
+                    Key01 = "94",
+                    ColBool = true,
+                    ColInt = 123,
+                    ColDec = 987654.32m,
+                    ColVarchar = "12345678901234567890123",
+                    CreateBy = "pt_test001",
+                    CreateDt = DateTime.Now,
+                    UpdateBy = "pt_test001",
+                    UpdateDt = DateTime.Now,
+                };
+                db.Insert(rec);
+            }
+            //});
+            //_output.WriteLine(ex.ToString());
+            //Assert.Equal(8152, ex.Number);
+            //_output.WriteLine(ex.Number.ToString());
 
         }
 
@@ -171,9 +180,9 @@ namespace PetaPoco4Core.Test.SQLServer
                     ColDec = 987654.32m,
                     ColVarchar = "Transactionテスト",
                     CreateBy = "pt_test001",
-                    CreateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    CreateDt = DateTime.Parse("2018-12-18 18:00:00"),
                     UpdateBy = "pt_test001",
-                    UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    UpdateDt = DateTime.Parse("2018-12-18 18:00:00"),
                 };
                 db.Insert(rec);
 
@@ -184,7 +193,7 @@ namespace PetaPoco4Core.Test.SQLServer
                 Assert.Equal(987654.32m, rec2.ColDec.Value);
                 Assert.Equal("Transactionテスト", rec2.ColVarchar);
                 Assert.Equal("pt_test001", rec2.CreateBy);
-                Assert.Equal(DateTime.Parse("2018/12/18 18:00:00"), rec2.CreateDt);
+                Assert.Equal(DateTime.Parse("2018-12-18 18:00:00"), rec2.CreateDt);
             }
         }
 
@@ -203,9 +212,9 @@ namespace PetaPoco4Core.Test.SQLServer
                     ColDec = 987654.32m,
                     ColVarchar = "Transactionテスト",
                     CreateBy = "pt_test001",
-                    CreateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    CreateDt = DateTime.Parse("2018-12-18 18:00:00"),
                     UpdateBy = "pt_test001",
-                    UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    UpdateDt = DateTime.Parse("2018-12-18 18:00:00"),
                 };
                 db.Insert(rec);
 
@@ -232,9 +241,9 @@ namespace PetaPoco4Core.Test.SQLServer
                     ColDec = 987654.32m,
                     ColVarchar = "AutoIncrementテスト",
                     CreateBy = "pt_test001",
-                    CreateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    CreateDt = DateTime.Parse("2018-12-18 18:00:00"),
                     UpdateBy = "pt_test001",
-                    UpdateDt = DateTime.Parse("2018/12/18 18:00:00"),
+                    UpdateDt = DateTime.Parse("2018-12-18 18:00:00"),
                 };
                 var newkey = db.Insert(rec);
                 var sql = db.LastSQL;

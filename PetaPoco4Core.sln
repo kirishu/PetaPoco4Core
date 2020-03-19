@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@Documents", "@Documents", 
 		@Documents\HowtoCreate-EmployeesDB .txt = @Documents\HowtoCreate-EmployeesDB .txt
 		@Documents\Manual-PetaPoco4Core.html = @Documents\Manual-PetaPoco4Core.html
 		@Documents\memo.txt = @Documents\memo.txt
+		@Documents\todo.txt = @Documents\todo.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestDatabases", "TestDatabases", "{5CF971B5-ED89-4856-A60E-AF45CDD5BADF}"

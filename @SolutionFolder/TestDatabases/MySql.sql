@@ -22,6 +22,7 @@ USE PetaPocoSample;
 DROP VIEW IF EXISTS ViHogeFuga;
 DROP TABLE IF EXISTS TrCompositeKey;
 DROP TABLE IF EXISTS TrAutoNumber;
+DROP TABLE IF EXISTS TrColumns;
 
 -- ---------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS TrCompositeKey (

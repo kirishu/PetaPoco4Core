@@ -8,12 +8,11 @@
 #pragma warning disable CA1305 // Specify IFormatProvider
 #pragma warning disable CA1303 // Do not pass literals as localized parameters
 
+using NLog;
 using System;
 using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
-using NLog;
 
 namespace PetaPoco
 {
@@ -47,10 +46,6 @@ namespace PetaPoco
         public DatabaseExtension(string connectionString, RDBType rdbType)
             : base(connectionString, rdbType)
         {
-            base.CommandTimeout = 30;    // default 30sec
-
-            UseA5Mk2Params = (rdbType == RDBType.PostgreSql);
-
             _logger.Debug("[New Instance] {0}", connectionString);
         }
 
@@ -63,6 +58,9 @@ namespace PetaPoco
             if (cmd == null) { throw new ArgumentNullException(nameof(cmd)); }
 
             var sql = cmd.CommandText;
+
+            var log = new StringBuilder();
+#if DEBUG
             if (UseA5Mk2Params)
             {
                 var regex = new Regex("@([0-9]+)");
@@ -71,15 +69,16 @@ namespace PetaPoco
                     sql = regex.Replace(sql, ":p$1");
                 }
             }
-
-            var log = new StringBuilder();
             log.AppendLine("[OnExecutingCommand]");
             log.AppendLine("-- BEGIN COMMAND");
             log.AppendLine(GetLogParameterDeclare(cmd.Parameters));
             log.AppendLine("--");
             log.AppendLine(sql);
             log.AppendLine("-- END COMMAND");
-
+#else
+            // Release時はパフォーマンスを考慮して簡易な出力に留める
+            log.AppendLine(LastCommand);
+#endif
             _logger.Debug(log.ToString());
             _execTime = DateTime.Now;
 #if DEBUG
@@ -112,7 +111,7 @@ namespace PetaPoco
                     log.AppendFormat("SetParameter {0} {1}",
                         param.ParameterName.Replace(this.ParamPrefix, "p"),     // "@"を"p"に変更する
                         logvalue
-                    );    
+                    );
                 }
                 else
                 {
@@ -409,10 +408,10 @@ namespace PetaPoco
 
         /// <summary>
         /// SQL Server専用
-        /// 指定したテーブルから構造を読み取り、新しいテーブルを作成する。
+        /// 指定したテーブルから構造を読み取り、新しい一時テーブルを作成する。
         ///
         ///     「SELECT * INTO hoge FROM fuga」のようなもの。
-        ///     何故かPetaPocoでは↑で一時表が作成できないので、代わりにこれを使います。
+        ///     PetaPocoでは↑で一時表が作成できないので、代わりにこれを使います。
         ///
         /// ※ユーザ一時表を使うときは、db.KeepConnectionAliveをtrueにすること！
         /// </summary>

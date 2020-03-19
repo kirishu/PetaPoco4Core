@@ -10,7 +10,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         public static readonly string Constr = "Server=localhost;Port=5432;Database=petapoco_sample;Encoding=UTF8;User Id=testman;Password=testpwd;";
 
         /// <summary>
-        /// dvdlental Database Object
+        /// Database Object
         /// </summary>
         public DB() : base(Constr, RDBType.PostgreSql)
         {

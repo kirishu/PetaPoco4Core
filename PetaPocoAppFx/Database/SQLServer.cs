@@ -34,6 +34,8 @@ namespace PetaPocoAppFx.Database.SQLServer
         /// </summary>
         public DB() : base(Config.ConnectionString, RDBType.SqlServer)
         {
+            CommandTimeout = 30;
+            UseA5Mk2Params = false;
         }
     }
 

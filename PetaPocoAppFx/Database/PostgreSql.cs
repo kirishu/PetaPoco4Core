@@ -34,6 +34,8 @@ namespace PetaPocoAppFx.Database.PostgreSql
         /// </summary>
         public DB() : base(Config.ConnectionString, RDBType.PostgreSql)
         {
+            CommandTimeout = 30;
+            UseA5Mk2Params = true;
         }
     }
 

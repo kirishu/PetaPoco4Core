@@ -34,6 +34,8 @@ namespace PetaPocoAppFx.Database.MySql
         /// </summary>
         public DB() : base(Config.ConnectionString, RDBType.MySql)
         {
+            CommandTimeout = 30;
+            UseA5Mk2Params = false;
         }
     }
 

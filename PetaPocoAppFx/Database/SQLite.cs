@@ -22,6 +22,7 @@ namespace PetaPocoAppFx.Database.SQLite
         /// </summary>
         public DB() : base(Config.ConnectionString, RDBType.SQLite)
         {
+            CommandTimeout = 30;
             UseA5Mk2Params = true;
         }
     }
@@ -48,41 +49,41 @@ namespace PetaPocoAppFx.Database.SQLite
     public class TrColumn: PetaPoco.PetaPocoRecord<TrColumn>
     {
         /// <summary>プライマリキーその１</summary>
-        [Column] public string Key01 { get { return _Key01; } set { _Key01 = value; MarkColumnModified("Key01"); } } string _Key01;
+        [Column] public string Key01 { get; set; }
         /// <summary>bigintの列</summary>
-        [Column] public long? ColBigInt { get { return _ColBigInt; } set { _ColBigInt = value; MarkColumnModified("ColBigInt"); } } long? _ColBigInt;
+        [Column] public long? ColBigInt { get; set; }
         /// <summary>intの列</summary>
-        [Column] public long? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("ColInt"); } } long? _ColInt;
+        [Column] public int? ColInt { get; set; }
         /// <summary>int unsignedの列</summary>
-        [Column] public long? ColIntU { get { return _ColIntU; } set { _ColIntU = value; MarkColumnModified("ColIntU"); } } long? _ColIntU;
+        [Column] public long? ColIntU { get; set; }
         /// <summary>smallintの列</summary>
-        [Column] public long? ColSmallInt { get { return _ColSmallInt; } set { _ColSmallInt = value; MarkColumnModified("ColSmallInt"); } } long? _ColSmallInt;
+        [Column] public short? ColSmallInt { get; set; }
         /// <summary>tinyintの列</summary>
-        [Column] public long? ColTinyInt { get { return _ColTinyInt; } set { _ColTinyInt = value; MarkColumnModified("ColTinyInt"); } } long? _ColTinyInt;
+        [Column] public short? ColTinyInt { get; set; }
         /// <summary>boolの列</summary>
-        [Column] public bool? ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("ColBool"); } } bool? _ColBool;
+        [Column] public bool? ColBool { get; set; }
         /// <summary>decimalの列</summary>
-        [Column] public decimal? ColDecimal { get { return _ColDecimal; } set { _ColDecimal = value; MarkColumnModified("ColDecimal"); } } decimal? _ColDecimal;
+        [Column] public decimal? ColDecimal { get; set; }
         /// <summary>numericの列</summary>
-        [Column] public decimal? ColNumeric { get { return _ColNumeric; } set { _ColNumeric = value; MarkColumnModified("ColNumeric"); } } decimal? _ColNumeric;
+        [Column] public decimal? ColNumeric { get; set; }
         /// <summary>doubleの列</summary>
-        [Column] public double? ColDouble { get { return _ColDouble; } set { _ColDouble = value; MarkColumnModified("ColDouble"); } } double? _ColDouble;
+        [Column] public double? ColDouble { get; set; }
         /// <summary>floatの列</summary>
-        [Column] public float? ColFloat { get { return _ColFloat; } set { _ColFloat = value; MarkColumnModified("ColFloat"); } } float? _ColFloat;
+        [Column] public float? ColFloat { get; set; }
         /// <summary>dateの列</summary>
-        [Column] public DateTime? ColDate { get { return _ColDate; } set { _ColDate = value; MarkColumnModified("ColDate"); } } DateTime? _ColDate;
+        [Column] public DateTime? ColDate { get; set; }
         /// <summary>timeの列</summary>
-        [Column] public TimeSpan? ColTime { get { return _ColTime; } set { _ColTime = value; MarkColumnModified("ColTime"); } } TimeSpan? _ColTime;
+        [Column] public DateTime? ColTime { get; set; }
         /// <summary>datetimeの列</summary>
-        [Column] public DateTime? ColDateTime { get { return _ColDateTime; } set { _ColDateTime = value; MarkColumnModified("ColDateTime"); } } DateTime? _ColDateTime;
+        [Column] public DateTime? ColDateTime { get; set; }
         /// <summary>timestampの列</summary>
-        [Column] public DateTime ColTimeStamp { get { return _ColTimeStamp; } set { _ColTimeStamp = value; MarkColumnModified("ColTimeStamp"); } } DateTime _ColTimeStamp;
+        [Column] public DateTime ColTimeStamp { get; set; }
         /// <summary>char(5)の列</summary>
-        [Column] public string ColChar { get { return _ColChar; } set { _ColChar = value; MarkColumnModified("ColChar"); } } string _ColChar;
+        [Column] public string ColChar { get; set; }
         /// <summary>varchar(50)の列</summary>
-        [Column] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("ColVarchar"); } } string _ColVarchar;
+        [Column] public string ColVarchar { get; set; }
         /// <summary>longblobの列</summary>
-        [Column] public byte[] ColBlob { get { return _ColBlob; } set { _ColBlob = value; MarkColumnModified("ColBlob"); } } byte[] _ColBlob;
+        [Column] public byte[] ColBlob { get; set; }
     }
 
     /// <summary>テストテーブル - 複合キー</summary>

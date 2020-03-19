@@ -34,6 +34,8 @@ namespace PetaPocoAppFx.Database.Oracle
         /// </summary>
         public DB() : base(Config.ConnectionString, RDBType.Oracle)
         {
+            CommandTimeout = 30;
+            UseA5Mk2Params = false;
         }
     }
 

@@ -10,7 +10,7 @@ namespace PetaPoco4Core.Test.SQLServer
         public static readonly string Constr = @"Data Source=192.168.1.210;Database=PetaPocoSample;Integrated Security=False;User ID=testman;Password=testpwd;Pooling=true;";
 
         /// <summary>
-        /// employees Database Object
+        /// Database Object
         /// </summary>
         public DB() : base(Constr, RDBType.SqlServer)
         {
