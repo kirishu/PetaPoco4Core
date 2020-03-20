@@ -129,7 +129,7 @@ namespace PetaPoco
 
             if (UseA5Mk2Params)
             {
-                log.Insert(0, "/**\n");
+                log.Insert(0, "/**\r\n");
                 log.Append("*/");
             }
             return log.ToString();

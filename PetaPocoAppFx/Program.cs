@@ -57,18 +57,18 @@ namespace PetaPocoAppFx
                 return;
             }
 
-            //try
-            //{
-            if (test != null)
+            try
             {
-                test.Execute();
+                if (test != null)
+                {
+                    test.Execute();
+                }
             }
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.Error(ex.ToString());
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
 
-            //}
+            }
         }
     }
 }

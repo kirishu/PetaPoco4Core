@@ -1005,7 +1005,7 @@ namespace PetaPoco
             }
             else
             {
-                sqlPage = string.Format("{0}\nLIMIT @{1} OFFSET @{2}", sql, args.Length, args.Length + 1);
+                sqlPage = string.Format("{0}\r\nLIMIT @{1} OFFSET @{2}", sql, args.Length, args.Length + 1);
                 args = args.Concat(new object[] { take, skip }).ToArray();
             }
 
@@ -1788,13 +1788,13 @@ namespace PetaPoco
                             switch (_rdbType)
                             {
                                 case RDBType.SqlServer:
-                                    cmd.CommandText += ";\nSELECT SCOPE_IDENTITY() AS NewID;";
+                                    cmd.CommandText += ";\r\nSELECT SCOPE_IDENTITY() AS NewID;";
                                     DoPreExecute(cmd);
                                     id = cmd.ExecuteScalar();
                                     OnExecutedCommand(cmd);
                                     break;
                                 case RDBType.MySql:
-                                    cmd.CommandText += ";\nSELECT LAST_INSERT_ID();";
+                                    cmd.CommandText += ";\r\nSELECT LAST_INSERT_ID();";
                                     DoPreExecute(cmd);
                                     id = cmd.ExecuteScalar();
                                     OnExecutedCommand(cmd);
@@ -1839,7 +1839,7 @@ namespace PetaPoco
                                 case RDBType.SQLite:
                                     if (primaryKeyName != null)
                                     {
-                                        cmd.CommandText += ";\nSELECT last_insert_rowid();";
+                                        cmd.CommandText += ";\r\nSELECT last_insert_rowid();";
                                         DoPreExecute(cmd);
                                         id = cmd.ExecuteScalar();
                                     }
@@ -1852,7 +1852,7 @@ namespace PetaPoco
                                     OnExecutedCommand(cmd);
                                     break;
                                 default:
-                                    cmd.CommandText += ";\nSELECT @@IDENTITY AS NewID;";
+                                    cmd.CommandText += ";\r\nSELECT @@IDENTITY AS NewID;";
                                     DoPreExecute(cmd);
                                     id = cmd.ExecuteScalar();
                                     OnExecutedCommand(cmd);
@@ -2340,10 +2340,10 @@ namespace PetaPoco
             sb.Append(sql);
             if (args != null && args.Length > 0)
             {
-                sb.Append("\n");
+                sb.Append("\r\n");
                 for (int i = 0; i < args.Length; i++)
                 {
-                    sb.AppendFormat("\t -> {0}{1} [{2}] = \"{3}\"\n", ParamPrefix, i, args[i].GetType().Name, args[i]);
+                    sb.AppendFormat("\t -> {0}{1} [{2}] = \"{3}\"\r\n", ParamPrefix, i, args[i].GetType().Name, args[i]);
                 }
                 sb.Remove(sb.Length - 1, 1);
             }
@@ -3167,7 +3167,7 @@ namespace PetaPoco
                 // Add SQL to the string
                 if (sb.Length > 0)
                 {
-                    sb.Append("\n");
+                    sb.Append("\r\n");
                 }
 
                 var sql = Database.ProcessParams(_sql, _args, args);

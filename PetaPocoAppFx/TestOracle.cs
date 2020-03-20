@@ -44,7 +44,19 @@ namespace PetaPocoAppFx
                     ColVarchar2 = "ほげほげ",
                     ColBlob = new byte[64],
                 };
-                db.Insert(rec6);
+                var rec6result = db.Insert(rec6);
+                System.Diagnostics.Debug.WriteLine(rec6result);
+
+                var rec7 = db.SingleOrDefaultById<Database.Oracle.TrColumn>("AB");
+                System.Diagnostics.Debug.WriteLine(rec7.Key01);
+                System.Diagnostics.Debug.WriteLine(rec7.ColNumber5);
+                System.Diagnostics.Debug.WriteLine(rec7.ColBinaryDouble);
+                System.Diagnostics.Debug.WriteLine(rec7.ColBinaryFloat);
+                System.Diagnostics.Debug.WriteLine(rec7.ColDate);
+                System.Diagnostics.Debug.WriteLine(rec7.ColTimestamp);
+                System.Diagnostics.Debug.WriteLine(rec7.ColChar);
+                System.Diagnostics.Debug.WriteLine(rec7.ColNvarchar2);
+                System.Diagnostics.Debug.WriteLine(rec7.ColVarchar2);
 
                 db.AbortTransaction();
             }
