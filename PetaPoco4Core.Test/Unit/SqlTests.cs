@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -28,7 +29,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("LINE 2");
             _sql.Append("LINE 3");
 
-            Assert.Equal("LINE 1\nLINE 2\nLINE 3", _sql.SQL);
+            Assert.Equal("LINE 1\r\nLINE 2\r\nLINE 3", _sql.SQL);
             Assert.Empty(_sql.Arguments);
         }
 
@@ -48,7 +49,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("arg @0 @1", "a1", "a2");
 
             Assert.Equal("arg @0 @1", _sql.SQL);
-            Assert.Equal(2, _sql.Arguments.Length);
+            Assert.Equal(2, _sql.Arguments.Count);
             Assert.Equal("a1", _sql.Arguments[0]);
             Assert.Equal("a2", _sql.Arguments[1]);
         }
@@ -60,7 +61,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("arg @0 @2", "a1", "a2", "a3");
 
             Assert.Equal("arg @0 @1", _sql.SQL);
-            Assert.Equal(2, _sql.Arguments.Length);
+            Assert.Equal(2, _sql.Arguments.Count);
             Assert.Equal("a1", _sql.Arguments[0]);
             Assert.Equal("a3", _sql.Arguments[1]);
         }
@@ -71,7 +72,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("arg @2 @1", "a1", "a2", "a3");
 
             Assert.Equal("arg @0 @1", _sql.SQL);
-            Assert.Equal(2, _sql.Arguments.Length);
+            Assert.Equal(2, _sql.Arguments.Count);
             Assert.Equal("a3", _sql.Arguments[0]);
             Assert.Equal("a2", _sql.Arguments[1]);
         }
@@ -84,7 +85,7 @@ namespace PetaPoco4Core.Test.Unit
             //Assert.Equal("arg @0 @1 @2 @3", _sql.SQL);
             //Assert.Equal(4, _sql.Arguments.Length);
             Assert.Equal("arg @0 @1 @0 @1", _sql.SQL);
-            Assert.Equal(2, _sql.Arguments.Length);
+            Assert.Equal(2, _sql.Arguments.Count);
             Assert.Equal("a1", _sql.Arguments[0]);
             Assert.Equal("a2", _sql.Arguments[1]);
             //Assert.Equal("a1", _sql.Arguments[2]);
@@ -97,7 +98,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("arg @@user1 @2 @1 @@@system1", "a1", "a2", "a3");
 
             Assert.Equal("arg @@user1 @0 @1 @@@system1", _sql.SQL);
-            Assert.Equal(2,_sql.Arguments.Length);
+            Assert.Equal(2,_sql.Arguments.Count);
             Assert.Equal("a3", _sql.Arguments[0]);
             Assert.Equal("a2", _sql.Arguments[1]);
         }
@@ -108,7 +109,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("arg @name @password", new { name = "n", password = "p" });
 
             Assert.Equal("arg @0 @1", _sql.SQL);
-            Assert.Equal(2, _sql.Arguments.Length);
+            Assert.Equal(2, _sql.Arguments.Count);
             Assert.Equal("n", _sql.Arguments[0]);
             Assert.Equal("p", _sql.Arguments[1]);
         }
@@ -119,7 +120,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("arg @0 @name @1 @password @2", "a1", "a2", "a3", new { name = "n", password = "p" });
 
             Assert.Equal("arg @0 @1 @2 @3 @4", _sql.SQL);
-            Assert.Equal(5, _sql.Arguments.Length);
+            Assert.Equal(5, _sql.Arguments.Count);
             Assert.Equal("a1", _sql.Arguments[0]);
             Assert.Equal("n", _sql.Arguments[1]);
             Assert.Equal("a2", _sql.Arguments[2]);
@@ -134,8 +135,8 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("l2 @0", "a1");
             _sql.Append("l3 @0", "a2");
 
-            Assert.Equal("l1 @0\nl2 @1\nl3 @2", _sql.SQL);
-            Assert.Equal(3, _sql.Arguments.Length);
+            Assert.Equal("l1 @0\r\nl2 @1\r\nl3 @2", _sql.SQL);
+            Assert.Equal(3, _sql.Arguments.Count);
             Assert.Equal("a0", _sql.Arguments[0]);
             Assert.Equal("a1", _sql.Arguments[1]);
             Assert.Equal("a2", _sql.Arguments[2]);
@@ -148,8 +149,8 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("l2 @0 @1", "a1", "a2");
             _sql.Append("l3 @0", "a3");
 
-            Assert.Equal("l1\nl2 @0 @1\nl3 @2", _sql.SQL);
-            Assert.Equal(3, _sql.Arguments.Length);
+            Assert.Equal("l1\r\nl2 @0 @1\r\nl3 @2", _sql.SQL);
+            Assert.Equal(3, _sql.Arguments.Count);
             Assert.Equal("a1", _sql.Arguments[0]);
             Assert.Equal("a2", _sql.Arguments[1]);
             Assert.Equal("a3", _sql.Arguments[2]);
@@ -185,8 +186,8 @@ namespace PetaPoco4Core.Test.Unit
             Assert.Equal(_sql, _sql.Append(sql1));
             Assert.Equal(_sql, _sql.Append(sql2));
 
-            Assert.Equal("l0 @0\nl1 @1\nl2 @2", _sql.SQL);
-            Assert.Equal(3, _sql.Arguments.Length);
+            Assert.Equal("l0 @0\r\nl1 @1\r\nl2 @2", _sql.SQL);
+            Assert.Equal(3, _sql.Arguments.Count);
             Assert.Equal("a0", _sql.Arguments[0]);
             Assert.Equal("a1", _sql.Arguments[1]);
             Assert.Equal("a2", _sql.Arguments[2]);
@@ -201,7 +202,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("SET a = 1");
             _sql.Append("SET b = 2");
 
-            Assert.Equal("UPDATE blah\nSET a = 1\n, b = 2", _sql.SQL);
+            Assert.Equal("UPDATE blah\r\nSET a = 1\r\n, b = 2", _sql.SQL);
         }
 
         [Fact]
@@ -215,7 +216,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("WHERE x");
             _sql.Append("WHERE y");
 
-            Assert.Equal("UPDATE blah\nSET a = 1\n, b = 2\nWHERE x\nAND y", _sql.SQL);
+            Assert.Equal("UPDATE blah\r\nSET a = 1\r\n, b = 2\r\nWHERE x\r\nAND y", _sql.SQL);
         }
 
         [Fact]
@@ -227,7 +228,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("WHERE x");
             _sql.Append("WHERE y");
 
-            Assert.Equal("SELECT * FROM blah\nWHERE x\nAND y", _sql.SQL);
+            Assert.Equal("SELECT * FROM blah\r\nWHERE x\r\nAND y", _sql.SQL);
         }
 
         [Fact]
@@ -239,7 +240,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Append("ORDER BY x");
             _sql.Append("ORDER BY y");
 
-            Assert.Equal("SELECT * FROM blah\nORDER BY x\n, y", _sql.SQL);
+            Assert.Equal("SELECT * FROM blah\r\nORDER BY x\r\n, y", _sql.SQL);
         }
 
         [Fact]
@@ -249,7 +250,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql = PetaPoco.Sql.Builder.Append("@0 IN (@1) @2", 20, new int[] { 1, 2, 3 }, 30);
 
             Assert.Equal("@0 IN (@1,@2,@3) @4", _sql.SQL);
-            Assert.Equal(5, _sql.Arguments.Length);
+            Assert.Equal(5, _sql.Arguments.Count);
             Assert.Equal(20, _sql.Arguments[0]);
             Assert.Equal(1, _sql.Arguments[1]);
             Assert.Equal(2, _sql.Arguments[2]);
@@ -263,7 +264,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql = PetaPoco.Sql.Builder.Append("IN (@numbers)", new { numbers = (new[] { 10, 20, 30 }) });
 
             Assert.Equal("IN (@0,@1,@2)", _sql.SQL);
-            Assert.Equal(3, _sql.Arguments.Length);
+            Assert.Equal(3, _sql.Arguments.Count);
             Assert.Equal(10, _sql.Arguments[0]);
             Assert.Equal(20, _sql.Arguments[1]);
             Assert.Equal(30, _sql.Arguments[2]);
@@ -278,7 +279,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql = PetaPoco.Sql.Builder.Append("IN (@0)", chars);
 
             Assert.Equal("IN (@0,@1,@2)", _sql.SQL);
-            Assert.Equal(3, _sql.Arguments.Length);
+            Assert.Equal(3, _sql.Arguments.Count);
             Assert.Equal("い", _sql.Arguments[0]);
             Assert.Equal("ろ", _sql.Arguments[1]);
             Assert.Equal("は", _sql.Arguments[2]);
@@ -293,7 +294,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql = PetaPoco.Sql.Builder.Append("IN (@1)", null, keys);
 
             Assert.Equal("IN (@0,@1,@2)", _sql.SQL);
-            Assert.Equal(3, _sql.Arguments.Length);
+            Assert.Equal(3, _sql.Arguments.Count);
             Assert.Equal("10", _sql.Arguments[0]);
             Assert.Equal("20", _sql.Arguments[1]);
             Assert.Equal("30", _sql.Arguments[2]);
@@ -306,7 +307,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql = PetaPoco.Sql.Builder.Append("IN (@0)", keys);
 
             Assert.Equal("IN (@0,@1,@2)", _sql.SQL);
-            Assert.Equal(3, _sql.Arguments.Length);
+            Assert.Equal(3, _sql.Arguments.Count);
             Assert.Equal("い", _sql.Arguments[0]);
             Assert.Equal("ろ", _sql.Arguments[1]);
             Assert.Equal("は", _sql.Arguments[2]);
@@ -319,7 +320,7 @@ namespace PetaPoco4Core.Test.Unit
             _sql = PetaPoco.Sql.Builder.Append("IN (@3) (@1)", null, new[] { 10, 20, 30 }, null, new[] { 40, 50, 60 });
 
             Assert.Equal("IN (@0,@1,@2) (@3,@4,@5)", _sql.SQL);
-            Assert.Equal(6, _sql.Arguments.Length);
+            Assert.Equal(6, _sql.Arguments.Count);
             Assert.Equal(40, _sql.Arguments[0]);
             Assert.Equal(50, _sql.Arguments[1]);
             Assert.Equal(60, _sql.Arguments[2]);
@@ -336,7 +337,7 @@ namespace PetaPoco4Core.Test.Unit
                 .From("articles")
                 .LeftJoin("comments").On("articles.article_id=comments.article_id");
 
-            Assert.Equal("SELECT *\nFROM articles\nLEFT JOIN comments\nON articles.article_id=comments.article_id", _sql.SQL);
+            Assert.Equal("SELECT *\r\nFROM articles\r\nLEFT JOIN comments\r\nON articles.article_id=comments.article_id", _sql.SQL);
         }
 
         [Fact]
@@ -395,10 +396,7 @@ namespace PetaPoco4Core.Test.Unit
                        + ",[Extension] = @10"
                        + " WHERE ResourceID=@11";
 
-            Assert.Equal(result, _sql.SQL.Replace("\n", "").Replace("\r", ""));
-
-            //Assert.Equal(@"UPDATE [Resource] SET [ResourceName] = @0,[ResourceDescription] = @1,[ResourceContent] = @2,[ResourceData] = @3,[ResourceGUID] = @4,[LaunchPath] = @5,[ResourceType] = @6,[ContentType] = @7,[SchoolID] = @8,[DistrictID] = @9,[IsActive] = @10,[UpdatedBy] = @11,[UpdatedDate] = @12,[Extension] = @13 WHERE ResourceID=@14",
-            //    _sql.SQL.Replace("\n", "").Replace("\r", ""));
+            Assert.Equal(result, _sql.SQL.Replace("\r\n", "").Replace("\n", "").Replace("\r", ""));
         }
 
         [Fact]
@@ -412,9 +410,9 @@ namespace PetaPoco4Core.Test.Unit
             _sql.Where("id = @0", 1);
             var sqlCapture3 = _sql.SQL;
 
-            Assert.Equal("SELECT field", sqlCapture1.Replace("\n", " "));
-            Assert.Equal("SELECT field FROM myTable", sqlCapture2.Replace("\n", " "));
-            Assert.Equal("SELECT field FROM myTable WHERE (id = @0)", sqlCapture3.Replace("\n", " "));
+            Assert.Equal("SELECT field", sqlCapture1.Replace("\r\n", " "));
+            Assert.Equal("SELECT field FROM myTable", sqlCapture2.Replace("\r\n", " "));
+            Assert.Equal("SELECT field FROM myTable WHERE (id = @0)", sqlCapture3.Replace("\r\n", " "));
         }
 
         [Fact]
@@ -431,11 +429,11 @@ namespace PetaPoco4Core.Test.Unit
             _sql = PetaPoco.Sql.Builder
                 .Append(sqlSelect.SQL)
                 .Append(sqlFrom.SQL)
-                .Append(new PetaPoco.Sql(sqlWhere.SQL, sqlWhere.Arguments));
+                .Append(new PetaPoco.Sql(sqlWhere.SQL, sqlWhere.Arguments.ToArray()));
 
             _output.WriteLine(_sql.SQL);
 
-            Assert.Equal(4, _sql.Arguments.Length);
+            Assert.Equal(4, _sql.Arguments.Count);
         }
 
         [Fact]
@@ -453,8 +451,8 @@ namespace PetaPoco4Core.Test.Unit
 
             _output.WriteLine(_sql.SQL);
 
-            Assert.Equal(4, where.Arguments.Length);
-            Assert.Equal(5, _sql.Arguments.Length);
+            Assert.Equal(4, where.Arguments.Count);
+            Assert.Equal(5, _sql.Arguments.Count);
         }
 
     }

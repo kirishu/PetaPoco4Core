@@ -7,7 +7,7 @@ namespace PetaPoco4Core.Test.SQLite
     /// </summary>
     public class DB : PetaPoco.DatabaseExtension
     {
-        public static readonly string Constr = @"Data Source=C:\Users\shu.kirihara\Documents\sources\PetaPoco4Core.git\@SolutionFolder\TestDatabases\PetaPocoSample.sqlite3";
+        public static readonly string Constr = @"Data Source=..\..\..\..\..\@SolutionFolder\TestDatabases\PetaPocoSample.sqlite3";
 
         /// <summary>
         /// Database Object

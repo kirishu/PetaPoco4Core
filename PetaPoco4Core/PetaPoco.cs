@@ -7,28 +7,22 @@
  * use of Subsonic's T4 templates, Rob Sullivan (@DataChomp) for hard core DBA advice
  * and Adam Schroder (@schotime) for lots of suggestions, improvements and Oracle support
  */
-/* Modified by kirishu (zapshu@gmail.com)
- * v4.7.1
+/* --------------------------------------------------------------------------
+ * Modified by kirishu (zapshu@gmail.com)
+ * v4.7.1.3
  * https://github.com/kirishu/PetaPoco4Core
- */
+ * -------------------------------------------------------------------------- */
 
 #region Suppressions
-#pragma warning disable CS1591 // CS1591: Missing XML comment for publicly visible type or member
-#pragma warning disable CA1303 // ローカライズされるパラメーターとしてリテラルを渡さない
-#pragma warning disable CA1305 // IFormatProvider を指定します
-#pragma warning disable CA1034 // 入れ子にされた型を参照可能にすることはできません
-#pragma warning disable CA1051 // 参照可能なインスタンス フィールドを宣言しません
-#pragma warning disable CA1062 // パブリック メソッドの引数の検証
-#pragma warning disable CA2211 // 非定数フィールドは表示されません
-#pragma warning disable CA2227 // コレクション プロパティは読み取り専用でなければなりません
-#pragma warning disable CA1716 // 識別子はキーワードと同一にすることはできません
-#pragma warning disable CA1720 // 識別子に型名が含まれます
-#pragma warning disable CA1819 // プロパティは配列を返すことはできません
-#pragma warning disable CA1825 // 長さ 0 の配列の割り当てを避けます。
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CA1034 // Nested types should not be visible
+#pragma warning disable CA1051 // Do not declare visible instance fields
+#pragma warning disable CA2227 // Collection properties should be read only
 #endregion
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -99,6 +93,8 @@ namespace PetaPoco
         /// <returns>A TableInfo instance</returns>
         public static TableInfo FromPoco(Type t)
         {
+            if (t == null) { throw new ArgumentNullException(nameof(t)); }
+
             var ti = new TableInfo();
 
             // Get the table name
@@ -240,22 +236,12 @@ namespace PetaPoco
         IEnumerable<T> Query<T>(Sql sql);
         T SingleById<T>(object primaryKey);
         T SingleOrDefaultById<T>(object primaryKey);
-        T Single<T>(string sql, params object[] args);
-        T SingleInto<T>(T instance, string sql, params object[] args);
         T SingleOrDefault<T>(string sql, params object[] args);
-        T SingleOrDefaultInto<T>(T instance, string sql, params object[] args);
         T First<T>(string sql, params object[] args);
-        T FirstInto<T>(T instance, string sql, params object[] args);
         T FirstOrDefault<T>(string sql, params object[] args);
-        T FirstOrDefaultInto<T>(T instance, string sql, params object[] args);
-        T Single<T>(Sql sql);
-        T SingleInto<T>(T instance, Sql sql);
         T SingleOrDefault<T>(Sql sql);
-        T SingleOrDefaultInto<T>(T instance, Sql sql);
         T First<T>(Sql sql);
-        T FirstInto<T>(T instance, Sql sql);
         T FirstOrDefault<T>(Sql sql);
-        T FirstOrDefaultInto<T>(T instance, Sql sql);
         Dictionary<TKey, TValue> Dictionary<TKey, TValue>(Sql sql);
         Dictionary<TKey, TValue> Dictionary<TKey, TValue>(string sql, params object[] args);
         bool Exists<T>(object primaryKey);
@@ -278,7 +264,6 @@ namespace PetaPoco
 
     public interface IDatabase : IDatabaseQuery
     {
-        //void Dispose();
         IDbConnection Connection { get; }
         IDbTransaction DbTransaction { get; }
         IDataParameter CreateParameter();
@@ -327,7 +312,7 @@ namespace PetaPoco
 
         public int CommandTimeout { get; set; }
         public int OneTimeCommandTimeout { get; set; }
-        
+
         public static IMapper Mapper { get; set; }
 
         // Member variables
@@ -355,7 +340,7 @@ namespace PetaPoco
         {
             if (string.IsNullOrEmpty(connectionString))
             {
-                throw new ArgumentException("Connection string cannot be null or empty", nameof(connectionString));
+                throw new ArgumentException(string.Format(Culture, "Connection string cannot be null or empty"), nameof(connectionString));
             }
 
             _connectionString = connectionString;
@@ -368,7 +353,7 @@ namespace PetaPoco
 
             if (_rdbType == RDBType.MySql
                 && _connectionString != null
-                && _connectionString.IndexOf("Allow User Variables=true", StringComparison.CurrentCulture) >= 0)
+                && _connectionString.IndexOf("Allow User Variables=true", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 ParamPrefix = "?";
             }
@@ -427,7 +412,7 @@ namespace PetaPoco
             }
             else
             {
-                throw new ArgumentException("DBType is not exist");
+                throw new ArgumentException(string.Format(Culture, "DBType is not exist"));
             }
 
             Type ft = null;
@@ -624,7 +609,7 @@ namespace PetaPoco
                 {
                     // Numbered parameter
                     if (paramIndex < 0 || paramIndex >= argsSrc.Length)
-                        throw new ArgumentOutOfRangeException(string.Format("Parameter '@{0}' specified but only {1} parameters supplied (in `{2}`)", paramIndex, argsSrc.Length, sql));
+                        throw new ArgumentOutOfRangeException(string.Format(Culture, "Parameter '@{0}' specified but only {1} parameters supplied (in `{2}`)", paramIndex, argsSrc.Length, sql));
                     arg_val = argsSrc[paramIndex];
                 }
                 else
@@ -644,7 +629,7 @@ namespace PetaPoco
                     }
 
                     if (!found)
-                        throw new ArgumentException(string.Format("Parameter '@{0}' specified but none of the passed arguments have a property with this name (in '{1}')", param, sql));
+                        throw new ArgumentException(string.Format(Culture, "Parameter '@{0}' specified but none of the passed arguments have a property with this name (in '{1}')", param, sql));
                 }
 
                 // Expand collections to parameter lists
@@ -668,7 +653,7 @@ namespace PetaPoco
                     }
                     if (sb.Length == 0)
                     {
-                        sb.AppendFormat("select 1 /*peta_dual*/ where 1 = 0");
+                        sb.AppendFormat(Culture, "select 1 /*peta_dual*/ where 1 = 0");
                     }
                     return sb.ToString();
                 }
@@ -679,7 +664,7 @@ namespace PetaPoco
                         return "@" + indexOfExistingValue;
 
                     argsDest.Add(arg_val);
-                    return "@" + (argsDest.Count - 1).ToString();
+                    return "@" + (argsDest.Count - 1).ToString(Culture);
                 }
             }
             );
@@ -699,12 +684,12 @@ namespace PetaPoco
             // Support passed in parameters
             if (item is IDbDataParameter idbParam)
             {
-                idbParam.ParameterName = string.Format("{0}{1}", ParameterPrefix, cmd.Parameters.Count);
+                idbParam.ParameterName = string.Format(Culture, "{0}{1}", ParameterPrefix, cmd.Parameters.Count);
                 cmd.Parameters.Add(idbParam);
                 return;
             }
             var p = cmd.CreateParameter();
-            p.ParameterName = string.Format("{0}{1}", ParameterPrefix, cmd.Parameters.Count);
+            p.ParameterName = string.Format(Culture, "{0}{1}", ParameterPrefix, cmd.Parameters.Count);
 
             if (item == null)
             {
@@ -784,13 +769,17 @@ namespace PetaPoco
         // Create a command
         static Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
         // [kirishu] このメソッドをprivate からprotectedに変更
-        // IDbCommand CreateCommand(IDbConnection connection, string sql, params object[] args)
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         protected IDbCommand CreateCommand(IDbConnection connection, string sql, params object[] args)
         {
+            if (connection == null) { throw new ArgumentNullException(nameof(connection)); }
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+
             // Perform parameter prefix replacements
             if (ParamPrefix != "@")
+            {
                 sql = rxParamsPrefix.Replace(sql, m => ParamPrefix + m.Value.Substring(1));
+            }
             sql = sql.Replace("@@", "@");           // <- double @@ escapes a single @
 
             // Create the command and add parameters
@@ -819,7 +808,7 @@ namespace PetaPoco
         // Override this to log/capture exceptions
         public virtual void OnException(Exception x)
         {
-            System.Diagnostics.Debug.WriteLine(x.ToString());
+            System.Diagnostics.Debug.WriteLine(x?.ToString());
             System.Diagnostics.Debug.WriteLine(LastCommand);
         }
 
@@ -837,8 +826,10 @@ namespace PetaPoco
 
         public int Execute(Sql sql)
         {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+
             var sql_ = sql.SQL;
-            var args = sql.Arguments;
+            var args = sql.Arguments.ToArray();
 
             try
             {
@@ -872,8 +863,10 @@ namespace PetaPoco
 
         public T ExecuteScalar<T>(Sql sql)
         {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+
             var sql_ = sql.SQL;
-            var args = sql.Arguments;
+            var args = sql.Arguments.ToArray();
 
             try
             {
@@ -891,7 +884,7 @@ namespace PetaPoco
                         if (val == null || val == DBNull.Value)
                             return default(T);
 
-                        return u != null ? (T)Convert.ChangeType(val, u) : (T)Convert.ChangeType(val, t);
+                        return u != null ? (T)Convert.ChangeType(val, u, Culture) : (T)Convert.ChangeType(val, t, Culture);
                     }
                 }
                 finally
@@ -910,18 +903,18 @@ namespace PetaPoco
         static Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         string AddSelectClause<T>(string sql)
         {
-            if (sql.StartsWith(";", StringComparison.CurrentCulture))
+            if (sql.StartsWith(";", StringComparison.OrdinalIgnoreCase))
                 return sql.Substring(1);
 
             if (!rxSelect.IsMatch(sql))
             {
                 var pd = PocoData.ForType(typeof(T));
                 var tableName = EscapeTableName(pd.TableInfo.TableName);
-                string cols = string.Join(", ", (from c in pd.QueryColumns select EscapeSqlIdentifier(c)).ToArray());
+                string cols = string.Join(", ", pd.QueryColumns.Select(c => EscapeSqlIdentifier(c)).ToArray());
                 if (!rxFrom.IsMatch(sql))
-                    sql = string.Format("SELECT {0} FROM {1} {2}", cols, tableName, sql);
+                    sql = string.Format(Culture, "SELECT {0} FROM {1} {2}", cols, tableName, sql);
                 else
-                    sql = string.Format("SELECT {0} {1}", cols, sql);
+                    sql = string.Format(Culture, "SELECT {0} {1}", cols, sql);
             }
             return sql;
         }
@@ -944,12 +937,14 @@ namespace PetaPoco
 
         // modified by [kirishu]
         // ↓これら正規表現パターンはprivateだったけど、継承側で使いたいのでprotectedにしました
-        protected static Regex rxColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-        protected static Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-        protected static Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+        protected static readonly Regex rxColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+        protected static readonly Regex rxOrderBy = new Regex(@"\bORDER\s+BY\s+(?!.*?(?:\)|\s+)AS\s)(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\.])+(?:\s+(?:ASC|DESC))?(?:\s*,\s*(?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|[\w\(\)\.])+(?:\s+(?:ASC|DESC))?)*", RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+        protected static readonly Regex rxDistinct = new Regex(@"\ADISTINCT\s", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
 
         public static bool SplitSqlForPaging(string sql, out string sqlCount, out string sqlSelectRemoved, out string sqlOrderBy)
         {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+
             sqlSelectRemoved = null;
             sqlCount = null;
             sqlOrderBy = null;
@@ -982,14 +977,17 @@ namespace PetaPoco
 
         public void BuildPageQueries<T>(long skip, long take, string sql, ref object[] args, out string sqlCount, out string sqlPage)
         {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            if (args == null) { throw new ArgumentNullException(nameof(args)); }
+
             // Add auto select clause
             sql = AddSelectClause<T>(sql);
 
             // Split the SQL into the bits we need
             if (!SplitSqlForPaging(sql, out sqlCount, out string sqlSelectRemoved, out string sqlOrderBy))
-                throw new Exception("Unable to parse SQL statement for paged query");
-            if (_rdbType == RDBType.Oracle && sqlSelectRemoved.StartsWith("*", StringComparison.CurrentCulture))
-                throw new Exception("Query must alias '*' when performing a paged query.\neg. select t.* from table t order by t.id");
+                throw new Exception(string.Format(Culture, "Unable to parse SQL statement for paged query"));
+            if (_rdbType == RDBType.Oracle && sqlSelectRemoved.StartsWith("*", StringComparison.OrdinalIgnoreCase))
+                throw new Exception(string.Format(Culture, "Query must alias '*' when performing a paged query.\neg. select t.* from table t order by t.id"));
 
             // Build the SQL for the actual final result
             if (_rdbType == RDBType.SqlServer || _rdbType == RDBType.Oracle)
@@ -999,13 +997,13 @@ namespace PetaPoco
                 {
                     sqlSelectRemoved = "peta_inner.* FROM (SELECT " + sqlSelectRemoved + ") peta_inner";
                 }
-                sqlPage = string.Format("SELECT * FROM (SELECT ROW_NUMBER() OVER ({0}) peta_rn, {1}) peta_paged WHERE peta_rn>@{2} AND peta_rn<=@{3}",
+                sqlPage = string.Format(Culture, "SELECT * FROM (SELECT ROW_NUMBER() OVER ({0}) peta_rn, {1}) peta_paged WHERE peta_rn>@{2} AND peta_rn<=@{3}",
                                         sqlOrderBy ?? "ORDER BY (SELECT NULL /*peta_dual*/)", sqlSelectRemoved, args.Length, args.Length + 1);
                 args = args.Concat(new object[] { skip, skip + take }).ToArray();
             }
             else
             {
-                sqlPage = string.Format("{0}\r\nLIMIT @{1} OFFSET @{2}", sql, args.Length, args.Length + 1);
+                sqlPage = string.Format(Culture, "{0}\r\nLIMIT @{1} OFFSET @{2}", sql, args.Length, args.Length + 1);
                 args = args.Concat(new object[] { take, skip }).ToArray();
             }
 
@@ -1041,7 +1039,8 @@ namespace PetaPoco
 
         public Page<T> Page<T>(long page, long itemsPerPage, Sql sql)
         {
-            return Page<T>(page, itemsPerPage, sql.SQL, sql.Arguments);
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return Page<T>(page, itemsPerPage, sql.SQL, sql.Arguments.ToArray());
         }
 
         public List<T> Fetch<T>(long page, long itemsPerPage, string sql, params object[] args)
@@ -1051,7 +1050,8 @@ namespace PetaPoco
 
         public List<T> Fetch<T>(long page, long itemsPerPage, Sql sql)
         {
-            return SkipTake<T>((page - 1) * itemsPerPage, itemsPerPage, sql.SQL, sql.Arguments);
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return SkipTake<T>((page - 1) * itemsPerPage, itemsPerPage, sql.SQL, sql.Arguments.ToArray());
         }
 
         public List<T> SkipTake<T>(long skip, long take, string sql, params object[] args)
@@ -1062,12 +1062,14 @@ namespace PetaPoco
 
         public List<T> SkipTake<T>(long skip, long take, Sql sql)
         {
-            return SkipTake<T>(skip, take, sql.SQL, sql.Arguments);
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return SkipTake<T>(skip, take, sql.SQL, sql.Arguments.ToArray());
         }
 
         public Dictionary<TKey, TValue> Dictionary<TKey, TValue>(Sql sql)
         {
-            return Dictionary<TKey, TValue>(sql.SQL, sql.Arguments);
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return Dictionary<TKey, TValue>(sql.SQL, sql.Arguments.ToArray());
         }
 
         public Dictionary<TKey, TValue> Dictionary<TKey, TValue>(string sql, params object[] args)
@@ -1088,11 +1090,11 @@ namespace PetaPoco
                     isConverterSet = true;
                 }
 
-                var keyConverted = (TKey)Convert.ChangeType(converter1(key), typeof(TKey));
+                var keyConverted = (TKey)Convert.ChangeType(converter1(key), typeof(TKey), Culture);
 
                 var valueType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
                 var valConv = converter2(value);
-                var valConverted = valConv != null ? (TValue)Convert.ChangeType(valConv, valueType) : default(TValue);
+                var valConverted = valConv != null ? (TValue)Convert.ChangeType(valConv, valueType, Culture) : default(TValue);
 
                 if (keyConverted != null)
                 {
@@ -1110,13 +1112,14 @@ namespace PetaPoco
 
         public IEnumerable<T> Query<T>(Sql sql)
         {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
             return Query<T>(default(T), sql);
         }
 
         private IEnumerable<T> Query<T>(T instance, Sql sql)
         {
             var sql_ = sql.SQL;
-            var args = sql.Arguments;
+            var args = sql.Arguments.ToArray();
 
             if (EnableAutoSelect)
                 sql_ = AddSelectClause<T>(sql_);
@@ -1250,11 +1253,11 @@ namespace PetaPoco
                     for (int j = i - 1; j >= 0; j--)
                     {
                         // Find the property
-                        var candidates = from p in types[j].GetProperties() where p.PropertyType == types[i] select p;
+                        var candidates = types[j].GetProperties().Where(p => p.PropertyType == types[i]).Select(p => p);
                         if (!candidates.Any())
                             continue;
                         if (candidates.Count() > 1)
-                            throw new InvalidOperationException(string.Format("Can't auto join {0} as {1} has more than one property of type {0}", types[i], types[j]));
+                            throw new InvalidOperationException(string.Format(Culture, "Can't auto join {0} as {1} has more than one property of type {0}", types[i], types[j]));
 
                         // Generate code
                         il.Emit(OpCodes.Ldarg_S, j);
@@ -1264,7 +1267,7 @@ namespace PetaPoco
                     }
 
                     if (!handled)
-                        throw new InvalidOperationException(string.Format("Can't auto join {0}", types[i]));
+                        throw new InvalidOperationException(string.Format(Culture, "Can't auto join {0}", types[i]));
                 }
 
                 il.Emit(OpCodes.Ldarg_0);
@@ -1306,7 +1309,7 @@ namespace PetaPoco
                 usedColumns.Add(fieldName, true);
             }
 
-            throw new InvalidOperationException(string.Format("Couldn't find split point between {0} and {1}", typeThis, typeNext));
+            throw new InvalidOperationException(string.Format(Culture, "Couldn't find split point between {0} and {1}", typeThis, typeNext));
         }
 
         // Instance data used by the Multipoco factory delegate - essentially a list of the nested poco factories to call
@@ -1412,10 +1415,13 @@ namespace PetaPoco
         // Actual implementation of the multi-poco query
         public IEnumerable<TRet> Query<TRet>(Type[] types, object cb, Sql sql)
         {
+            if (types == null) { throw new ArgumentNullException(nameof(types)); }
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+
             OpenSharedConnection();
             try
             {
-                using (var cmd = CreateCommand(_sharedConnection, sql.SQL, sql.Arguments))
+                using (var cmd = CreateCommand(_sharedConnection, sql.SQL, sql.Arguments.ToArray()))
                 {
                     IDataReader r;
                     try
@@ -1471,27 +1477,72 @@ namespace PetaPoco
             }
         }
 
-        public TRet FetchMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args) { return FetchMultiple<T1, T2, DontMap, DontMap, TRet>(new[] { typeof(T1), typeof(T2) }, cb, new Sql(sql, args)); }
-        public TRet FetchMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args) { return FetchMultiple<T1, T2, T3, DontMap, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3) }, cb, new Sql(sql, args)); }
-        public TRet FetchMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args) { return FetchMultiple<T1, T2, T3, T4, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, cb, new Sql(sql, args)); }
-        public TRet FetchMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, Sql sql) { return FetchMultiple<T1, T2, DontMap, DontMap, TRet>(new[] { typeof(T1), typeof(T2) }, cb, sql); }
-        public TRet FetchMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, Sql sql) { return FetchMultiple<T1, T2, T3, DontMap, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3) }, cb, sql); }
-        public TRet FetchMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, Sql sql) { return FetchMultiple<T1, T2, T3, T4, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, cb, sql); }
+        #region Tupple methods
+        public TRet FetchMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args)
+        {
+            return FetchMultiple<T1, T2, DontMap, DontMap, TRet>(new[] { typeof(T1), typeof(T2) }, cb, new Sql(sql, args));
+        }
+        public TRet FetchMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args)
+        {
+            return FetchMultiple<T1, T2, T3, DontMap, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3) }, cb, new Sql(sql, args));
+        }
+        public TRet FetchMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args)
+        {
+            return FetchMultiple<T1, T2, T3, T4, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, cb, new Sql(sql, args));
+        }
+        public TRet FetchMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, Sql sql)
+        {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return FetchMultiple<T1, T2, DontMap, DontMap, TRet>(new[] { typeof(T1), typeof(T2) }, cb, sql);
+        }
+        public TRet FetchMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, Sql sql)
+        {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return FetchMultiple<T1, T2, T3, DontMap, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3) }, cb, sql);
+        }
+        public TRet FetchMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, Sql sql)
+        {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return FetchMultiple<T1, T2, T3, T4, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, cb, sql);
+        }
 
-        public Tuple<List<T1>, List<T2>> FetchMultiple<T1, T2>(string sql, params object[] args) { return FetchMultiple<T1, T2, DontMap, DontMap, Tuple<List<T1>, List<T2>>>(new[] { typeof(T1), typeof(T2) }, new Func<List<T1>, List<T2>, Tuple<List<T1>, List<T2>>>((y, z) => new Tuple<List<T1>, List<T2>>(y, z)), new Sql(sql, args)); }
-        public Tuple<List<T1>, List<T2>, List<T3>> FetchMultiple<T1, T2, T3>(string sql, params object[] args) { return FetchMultiple<T1, T2, T3, DontMap, Tuple<List<T1>, List<T2>, List<T3>>>(new[] { typeof(T1), typeof(T2), typeof(T3) }, new Func<List<T1>, List<T2>, List<T3>, Tuple<List<T1>, List<T2>, List<T3>>>((x, y, z) => new Tuple<List<T1>, List<T2>, List<T3>>(x, y, z)), new Sql(sql, args)); }
-        public Tuple<List<T1>, List<T2>, List<T3>, List<T4>> FetchMultiple<T1, T2, T3, T4>(string sql, params object[] args) { return FetchMultiple<T1, T2, T3, T4, Tuple<List<T1>, List<T2>, List<T3>, List<T4>>>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, new Func<List<T1>, List<T2>, List<T3>, List<T4>, Tuple<List<T1>, List<T2>, List<T3>, List<T4>>>((w, x, y, z) => new Tuple<List<T1>, List<T2>, List<T3>, List<T4>>(w, x, y, z)), new Sql(sql, args)); }
-        public Tuple<List<T1>, List<T2>> FetchMultiple<T1, T2>(Sql sql) { return FetchMultiple<T1, T2, DontMap, DontMap, Tuple<List<T1>, List<T2>>>(new[] { typeof(T1), typeof(T2) }, new Func<List<T1>, List<T2>, Tuple<List<T1>, List<T2>>>((y, z) => new Tuple<List<T1>, List<T2>>(y, z)), sql); }
-        public Tuple<List<T1>, List<T2>, List<T3>> FetchMultiple<T1, T2, T3>(Sql sql) { return FetchMultiple<T1, T2, T3, DontMap, Tuple<List<T1>, List<T2>, List<T3>>>(new[] { typeof(T1), typeof(T2), typeof(T3) }, new Func<List<T1>, List<T2>, List<T3>, Tuple<List<T1>, List<T2>, List<T3>>>((x, y, z) => new Tuple<List<T1>, List<T2>, List<T3>>(x, y, z)), sql); }
-        public Tuple<List<T1>, List<T2>, List<T3>, List<T4>> FetchMultiple<T1, T2, T3, T4>(Sql sql) { return FetchMultiple<T1, T2, T3, T4, Tuple<List<T1>, List<T2>, List<T3>, List<T4>>>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, new Func<List<T1>, List<T2>, List<T3>, List<T4>, Tuple<List<T1>, List<T2>, List<T3>, List<T4>>>((w, x, y, z) => new Tuple<List<T1>, List<T2>, List<T3>, List<T4>>(w, x, y, z)), sql); }
+        public Tuple<List<T1>, List<T2>> FetchMultiple<T1, T2>(string sql, params object[] args)
+        {
+            return FetchMultiple<T1, T2, DontMap, DontMap, Tuple<List<T1>, List<T2>>>(new[] { typeof(T1), typeof(T2) }, new Func<List<T1>, List<T2>, Tuple<List<T1>, List<T2>>>((y, z) => new Tuple<List<T1>, List<T2>>(y, z)), new Sql(sql, args));
+        }
+        public Tuple<List<T1>, List<T2>, List<T3>> FetchMultiple<T1, T2, T3>(string sql, params object[] args)
+        {
+            return FetchMultiple<T1, T2, T3, DontMap, Tuple<List<T1>, List<T2>, List<T3>>>(new[] { typeof(T1), typeof(T2), typeof(T3) }, new Func<List<T1>, List<T2>, List<T3>, Tuple<List<T1>, List<T2>, List<T3>>>((x, y, z) => new Tuple<List<T1>, List<T2>, List<T3>>(x, y, z)), new Sql(sql, args));
+        }
+        public Tuple<List<T1>, List<T2>, List<T3>, List<T4>> FetchMultiple<T1, T2, T3, T4>(string sql, params object[] args)
+        {
+            return FetchMultiple<T1, T2, T3, T4, Tuple<List<T1>, List<T2>, List<T3>, List<T4>>>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, new Func<List<T1>, List<T2>, List<T3>, List<T4>, Tuple<List<T1>, List<T2>, List<T3>, List<T4>>>((w, x, y, z) => new Tuple<List<T1>, List<T2>, List<T3>, List<T4>>(w, x, y, z)), new Sql(sql, args));
+        }
+        public Tuple<List<T1>, List<T2>> FetchMultiple<T1, T2>(Sql sql)
+        {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return FetchMultiple<T1, T2, DontMap, DontMap, Tuple<List<T1>, List<T2>>>(new[] { typeof(T1), typeof(T2) }, new Func<List<T1>, List<T2>, Tuple<List<T1>, List<T2>>>((y, z) => new Tuple<List<T1>, List<T2>>(y, z)), sql);
+        }
+        public Tuple<List<T1>, List<T2>, List<T3>> FetchMultiple<T1, T2, T3>(Sql sql)
+        {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return FetchMultiple<T1, T2, T3, DontMap, Tuple<List<T1>, List<T2>, List<T3>>>(new[] { typeof(T1), typeof(T2), typeof(T3) }, new Func<List<T1>, List<T2>, List<T3>, Tuple<List<T1>, List<T2>, List<T3>>>((x, y, z) => new Tuple<List<T1>, List<T2>, List<T3>>(x, y, z)), sql);
+        }
+        public Tuple<List<T1>, List<T2>, List<T3>, List<T4>> FetchMultiple<T1, T2, T3, T4>(Sql sql)
+        {
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return FetchMultiple<T1, T2, T3, T4, Tuple<List<T1>, List<T2>, List<T3>, List<T4>>>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, new Func<List<T1>, List<T2>, List<T3>, List<T4>, Tuple<List<T1>, List<T2>, List<T3>, List<T4>>>((w, x, y, z) => new Tuple<List<T1>, List<T2>, List<T3>, List<T4>>(w, x, y, z)), sql);
+        }
 
         public class DontMap { }
+
+        #endregion
 
         // Actual implementation of the multi query
         private TRet FetchMultiple<T1, T2, T3, T4, TRet>(Type[] types, object cb, Sql sql)
         {
             var sql_ = sql.SQL;
-            var args = sql.Arguments;
+            var args = sql.Arguments.ToArray();
 
             OpenSharedConnection();
             try
@@ -1582,109 +1633,73 @@ namespace PetaPoco
         {
             var index = 0;
             var primaryKeyValuePairs = GetPrimaryKeyValues(PocoData.ForType(typeof(T)).TableInfo.PrimaryKey, primaryKey);
-            return FirstOrDefault<T>(string.Format("WHERE {0}", BuildPrimaryKeySql(primaryKeyValuePairs, ref index)), primaryKeyValuePairs.Select(x => x.Value).ToArray()) != null;
+            return FirstOrDefault<T>(string.Format(Culture, "WHERE {0}", BuildPrimaryKeySql(primaryKeyValuePairs, ref index)), primaryKeyValuePairs.Select(x => x.Value).ToArray()) != null;
         }
         public T SingleById<T>(object primaryKey)
         {
             var index = 0;
             var primaryKeyValuePairs = GetPrimaryKeyValues(PocoData.ForType(typeof(T)).TableInfo.PrimaryKey, primaryKey);
-            return Single<T>(string.Format("WHERE {0}", BuildPrimaryKeySql(primaryKeyValuePairs, ref index)), primaryKeyValuePairs.Select(x => x.Value).ToArray());
+            return Query<T>(string.Format(Culture, "WHERE {0}", BuildPrimaryKeySql(primaryKeyValuePairs, ref index)), primaryKeyValuePairs.Select(x => x.Value).ToArray()).Single();
         }
         public T SingleOrDefaultById<T>(object primaryKey)
         {
             var index = 0;
             var primaryKeyValuePairs = GetPrimaryKeyValues(PocoData.ForType(typeof(T)).TableInfo.PrimaryKey, primaryKey);
-            return SingleOrDefault<T>(string.Format("WHERE {0}", BuildPrimaryKeySql(primaryKeyValuePairs, ref index)), primaryKeyValuePairs.Select(x => x.Value).ToArray());
-        }
-        public T Single<T>(string sql, params object[] args)
-        {
-            return Query<T>(sql, args).Single();
-        }
-        public T SingleInto<T>(T instance, string sql, params object[] args)
-        {
-            return Query<T>(instance, new Sql(sql, args)).Single();
+            return SingleOrDefault<T>(string.Format(Culture, "WHERE {0}", BuildPrimaryKeySql(primaryKeyValuePairs, ref index)), primaryKeyValuePairs.Select(x => x.Value).ToArray());
         }
         public T SingleOrDefault<T>(string sql, params object[] args)
         {
             return Query<T>(sql, args).SingleOrDefault();
         }
-        public T SingleOrDefaultInto<T>(T instance, string sql, params object[] args)
-        {
-            return Query<T>(instance, new Sql(sql, args)).SingleOrDefault();
-        }
         public T First<T>(string sql, params object[] args)
         {
             return Query<T>(sql, args).First();
-        }
-        public T FirstInto<T>(T instance, string sql, params object[] args)
-        {
-            return Query<T>(instance, new Sql(sql, args)).First();
         }
         public T FirstOrDefault<T>(string sql, params object[] args)
         {
             return Query<T>(sql, args).FirstOrDefault();
         }
-        public T FirstOrDefaultInto<T>(T instance, string sql, params object[] args)
-        {
-            return Query<T>(instance, new Sql(sql, args)).FirstOrDefault();
-        }
-        public T Single<T>(Sql sql)
-        {
-            return Query<T>(sql).Single();
-        }
-        public T SingleInto<T>(T instance, Sql sql)
-        {
-            return Query<T>(instance, sql).Single();
-        }
         public T SingleOrDefault<T>(Sql sql)
         {
             return Query<T>(sql).SingleOrDefault();
-        }
-        public T SingleOrDefaultInto<T>(T instance, Sql sql)
-        {
-            return Query<T>(instance, sql).SingleOrDefault();
         }
         public T First<T>(Sql sql)
         {
             return Query<T>(sql).First();
         }
-        public T FirstInto<T>(T instance, Sql sql)
-        {
-            return Query<T>(instance, sql).First();
-        }
         public T FirstOrDefault<T>(Sql sql)
         {
             return Query<T>(sql).FirstOrDefault();
         }
-        public T FirstOrDefaultInto<T>(T instance, Sql sql)
-        {
-            return Query<T>(instance, sql).FirstOrDefault();
-        }
         public string EscapeTableName(string str)
         {
+            if (str == null) { throw new ArgumentNullException(nameof(str)); }
+
             // Assume table names with "dot" are already escaped
             return str.IndexOf('.') >= 0 ? str : EscapeSqlIdentifier(str);
         }
 
         public string EscapeSqlIdentifier(string str)
         {
+            if (str == null) { throw new ArgumentNullException(nameof(str)); }
+
             switch (_rdbType)
             {
                 case RDBType.MySql:
-                    return string.Format("`{0}`", str);
+                    return string.Format(Culture, "`{0}`", str);
 
                 case RDBType.PostgreSql:
-                    return string.Format("\"{0}\"", str);
+                    return string.Format(Culture, "\"{0}\"", str);
 
                 case RDBType.Oracle:
-                    return string.Format("\"{0}\"", str.ToUpperInvariant());
+                    return string.Format(Culture, "\"{0}\"", str.ToUpperInvariant());
 
                 default:
-                    return string.Format("[{0}]", str);
+                    return string.Format(Culture, "[{0}]", str);
             }
         }
 
-        #region Obsolete Update Methods
+        #region Obsolete Insert Methods
         // 下記のメソッド（テーブル名を指定するもの）は使用禁止にします
         //      object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco);
         //      object Insert(string tableName, string primaryKeyName, object poco);
@@ -1735,18 +1750,18 @@ namespace PetaPoco
                         // Don't insert the primary key (except under oracle where we need bring in the next sequence value)
                         if (autoIncrement
                             && primaryKeyName != null
-                            && string.Compare(i.Key, primaryKeyName, true, System.Globalization.CultureInfo.CurrentCulture) == 0)
+                            && string.Compare(i.Key, primaryKeyName, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             if (_rdbType == RDBType.Oracle && !string.IsNullOrEmpty(pd.TableInfo.SequenceName))
                             {
                                 names.Add(i.Key);
-                                values.Add(string.Format("{0}.nextval", pd.TableInfo.SequenceName));
+                                values.Add(string.Format(Culture, "{0}.nextval", pd.TableInfo.SequenceName));
                             }
                             continue;
                         }
 
                         names.Add(EscapeSqlIdentifier(i.Key));
-                        values.Add(string.Format("{0}{1}", ParamPrefix, index++));
+                        values.Add(string.Format(Culture, "{0}{1}", ParamPrefix, index++));
 
                         object val = i.Value.GetValue(poco);
                         if (i.Value.VersionColumn)
@@ -1763,11 +1778,11 @@ namespace PetaPoco
                         var sql = string.Empty;
                         if (names.Count > 0 || _rdbType == RDBType.MySql)
                         {
-                            sql = string.Format("INSERT INTO {0} ({1}) VALUES ({2})", EscapeTableName(tableName), string.Join(",", names.ToArray()), string.Join(",", values.ToArray()));
+                            sql = string.Format(Culture, "INSERT INTO {0} ({1}) VALUES ({2})", EscapeTableName(tableName), string.Join(",", names.ToArray()), string.Join(",", values.ToArray()));
                         }
                         else
                         {
-                            sql = string.Format("INSERT INTO {0} DEFAULT VALUES", EscapeTableName(tableName));
+                            sql = string.Format(Culture, "INSERT INTO {0} DEFAULT VALUES", EscapeTableName(tableName));
                         }
 
                         cmd.CommandText = sql;
@@ -1802,7 +1817,7 @@ namespace PetaPoco
                                 case RDBType.PostgreSql:
                                     if (primaryKeyName != null)
                                     {
-                                        cmd.CommandText += string.Format(" returning {0} as NewID", EscapeSqlIdentifier(primaryKeyName));
+                                        cmd.CommandText += string.Format(Culture, " returning {0} as NewID", EscapeSqlIdentifier(primaryKeyName));
                                         DoPreExecute(cmd);
                                         id = cmd.ExecuteScalar();
                                     }
@@ -1817,7 +1832,7 @@ namespace PetaPoco
                                 case RDBType.Oracle:
                                     if (primaryKeyName != null)
                                     {
-                                        cmd.CommandText += string.Format(" returning {0} into :newid", EscapeSqlIdentifier(primaryKeyName));
+                                        cmd.CommandText += string.Format(Culture, " returning {0} into :newid", EscapeSqlIdentifier(primaryKeyName));
                                         var param = cmd.CreateParameter();
                                         param.ParameterName = ":newid";
                                         param.Value = DBNull.Value;
@@ -1912,7 +1927,7 @@ namespace PetaPoco
         {
             var tempIndex = index;
             index += primaryKeyValuePair.Count;
-            return string.Join(" AND ", primaryKeyValuePair.Select((x, i) => string.Format("{0} = @{1}", EscapeSqlIdentifier(x.Key), tempIndex + i)).ToArray());
+            return string.Join(" AND ", primaryKeyValuePair.Select((x, i) => string.Format(Culture, "{0} = @{1}", EscapeSqlIdentifier(x.Key), tempIndex + i)).ToArray());
         }
 
         /// <summary>
@@ -1970,6 +1985,8 @@ namespace PetaPoco
         // Update a record with values from a poco.  primary key value can be either supplied or read from the poco
         public int Update<T>(string tableName, string primaryKeyName, IPetaPocoRecord<T> poco, object primaryKeyValue, IEnumerable<string> columns)
         {
+            if (primaryKeyName == null) { throw new ArgumentNullException(nameof(primaryKeyName)); }
+
             if (columns != null && !columns.Any())
                 return 0;
 
@@ -2008,27 +2025,27 @@ namespace PetaPoco
                 {
                     versionName = i.Key;
                     versionValue = value;
-                    value = Convert.ToInt64(value) + 1;
+                    value = Convert.ToInt64(value, Culture) + 1;
                 }
 
                 // Build the sql
                 if (index > 0)
                     sb.Append(", ");
-                sb.AppendFormat("{0} = @{1}", EscapeSqlIdentifier(i.Key), index++);
+                sb.AppendFormat(Culture, "{0} = @{1}", EscapeSqlIdentifier(i.Key), index++);
 
                 rawvalues.Add(value);
             }
 
             if (columns != null && columns.Any() && sb.Length == 0)
-                throw new ArgumentException("There were no columns in the columns list that matched your table", nameof(columns));
+                throw new ArgumentException(string.Format(Culture, "There were no columns in the columns list that matched your table"), nameof(columns));
 
-            var sql = string.Format("UPDATE {0} SET {1} WHERE {2}", EscapeTableName(tableName), sb, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
+            var sql = string.Format(Culture, "UPDATE {0} SET {1} WHERE {2}", EscapeTableName(tableName), sb, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
 
             rawvalues.AddRange(primaryKeyValuePairs.Select(keyValue => keyValue.Value));
 
             if (!string.IsNullOrEmpty(versionName))
             {
-                sql += string.Format(" AND {0} = @{1}", EscapeSqlIdentifier(versionName), index++);
+                sql += string.Format(Culture, " AND {0} = @{1}", EscapeSqlIdentifier(versionName), index++);
                 rawvalues.Add(versionValue);
             }
 
@@ -2036,7 +2053,7 @@ namespace PetaPoco
 
             if (result == 0 && !string.IsNullOrEmpty(versionName) && VersionException == VersionExceptionHandling.Exception)
             {
-                throw new DBConcurrencyException(string.Format("A Concurrency update occurred in table '{0}' for primary key value(s) = '{1}' and version = '{2}'", tableName, string.Join(",", primaryKeyValuePairs.Values.Select(x => x.ToString()).ToArray()), versionValue));
+                throw new DBConcurrencyException(string.Format(Culture, "A Concurrency update occurred in table '{0}' for primary key value(s) = '{1}' and version = '{2}'", tableName, string.Join(",", primaryKeyValuePairs.Values.Select(x => x.ToString()).ToArray()), versionValue));
             }
 
             // Set Version
@@ -2044,7 +2061,7 @@ namespace PetaPoco
             {
                 if (pd.Columns.TryGetValue(versionName, out PocoColumn pc))
                 {
-                    pc.SetValue(poco, Convert.ChangeType(Convert.ToInt64(versionValue) + 1, pc.PropertyInfo.PropertyType));
+                    pc.SetValue(poco, Convert.ChangeType(Convert.ToInt64(versionValue, Culture) + 1, pc.PropertyInfo.PropertyType, Culture));
                 }
             }
 
@@ -2069,11 +2086,6 @@ namespace PetaPoco
         {
             return Update(tableName, primaryKeyName, poco, null, columns);
         }
-
-        //public int Update(object poco)
-        //{
-        //    return Update(poco, null, null);
-        //}
         #endregion
 
 
@@ -2172,7 +2184,7 @@ namespace PetaPoco
                 {
                     versionName = col.Key;
                     versionValue = value;
-                    value = Convert.ToInt64(value) + 1;
+                    value = Convert.ToInt64(value, Culture) + 1;
                 }
 
                 // Build the sql
@@ -2180,23 +2192,23 @@ namespace PetaPoco
                 {
                     sb.Append(", ");
                 }
-                sb.AppendFormat("{0} = @{1}", EscapeSqlIdentifier(col.Key), index++);
+                sb.AppendFormat(Culture, "{0} = @{1}", EscapeSqlIdentifier(col.Key), index++);
 
                 rawvalues.Add(value);
             }
 
             if (columns != null && columns.Any() && sb.Length == 0)
             {
-                throw new ArgumentException("There were no columns in the columns list that matched your table", nameof(columns));
+                throw new ArgumentException(string.Format(Culture, "There were no columns in the columns list that matched your table"), nameof(columns));
             }
 
-            var sql = string.Format("UPDATE {0} SET {1} WHERE {2}", EscapeTableName(tableName), sb, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
+            var sql = string.Format(Culture, "UPDATE {0} SET {1} WHERE {2}", EscapeTableName(tableName), sb, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
 
             rawvalues.AddRange(primaryKeyValuePairs.Select(keyValue => keyValue.Value));
 
             if (!string.IsNullOrEmpty(versionName))
             {
-                sql += string.Format(" AND {0} = @{1}", EscapeSqlIdentifier(versionName), index++);
+                sql += string.Format(Culture, " AND {0} = @{1}", EscapeSqlIdentifier(versionName), index++);
                 rawvalues.Add(versionValue);
             }
 
@@ -2204,7 +2216,7 @@ namespace PetaPoco
 
             if (result == 0 && !string.IsNullOrEmpty(versionName) && VersionException == VersionExceptionHandling.Exception)
             {
-                throw new DBConcurrencyException(string.Format("A Concurrency update occurred in table '{0}' for primary key value(s) = '{1}' and version = '{2}'", tableName, string.Join(",", primaryKeyValuePairs.Values.Select(x => x.ToString()).ToArray()), versionValue));
+                throw new DBConcurrencyException(string.Format(Culture, "A Concurrency update occurred in table '{0}' for primary key value(s) = '{1}' and version = '{2}'", tableName, string.Join(",", primaryKeyValuePairs.Values.Select(x => x.ToString()).ToArray()), versionValue));
             }
 
             // Set Version
@@ -2212,7 +2224,7 @@ namespace PetaPoco
             {
                 if (pd.Columns.TryGetValue(versionName, out PocoColumn pc))
                 {
-                    pc.SetValue(poco, Convert.ChangeType(Convert.ToInt64(versionValue) + 1, pc.PropertyInfo.PropertyType));
+                    pc.SetValue(poco, Convert.ChangeType(Convert.ToInt64(versionValue, Culture) + 1, pc.PropertyInfo.PropertyType, Culture));
                 }
             }
 
@@ -2222,16 +2234,16 @@ namespace PetaPoco
         public int Update<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(typeof(T));
-            return Execute(string.Format("UPDATE {0} {1}", EscapeTableName(pd.TableInfo.TableName), sql), args);
+            return Execute(string.Format(Culture, "UPDATE {0} {1}", EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
         public int Update<T>(Sql sql) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(typeof(T));
-            return Execute(new Sql(string.Format("UPDATE {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
+            return Execute(new Sql(string.Format(Culture, "UPDATE {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
         }
 
-        #region Obsolete Update Methods
+        #region Obsolete Delete Methods
         // 下記のメソッド（テーブル名を指定するものや、PKのキー名を取るもの）は使用禁止にします
         //  （ここまで書くならDMLでいいだろう）
         //      int Delete(string tableName, string primaryKeyName, object poco);
@@ -2245,6 +2257,7 @@ namespace PetaPoco
         [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
         public int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
+            if (primaryKeyName == null) { throw new ArgumentNullException(nameof(primaryKeyName)); }
             var primaryKeyValuePairs = GetPrimaryKeyValues(primaryKeyName, primaryKeyValue);
             // If primary key value not specified, pick it up from the object
             if (primaryKeyValue == null)
@@ -2261,7 +2274,7 @@ namespace PetaPoco
 
             // Do it
             var index = 0;
-            var sql = string.Format("DELETE FROM {0} WHERE {1}", EscapeTableName(tableName), BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
+            var sql = string.Format(Culture, "DELETE FROM {0} WHERE {1}", EscapeTableName(tableName), BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
             return Execute(sql, primaryKeyValuePairs.Select(x => x.Value).ToArray());
         }
 
@@ -2270,13 +2283,13 @@ namespace PetaPoco
         public int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(typeof(T));
-            return Execute(string.Format("DELETE FROM {0} {1}", EscapeTableName(pd.TableInfo.TableName), sql), args);
+            return Execute(string.Format(Culture, "DELETE FROM {0} {1}", EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
         public int Delete<T>(Sql sql) where T : IPetaPocoRecord<T>
         {
             var pd = PocoData.ForType(typeof(T));
-            return Execute(new Sql(string.Format("DELETE FROM {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
+            return Execute(new Sql(string.Format(Culture, "DELETE FROM {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
         }
 
         public int Delete<T>(T poco) where T : IPetaPocoRecord<T>
@@ -2291,11 +2304,11 @@ namespace PetaPoco
 
             foreach (var key in primaryKeyValuePairs.Keys.ToArray())
             {
-                primaryKeyValuePairs[key] = pd.Columns.Single(x => x.Key.Equals(key, StringComparison.CurrentCultureIgnoreCase)).Value.GetValue(poco);
+                primaryKeyValuePairs[key] = pd.Columns.Single(x => x.Key.Equals(key, StringComparison.OrdinalIgnoreCase)).Value.GetValue(poco);
             }
 
             var index = 0;
-            var sql = string.Format("DELETE FROM {0} WHERE {1}", tableName, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
+            var sql = string.Format(Culture, "DELETE FROM {0} WHERE {1}", tableName, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
             return Execute(sql, primaryKeyValuePairs.Select(x => x.Value).ToArray());
         }
 
@@ -2321,14 +2334,17 @@ namespace PetaPoco
         }
 
         public string LastSQL { get { return _lastSql; } }
-        public object[] LastArgs { get { return _lastArgs; } }
+        public ReadOnlyCollection<object> LastArgs { get { return new ReadOnlyCollection<object>(_lastArgs.ToList()); } }
         public string LastCommand
         {
             get { return FormatCommand(_lastSql, _lastArgs); }
         }
 
+        public static readonly IFormatProvider Culture = System.Globalization.CultureInfo.InvariantCulture;
+
         public string FormatCommand(IDbCommand cmd)
         {
+            if (cmd == null) { throw new ArgumentNullException(nameof(cmd)); }
             return FormatCommand(cmd.CommandText, (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray());
         }
 
@@ -2343,7 +2359,7 @@ namespace PetaPoco
                 sb.Append("\r\n");
                 for (int i = 0; i < args.Length; i++)
                 {
-                    sb.AppendFormat("\t -> {0}{1} [{2}] = \"{3}\"\r\n", ParamPrefix, i, args[i].GetType().Name, args[i]);
+                    sb.AppendFormat(Culture, "\t -> {0}{1} [{2}] = \"{3}\"\r\n", ParamPrefix, i, args[i].GetType().Name, args[i]);
                 }
                 sb.Remove(sb.Length - 1, 1);
             }
@@ -2364,27 +2380,34 @@ namespace PetaPoco
             public bool VersionColumn;
             public virtual void SetValue(object target, object val) { PropertyInfo.SetValue(target, val, null); }
             public virtual object GetValue(object target) { return PropertyInfo.GetValue(target, null); }
-            public virtual object ChangeType(object val) { return Convert.ChangeType(val, PropertyInfo.PropertyType); }
+            public virtual object ChangeType(object val) { return Convert.ChangeType(val, PropertyInfo.PropertyType, Culture); }
         }
 
         public class ExpandoColumn : PocoColumn
         {
-            public override void SetValue(object target, object val) { ((IDictionary<string, object>)target)[ColumnName] = val; }
+            public override void SetValue(object target, object val)
+            {
+                if (target == null) { throw new ArgumentNullException(nameof(target)); }
+                ((IDictionary<string, object>)target)[ColumnName] = val;
+            }
             public override object GetValue(object target)
             {
+                if (target == null) { throw new ArgumentNullException(nameof(target)); }
                 ((IDictionary<string, object>)target).TryGetValue(ColumnName, out object val);
                 return val;
             }
             public override object ChangeType(object val) { return val; }
         }
 
-        public static Func<Type, PocoData> PocoDataFactory = type => new PocoData(type);
+        public static readonly Func<Type, PocoData> PocoDataFactory = type => new PocoData(type);
         public class PocoData
         {
             static readonly EnumMapper EnumMapper = new EnumMapper();
 
             public static PocoData ForObject(object o, string primaryKeyName)
             {
+                if (o == null) { throw new ArgumentNullException(nameof(o)); }
+
                 var t = o.GetType();
                 if (t == typeof(System.Dynamic.ExpandoObject))
                 {
@@ -2417,7 +2440,7 @@ namespace PetaPoco
             {
                 if (t == typeof(System.Dynamic.ExpandoObject))
                 {
-                    throw new InvalidOperationException("Can't use dynamic types with this method");
+                    throw new InvalidOperationException(string.Format(Culture, "Can't use dynamic types with this method"));
                 }
 
                 // Check cache
@@ -2459,7 +2482,7 @@ namespace PetaPoco
 
             public PocoData(Type t)
             {
-                type = t;
+                type = t ?? throw new ArgumentNullException(nameof(t));
                 TableInfo = new TableInfo();
 
                 // Get the table name
@@ -2485,10 +2508,10 @@ namespace PetaPoco
                 foreach (var pi in t.GetProperties())
                 {
                     // Work out if properties is to be included
-                    var ColAttrs = pi.GetCustomAttributes(typeof(ColumnAttribute), true);
+                    var colAttrs = pi.GetCustomAttributes(typeof(ColumnAttribute), true);
                     if (ExplicitColumns)
                     {
-                        if (ColAttrs.Length == 0)
+                        if (colAttrs.Length == 0)
                             continue;
                     }
                     else
@@ -2503,9 +2526,9 @@ namespace PetaPoco
                     };
 
                     // Work out the DB column name
-                    if (ColAttrs.Length > 0)
+                    if (colAttrs.Length > 0)
                     {
-                        var colattr = (ColumnAttribute)ColAttrs[0];
+                        var colattr = (ColumnAttribute)colAttrs[0];
                         pc.ColumnName = colattr.Name;
                         if ((colattr as ResultColumnAttribute) != null)
                             pc.ResultColumn = true;
@@ -2524,7 +2547,10 @@ namespace PetaPoco
                 }
 
                 // Build column list for automatic select
-                QueryColumns = (from c in Columns where !c.Value.ResultColumn select c.Key).ToArray();
+                QueryColumns = new ReadOnlyCollection<string>(
+                    Columns.Where(c => !c.Value.ResultColumn)
+                            .Select(c => c.Key).ToArray()
+                    );
 
             }
 
@@ -2546,8 +2572,10 @@ namespace PetaPoco
             // Create factory function that can convert a IDataReader record into a POCO
             public Delegate GetFactory(string sql, string connString, bool ForceDateTimesToUtc, int firstColumn, int countColumns, IDataReader r, object instance)
             {
+                if (r == null) { throw new ArgumentNullException(nameof(r)); }
+
                 // Check cache
-                var key = string.Format("{0}:{1}:{2}:{3}:{4}:{5}", sql, connString, ForceDateTimesToUtc, firstColumn, countColumns, instance != GetDefault(type));
+                var key = string.Format(Culture, "{0}:{1}:{2}:{3}:{4}:{5}", sql, connString, ForceDateTimesToUtc, firstColumn, countColumns, instance != GetDefault(type));
                 RWLock.EnterReadLock();
                 try
                 {
@@ -2572,7 +2600,7 @@ namespace PetaPoco
                     }
 
                     // Create the method
-                    var m = new DynamicMethod("petapoco_factory_" + PocoFactories.Count.ToString(), type, new Type[] { typeof(IDataReader), type }, true);
+                    var m = new DynamicMethod("petapoco_factory_" + PocoFactories.Count.ToString(Culture), type, new Type[] { typeof(IDataReader), type }, true);
                     var il = m.GetILGenerator();
 
                     if (type == typeof(object))
@@ -2713,15 +2741,19 @@ namespace PetaPoco
                         else
                         {
                             if (instance != null)
+                            {
                                 il.Emit(OpCodes.Ldarg_1);
+                            }
                             else
+                            {
                                 // var poco=new T()
                                 il.Emit(OpCodes.Newobj,
                                     type.GetConstructor(
                                         BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                                         null,
-                                        new Type[0],
+                                        Array.Empty<Type>(),
                                         null));
+                            }
 
                             // Enumerate all fields generating a set assignment for the column
                             for (int i = firstColumn; i < firstColumn + countColumns; i++)
@@ -2796,7 +2828,7 @@ namespace PetaPoco
                                 il.MarkLabel(lblNext);
                             }
 
-                            var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(type, (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
+                            var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(type, (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Array.Empty<Type>(), null));
                             if (fnOnLoaded != null)
                             {
                                 il.Emit(OpCodes.Dup);
@@ -2834,6 +2866,8 @@ namespace PetaPoco
 
             public static Func<object, object> GetConverter(bool forceDateTimesToUtc, PocoColumn pc, Type srcType, Type dstType)
             {
+                if (dstType == null) { throw new ArgumentNullException(nameof(dstType)); }
+
                 Func<object, object> converter = null;
 
                 // Get converter from the mapper
@@ -2913,7 +2947,7 @@ namespace PetaPoco
             static readonly MethodInfo fnListGetItem = typeof(List<Func<object, object>>).GetProperty("Item").GetGetMethod();
             static readonly MethodInfo fnInvoke = typeof(Func<object, object>).GetMethod("Invoke");
             public Type type;
-            public string[] QueryColumns { get; protected set; }
+            public ReadOnlyCollection<string> QueryColumns { get; protected set; }
             public TableInfo TableInfo { get; protected set; }
             public Dictionary<string, PocoColumn> Columns { get; protected set; }
             Dictionary<string, Delegate> PocoFactories = new Dictionary<string, Delegate>();
@@ -2994,7 +3028,7 @@ namespace PetaPoco
 
         public Transaction(Database db, IsolationLevel? isolationLevel)
         {
-            _db = db;
+            _db = db ?? throw new ArgumentNullException(nameof(db));
             _db.BeginTransaction(isolationLevel);
         }
 
@@ -3031,7 +3065,7 @@ namespace PetaPoco
         private object[] _args;
         private Sql _rhs;
         private string _sqlFinal;
-        private object[] _argsFinal;
+        private ReadOnlyCollection<object> _argsFinal;
 
         /// <summary>
         /// Default, empty constructor
@@ -3064,7 +3098,7 @@ namespace PetaPoco
             if (isBuilt)
             {
                 _sqlFinal = _sql;
-                _argsFinal = _args;
+                _argsFinal = new ReadOnlyCollection<object>(_args);
             }
         }
 
@@ -3089,7 +3123,7 @@ namespace PetaPoco
             var args = new List<object>();
             Build(sb, args, null);
             _sqlFinal = sb.ToString();
-            _argsFinal = args.ToArray();
+            _argsFinal = new ReadOnlyCollection<object>(args);
         }
 
         /// <summary>
@@ -3107,7 +3141,7 @@ namespace PetaPoco
         /// <summary>
         /// Gets the complete, final set of arguments collected by this builder.
         /// </summary>
-        public object[] Arguments
+        public ReadOnlyCollection<object> Arguments
         {
             get
             {
@@ -3136,6 +3170,7 @@ namespace PetaPoco
             }
             else
             {
+                if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
                 _sql = sql._sql;
                 _args = sql._args;
                 _rhs = sql._rhs;
@@ -3157,7 +3192,7 @@ namespace PetaPoco
 
         private static bool Is(Sql sql, string sqltype)
         {
-            return sql != null && sql._sql != null && sql._sql.StartsWith(sqltype, StringComparison.InvariantCultureIgnoreCase);
+            return sql != null && sql._sql != null && sql._sql.StartsWith(sqltype, StringComparison.OrdinalIgnoreCase);
         }
 
         private void Build(StringBuilder sb, List<object> args, Sql lhs)
@@ -3214,7 +3249,7 @@ namespace PetaPoco
             }
             if (_argsFinal != null)
             {
-                cloned._argsFinal = (object[])_argsFinal.Clone();
+                cloned._argsFinal = new ReadOnlyCollection<object>(_argsFinal); //  (object[])_argsFinal.Clone();
             }
             cloned._sql = _sql;
             cloned._sqlFinal = _sqlFinal;
@@ -3249,7 +3284,8 @@ namespace PetaPoco
              *
              * なので、SQL、Argumentsプロパティの値を使うべし
              * */
-            return Where(sql.SQL, sql.Arguments);
+            if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
+            return Where(sql.SQL, sql.Arguments.ToArray());
         }
 
         /// <summary>

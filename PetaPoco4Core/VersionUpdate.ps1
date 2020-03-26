@@ -5,15 +5,15 @@
 # Version value
 $major = 4
 $miner = 7
-$revision = 1
+$revision = 1.3
 # ---------------------------
 
 # target files and line number
 $files = @{
 	# それぞれのファイルで書き換える行番号を設定
 	"DatabaseExtension.cs" = [int]4
-	"PetaPoco.cs" = [int]11
-	"PetaPocoAttributes.cs" = [int]11
+	"PetaPoco.cs" = [int]12
+	"PetaPocoAttributes.cs" = [int]12
 }
 # ---------------------------
 

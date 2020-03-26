@@ -7,10 +7,11 @@
  * use of Subsonic's T4 templates, Rob Sullivan (@DataChomp) for hard core DBA advice
  * and Adam Schroder (@schotime) for lots of suggestions, improvements and Oracle support
  */
-/* Modified by kirishu (zapshu@gmail.com)
- * v4.7.1
+/* --------------------------------------------------------------------------
+ * Modified by kirishu (zapshu@gmail.com)
+ * v4.7.1.3
  * https://github.com/kirishu/PetaPoco4Core
- */
+ * -------------------------------------------------------------------------- */
 
 using System;
 using System.Collections.Generic;

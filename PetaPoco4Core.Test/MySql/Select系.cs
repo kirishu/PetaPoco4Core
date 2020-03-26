@@ -166,7 +166,7 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                var rec = db.Single<PtTable01>("WHERE Key01 = @0", "03");
+                var rec = db.SingleOrDefault<PtTable01>("WHERE Key01 = @0", "03");
                 _output.WriteLine(db.LastCommand);
 
                 Assert.NotNull(rec);
@@ -184,7 +184,7 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                var rec = db.Single<PtTable02>("WHERE Key01=@0 AND Key02=@1", "03", 3);
+                var rec = db.SingleOrDefault<PtTable02>("WHERE Key01=@0 AND Key02=@1", "03", 3);
                 _output.WriteLine(db.LastCommand);
 
                 Assert.NotNull(rec);
@@ -197,20 +197,20 @@ namespace PetaPoco4Core.Test.MySql
             }
         }
 
-        [Fact]
-        public void Select系_Single_条件を指定してヒットなしエラー()
-        {
-            // InvalidOperationExceptionが発生したらOK
-            var ex = Assert.Throws<InvalidOperationException>(() =>
-            {
-                using (var db = new DB())
-                {
-                    var rec = db.Single<PtTable01>("WHERE Key01 = @0", "999");
-                    _output.WriteLine(db.LastCommand);
-                }
-            });
-            _output.WriteLine(ex.ToString());
-        }
+        //[Fact]
+        //public void Select系_Single_条件を指定してヒットなしエラー()
+        //{
+        //    // InvalidOperationExceptionが発生したらOK
+        //    var ex = Assert.Throws<InvalidOperationException>(() =>
+        //    {
+        //        using (var db = new DB())
+        //        {
+        //            var rec = db.Single<PtTable01>("WHERE Key01 = @0", "999");
+        //            _output.WriteLine(db.LastCommand);
+        //        }
+        //    });
+        //    _output.WriteLine(ex.ToString());
+        //}
 
 
         [Fact]
@@ -385,7 +385,7 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                var rec = db.Single<JoinTest>(PetaPoco.Sql.Builder
+                var rec = db.SingleOrDefault<JoinTest>(PetaPoco.Sql.Builder
                     .Append("SELECT  t01.Key01")
                     .Append("       ,t01.ColVarchar")
                     .Append("       ,t01.CreateBy")
@@ -416,7 +416,7 @@ namespace PetaPoco4Core.Test.MySql
         {
             using (var db = new DB())
             {
-                var rec = db.Single<JoinTest>(PetaPoco.Sql.Builder
+                var rec = db.SingleOrDefault<JoinTest>(PetaPoco.Sql.Builder
                     .Append("SELECT  t01.Key01")
                     .Append("       ,t01.ColVarchar")
                     .Append("       ,t01.CreateBy")

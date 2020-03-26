@@ -9,13 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetaPoco4Core.Test", "PetaP
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@SolutionFolder", "@SolutionFolder", "{190E3FEE-2B28-49B0-9A43-BBA43B36601D}"
 	ProjectSection(SolutionItems) = preProject
-		@SolutionFolder\PetaPoco.Core.tt = @SolutionFolder\PetaPoco.Core.tt
-		@SolutionFolder\PetaPoco.Generator.tt = @SolutionFolder\PetaPoco.Generator.tt
+		@SolutionFolder\PetaPoco.Core.ttinclude = @SolutionFolder\PetaPoco.Core.ttinclude
+		@SolutionFolder\PetaPoco.Generator.ttinclude = @SolutionFolder\PetaPoco.Generator.ttinclude
 		@SolutionFolder\readme.txt = @SolutionFolder\readme.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@Documents", "@Documents", "{B55B9C00-1430-4FA9-8B42-5CCFEC6A8C19}"
 	ProjectSection(SolutionItems) = preProject
+		@Documents\changelog.txt = @Documents\changelog.txt
 		@Documents\HowToCreate-DvdRentalDB.txt = @Documents\HowToCreate-DvdRentalDB.txt
 		@Documents\HowtoCreate-EmployeesDB .txt = @Documents\HowtoCreate-EmployeesDB .txt
 		@Documents\Manual-PetaPoco4Core.html = @Documents\Manual-PetaPoco4Core.html
