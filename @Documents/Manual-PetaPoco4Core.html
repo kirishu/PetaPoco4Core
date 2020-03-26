@@ -2,9 +2,9 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>PetaPocoExtension Manual</title>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <title>PetaPoco4Core Manual</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
     <style>
@@ -94,7 +94,7 @@
             font-size: 18pt;
             font-weight: bold;
             line-height: 1.1em;
-            margin-top: 40px;
+            margin-bottom: 20px;
         }
 
         h2 {
@@ -295,9 +295,8 @@
     <!-- メインコンテンツエリア -->
     <div id="area__content">
 
-        <div style="text-align:right;font-style:italic">07-Jul-2019 &nbsp; zapshu@gmail.com</div>
-        <h1 style="margin:0;">PetaPoco4Coreの使い方</h1>
-        <h6>（Fork from PetaPoco v4.0.3）</h6>
+        <div style="text-align:right;font-style:italic">25-Mar-2020 &nbsp; zapshu@gmail.com</div>
+        <h1>PetaPoco4Coreの使い方</h1>
 
         <p>
             .NET用micro-ORMです。
@@ -319,7 +318,7 @@
                 <li>DMLのメソッドがひと通り揃っている</li>
                 <li>TextTemplateによる自動Entity生成機能あり</li>
                 <li>ADO.NETをラッピングしているだけなので、パフォーマンスは著名なORMの中でもトップクラス</li>
-                <li>.NET Framework時代の v4.0.3をベースに、.Net Standard 2.0用に修正を加えたものです</li>
+                <li>.NET Framework時代の topten software オリジナル v4.0.3をベースに、.NET Standard 2.0用に修正を加えたものです</li>
             </ul>
         </p>
 
@@ -395,7 +394,9 @@ using (var otherdb = new PetaPoco.DatabaseExtension(otherStr, "MySql.Data.MySqlC
             </tr>
             <tr>
                 <td>Oracle</td>
-                <td>System.Data.OracleClient</td>
+                <td>Oracle.ManagedDataAccess
+                <br />（System.Data.Oracleは非対応）
+                </td>
             </tr>
             <tr>
                 <td>SQLite</td>
@@ -458,16 +459,13 @@ var rec = db.SingleOrDefaultById&lt;Database.Employees.Title&gt;(pk);
 
         <h4>条件を指定して1件だけ抽出</h4>
 <pre class="prettyprint lang-cs">
-var rec1 = db.Single&lt;Database.Employees.DeptEmp&gt;("WHERE emp_no=@0 AND dept_no=@1", 1001, "d005");
 var rec1 = db.SingleOrDefault&lt;Database.Employees.DeptEmp&gt;("WHERE emp_no=@0 AND dept_no=@1", 1001, "d005");
 </pre>
 <pre class="note">
-Single、SingleOrDefault を使う。
+SingleOrDefault を使う。
 抽出結果が複数件数あると例外が発生します。
-ヒットなしの場合、SignleOrDefaultはnullが返り、Singleの場合は例外が発生します。
 
 ちなみに、PetaPocoRecordオブジェクトの場合、WHERE句から書けばOK。
-（もちろん"SELECT * FROM ～"と全部書いてもOKだけど）
 </pre>
 
 
@@ -484,7 +482,7 @@ First、FirstOrDefault を使う。
 
         <h4>単一項目スカラ クエリ</h4>
 <pre class="prettyprint lang-cs">
-var count = db.ExecuteScalar&lt;int&gt;("SELECT Count(*) FROM employee");
+var count = db.ExecuteScalar&lt;int&gt;("SELECT COUNT(*) FROM employee");
 </pre>
 <pre class="note">
 ExecuteScalarを使う。
@@ -1044,6 +1042,7 @@ db.Delete("tablename", "pkname", null, 123);
 </pre>
 -->
 
+<!--
         <h4>Save</h4>
 <pre class="prettyprint lang-cs">
 db.Save(Entity);
@@ -1057,6 +1056,7 @@ db.Save(Entity);
 でもさ、IDENTITY型のテーブルにInsertする場合ってキー値なんか指定しないし、
 キーの有無を調べる局面なんていまだかつてないんだけど・・・
 </pre>
+-->
 
         <h4>Transaction</h4>
 <pre class="prettyprint lang-cs">
@@ -1374,7 +1374,8 @@ D:\HogeProject\Database&gt; "C:\Program Files\Common Files\Microsoft Shared\Text
 このT4Template、ご丁寧にもテーブル名が複数形だったら、レコードEntity名は単数形に変換してくれちゃってるので注意！
 例：[IPM_Items]テーブルのEntityは、[IPM_Item]、
 　　[Categories]テーブルのEntityは、[Category]
-PetaPoco.Core.tt の1360行付近に置換ルールがあります。
+
+PetaPoco.Core.ttinclude の1360行付近に置換ルールがあります。
 </pre>
         <br />
         <br />
@@ -2091,7 +2092,7 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
         $("h2, h3, h4").each(function () {
             var $li = $("<li>" + $(this).text() + "</li>").appendTo($("#area__menu ul"));
             // attributeに[targetTop]ってのを作る
-            $li.attr("targetTop", ($(this).position().top - 30)); 6
+            $li.attr("targetTop", ($(this).position().top - 40));
 
             var hn = $(this).get(0).tagName.toLowerCase();
             if (hn == "h2") {

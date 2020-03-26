@@ -33,38 +33,40 @@ SELECT isco.table_name
 
 
 -- =======================================================================================
+-- MySQL
 -- =======================================================================================
-SELECT TABLE_SCHEMA
-     , TABLE_NAME
-     , TABLE_TYPE
-     , TABLE_COMMENT
-  FROM INFORMATION_SCHEMA.TABLES
- WHERE TABLE_SCHEMA IN (SELECT database())
-   AND TABLE_NAME = 'TrAutoNumber'
- ORDER BY TABLE_NAME;
+SELECT table_schema
+     , table_name
+     , table_type
+     , table_comment
+  FROM information_schema.tables
+ WHERE table_schema IN (SELECT database())
+   AND table_name = 'TrAutonumber'
+ ORDER BY by table_name;
 
 -- 列情報
-SELECT TABLE_SCHEMA
-     , TABLE_NAME
-     , COLUMN_NAME
-     , ORDINAL_POSITION
-     , IS_NULLABLE
-     , COLUMN_DEFAULT
-     , DATA_TYPE
-     , COLUMN_TYPE
-     , CHARACTER_MAXIMUM_LENGTH
-     , NUMERIC_PRECISION
-     , NUMERIC_SCALE
-     , COLUMN_KEY
-     , EXTRA
-     , COLUMN_COMMENT
-  FROM INFORMATION_SCHEMA.COLUMNS
- WHERE TABLE_SCHEMA IN (SELECT database())
-   AND TABLE_NAME = 'TrAutoNumber'
---   AND TABLE_SCHEMA = [DB名]
- ORDER BY ORDINAL_POSITION;
+SELECT table_schema
+     , table_name
+     , column_name
+     , ordinal_position
+     , is_nullable
+     , column_default
+     , data_type
+     , column_type
+     , character_maximum_length
+     , numeric_precision
+     , numeric_scale
+     , column_key
+     , extra
+     , column_comment
+  FROM information_schema.columns
+ WHERE table_schema = (SELECT database())
+   AND table_name = 'TrAutonumber'
+ ORDER BY ordinal_position;
 
-
+-- =======================================================================================
+-- SQL Server
+-- =======================================================================================
 
 
 

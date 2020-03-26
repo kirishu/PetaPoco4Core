@@ -1,16 +1,14 @@
-﻿/*
+﻿/* --------------------------------------------------------------------------
  * DatabaseExtension - PetaPoco.Database Extension class
  * Created by kirishu (zapshu@gmail.com)
- * v4.7.1
+ * v4.7.1.3
  * https://github.com/kirishu/PetaPoco4Core
- */
-
-#pragma warning disable CA1305 // Specify IFormatProvider
-#pragma warning disable CA1303 // Do not pass literals as localized parameters
+ * -------------------------------------------------------------------------- */
 
 using NLog;
 using System;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -46,7 +44,7 @@ namespace PetaPoco
         public DatabaseExtension(string connectionString, RDBType rdbType)
             : base(connectionString, rdbType)
         {
-            _logger.Debug("[New Instance] {0}", connectionString);
+            _logger.Debug(string.Format(Culture, "[New Instance] {0}", connectionString));
         }
 
         /// <summary>
@@ -108,7 +106,7 @@ namespace PetaPoco
 
                 if (UseA5Mk2Params)
                 {
-                    log.AppendFormat("SetParameter {0} {1}",
+                    log.AppendFormat(Culture, "SetParameter {0} {1}",
                         param.ParameterName.Replace(this.ParamPrefix, "p"),     // "@"を"p"に変更する
                         logvalue
                     );
@@ -117,11 +115,11 @@ namespace PetaPoco
                 {
                     if (this._rdbType == RDBType.SqlServer)
                     {
-                        log.AppendFormat("DECLARE {0} {1} = {2}", param.ParameterName, typename, logvalue);
+                        log.AppendFormat(Culture, "DECLARE {0} {1} = {2}", param.ParameterName, typename, logvalue);
                     }
                     else
                     {
-                        log.AppendFormat("SET {0} = {1};", param.ParameterName, logvalue);
+                        log.AppendFormat(Culture, "SET {0} = {1};", param.ParameterName, logvalue);
                     }
                 }
                 log.AppendLine();
@@ -172,7 +170,7 @@ namespace PetaPoco
                         else
                         {
                             // True -> 1, False -> 0
-                            log.Append(Convert.ToInt32(value));
+                            log.Append(Convert.ToInt32(value, Culture));
                         }
                     }
                     else if (value is sbyte
@@ -194,18 +192,18 @@ namespace PetaPoco
                         log.Append('\'');
                         if (typename.Equals("DATE", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            log.Append(((DateTime)value).ToString("yyyy/MM/dd"));
+                            log.Append(((DateTime)value).ToString("yyyy/MM/dd", Culture));
                         }
                         else
                         {
-                            log.Append(((DateTime)value).ToString("yyyy/MM/dd HH:mm:ss.fff"));
+                            log.Append(((DateTime)value).ToString("yyyy/MM/dd HH:mm:ss.fff", Culture));
                         }
                         log.Append('\'');
                     }
                     else if (value is TimeSpan)
                     {
                         log.Append('\'');
-                        log.Append(((TimeSpan)value).ToString("g"));    //g [-][d:]h:mm:ss[.FFFFFFF]
+                        log.Append(((TimeSpan)value).ToString("g", Culture));    //g [-][d:]h:mm:ss[.FFFFFFF]
                         log.Append('\'');
                     }
                     else if (value is Guid)
@@ -253,7 +251,7 @@ namespace PetaPoco
                     System.Reflection.BindingFlags.Public |
                     System.Reflection.BindingFlags.Instance |
                     System.Reflection.BindingFlags.InvokeMethod,
-                    null, value, null, System.Globalization.CultureInfo.CurrentCulture);
+                    null, value, null, System.Globalization.CultureInfo.InvariantCulture);
             }
             else
             {
@@ -324,7 +322,7 @@ namespace PetaPoco
                 case DbType.Object:
                 case DbType.Xml:
                     // バイナリ
-                    datatype = UseA5Mk2Params ? "String" : param.DbType.ToString().ToUpper(System.Globalization.CultureInfo.CurrentCulture);
+                    datatype = UseA5Mk2Params ? "String" : param.DbType.ToString().ToUpperInvariant();
                     break;
                 default:
                     // なんだかわかんないもの
@@ -341,7 +339,7 @@ namespace PetaPoco
         public override void OnExecutedCommand(IDbCommand cmd)
         {
             TimeSpan ts = DateTime.Now - _execTime;
-            var log = string.Format("[OnExecutedCommand] {0} milliseconds", ts.TotalMilliseconds);
+            var log = string.Format(Culture, "[OnExecutedCommand] {0} milliseconds", ts.TotalMilliseconds);
             _logger.Debug(log);
 #if DEBUG
             System.Diagnostics.Debug.WriteLine(log);
@@ -403,7 +401,7 @@ namespace PetaPoco
         public DataTable GetDataTable(PetaPoco.Sql sql)
         {
             if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
-            return GetDataTable(sql.SQL, sql.Arguments);
+            return GetDataTable(sql.SQL, sql.Arguments.ToArray());
         }
 
         /// <summary>
@@ -421,15 +419,14 @@ namespace PetaPoco
         {
             if (_rdbType != RDBType.SqlServer)
             {
-                const string message = "SQL Serverのみです";
-                throw new ArgumentException(message);
+                throw new ArgumentException(string.Format(Culture, "SQL Serverのみです"));
             }
 
             try
             {
                 // sp_columnsから列情報を読み取ってCREATE TABLE文を発行する
                 var sb = new StringBuilder();
-                using (var dt = GetDataTable(string.Format("sp_columns '{0}'", sourcename)))
+                using (var dt = GetDataTable(string.Format(Culture, "sp_columns '{0}'", sourcename)))
                 {
                     foreach (DataRow dr in dt.Rows)
                     {
@@ -439,9 +436,9 @@ namespace PetaPoco
                         }
 
                         // カラム名
-                        sb.AppendFormat(" {0} ", dr["COLUMN_NAME"].ToString());
+                        sb.AppendFormat(Culture, " {0} ", dr["COLUMN_NAME"].ToString());
                         // 型名
-                        sb.AppendFormat(" {0} ", dr["TYPE_NAME"].ToString().ToLower(System.Globalization.CultureInfo.CurrentCulture).Replace("identity", ""));
+                        sb.AppendFormat(Culture, " {0} ", dr["TYPE_NAME"].ToString().ToUpperInvariant().Replace("identity", ""));
                         // サイズ
                         if (dr["RADIX"] == null || dr["RADIX"].Equals(DBNull.Value))
                         {
@@ -451,12 +448,12 @@ namespace PetaPoco
                                 // 文字列
                                 if (dr["PRECISION"].ToString().Trim().Length < 5)
                                 {
-                                    sb.AppendFormat(" ({0}) ", dr["PRECISION"].ToString());
+                                    sb.AppendFormat(Culture, " ({0}) ", dr["PRECISION"].ToString());
                                 }
                             }
                         }
                         // nullの可否
-                        sb.AppendFormat(" {0} ", (dr["NULLABLE"].ToString().Trim() == "0") ? "not null" : "null");
+                        sb.AppendFormat(Culture, " {0} ", (dr["NULLABLE"].ToString().Trim() == "0") ? "not null" : "null");
                     }
                 }
 
@@ -537,7 +534,7 @@ namespace PetaPoco
         public Page<T> PageWithHaving<T>(long page, long itemsPerPage, Sql sql)
         {
             if (sql == null) { throw new ArgumentNullException(nameof(sql)); }
-            return PageWithHaving<T>(page, itemsPerPage, sql.SQL, sql.Arguments);
+            return PageWithHaving<T>(page, itemsPerPage, sql.SQL, sql.Arguments.ToArray());
         }
 
     }
