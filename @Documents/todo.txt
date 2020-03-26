@@ -12,8 +12,6 @@ OracleのTTでAutoIncrementがうまく取得できない
 Oracleでnumber(5) nullable は int? にしないとだめ？
 またnumber?はdboule?にしないとだめ？
 
-どうもOracle.DataAccessのコネクタが勝手に型を決めて、PetaPocoのマッパでうまく行かないみたい・・・
-
 	→ 2020.03.20
 	Database.PocoDataクラスのGetConverterにNullable型の対応を行ったのでエラーなくマッピングできるようになった。
 
