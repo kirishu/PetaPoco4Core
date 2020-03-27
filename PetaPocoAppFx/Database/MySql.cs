@@ -4,11 +4,11 @@
 // 
 // The following connection settings were used to generate this file
 // 
-//     Connection String:      `server=CentOSdb;database=PetaPocoSample;uid=testman;pwd=**zapped**;SslMode=None;`
+//     Connection String:      `server=localhost;database=PetaPocoSample;uid=testman;pwd=**zapped**;SslMode=None;`
 //     Provider:               `MySql.Data.MySqlClient`
 //     Schema:                 ``
 //     Include Views:          `True`
-//     Genetated:              `2020/03/07 00:07:50`
+//     Genetated:              `2020/03/27 15:42:22`
 
 using System;
 using PetaPoco;
@@ -34,8 +34,6 @@ namespace PetaPocoAppFx.Database.MySql
         /// </summary>
         public DB() : base(Config.ConnectionString, RDBType.MySql)
         {
-            CommandTimeout = 30;
-            UseA5Mk2Params = false;
         }
     }
 
@@ -63,53 +61,53 @@ namespace PetaPocoAppFx.Database.MySql
         /// <summary>プライマリキーその１</summary>
         [Column] public string Key01 { get { return _Key01; } set { _Key01 = value; MarkColumnModified("Key01"); } } string _Key01;
         /// <summary>bigintの列</summary>
-        [Column] public long? ColBigInt { get { return _ColBigInt; } set { _ColBigInt = value; MarkColumnModified("ColBigInt"); } } long? _ColBigInt;
-        /// <summary>bigint unsignedの列</summary>
-        [Column] public ulong? ColBigIntU { get { return _ColBigIntU; } set { _ColBigIntU = value; MarkColumnModified("ColBigIntU"); } } ulong? _ColBigIntU;
+        [Column] public long? ColBigint { get { return _ColBigint; } set { _ColBigint = value; MarkColumnModified("ColBigint"); } } long? _ColBigint;
         /// <summary>intの列</summary>
         [Column] public int? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("ColInt"); } } int? _ColInt;
-        /// <summary>int unsignedの列</summary>
-        [Column] public uint? ColIntU { get { return _ColIntU; } set { _ColIntU = value; MarkColumnModified("ColIntU"); } } uint? _ColIntU;
-        /// <summary>mediumintの列</summary>
-        [Column] public int? ColMediumInt { get { return _ColMediumInt; } set { _ColMediumInt = value; MarkColumnModified("ColMediumInt"); } } int? _ColMediumInt;
-        /// <summary>mediumint unsignedの列</summary>
-        [Column] public uint? ColMediumIntU { get { return _ColMediumIntU; } set { _ColMediumIntU = value; MarkColumnModified("ColMediumIntU"); } } uint? _ColMediumIntU;
         /// <summary>smallintの列</summary>
-        [Column] public short? ColSmallInt { get { return _ColSmallInt; } set { _ColSmallInt = value; MarkColumnModified("ColSmallInt"); } } short? _ColSmallInt;
-        /// <summary>smallint unsignedの列</summary>
-        [Column] public ushort? ColSmallIntU { get { return _ColSmallIntU; } set { _ColSmallIntU = value; MarkColumnModified("ColSmallIntU"); } } ushort? _ColSmallIntU;
+        [Column] public short? ColSmallint { get { return _ColSmallint; } set { _ColSmallint = value; MarkColumnModified("ColSmallint"); } } short? _ColSmallint;
         /// <summary>tinyintの列</summary>
-        [Column] public sbyte? ColTinyInt { get { return _ColTinyInt; } set { _ColTinyInt = value; MarkColumnModified("ColTinyInt"); } } sbyte? _ColTinyInt;
-        /// <summary>tinyint unsignedの列</summary>
-        [Column] public byte? ColTinyIntU { get { return _ColTinyIntU; } set { _ColTinyIntU = value; MarkColumnModified("ColTinyIntU"); } } byte? _ColTinyIntU;
-        /// <summary>bitの列</summary>
-        [Column] public bool? ColBit { get { return _ColBit; } set { _ColBit = value; MarkColumnModified("ColBit"); } } bool? _ColBit;
+        [Column] public sbyte? ColTinyint { get { return _ColTinyint; } set { _ColTinyint = value; MarkColumnModified("ColTinyint"); } } sbyte? _ColTinyint;
         /// <summary>boolの列</summary>
-        [Column] public bool? ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("ColBool"); } } bool? _ColBool;
-        /// <summary>decimalの列</summary>
+        [Column] public bool ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("ColBool"); } } bool _ColBool;
+        /// <summary>decimal(14,2)の列</summary>
         [Column] public decimal? ColDecimal { get { return _ColDecimal; } set { _ColDecimal = value; MarkColumnModified("ColDecimal"); } } decimal? _ColDecimal;
-        /// <summary>numericの列</summary>
-        [Column] public decimal? ColNumeric { get { return _ColNumeric; } set { _ColNumeric = value; MarkColumnModified("ColNumeric"); } } decimal? _ColNumeric;
-        /// <summary>doubleの列</summary>
-        [Column] public double? ColDouble { get { return _ColDouble; } set { _ColDouble = value; MarkColumnModified("ColDouble"); } } double? _ColDouble;
         /// <summary>floatの列</summary>
         [Column] public float? ColFloat { get { return _ColFloat; } set { _ColFloat = value; MarkColumnModified("ColFloat"); } } float? _ColFloat;
+        /// <summary>doubleの列</summary>
+        [Column] public double? ColDouble { get { return _ColDouble; } set { _ColDouble = value; MarkColumnModified("ColDouble"); } } double? _ColDouble;
         /// <summary>dateの列</summary>
         [Column] public DateTime? ColDate { get { return _ColDate; } set { _ColDate = value; MarkColumnModified("ColDate"); } } DateTime? _ColDate;
         /// <summary>timeの列</summary>
         [Column] public TimeSpan? ColTime { get { return _ColTime; } set { _ColTime = value; MarkColumnModified("ColTime"); } } TimeSpan? _ColTime;
         /// <summary>datetimeの列</summary>
-        [Column] public DateTime? ColDateTime { get { return _ColDateTime; } set { _ColDateTime = value; MarkColumnModified("ColDateTime"); } } DateTime? _ColDateTime;
-        /// <summary>timestampの列</summary>
-        [Column] public DateTime ColTimeStamp { get { return _ColTimeStamp; } set { _ColTimeStamp = value; MarkColumnModified("ColTimeStamp"); } } DateTime _ColTimeStamp;
-        /// <summary>char(5)の列</summary>
+        [Column] public DateTime ColDateTime { get { return _ColDateTime; } set { _ColDateTime = value; MarkColumnModified("ColDateTime"); } } DateTime _ColDateTime;
+        /// <summary>charの列</summary>
         [Column] public string ColChar { get { return _ColChar; } set { _ColChar = value; MarkColumnModified("ColChar"); } } string _ColChar;
-        /// <summary>varchar(50)の列</summary>
+        /// <summary>varcharの列</summary>
         [Column] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("ColVarchar"); } } string _ColVarchar;
         /// <summary>longtextの列</summary>
-        [Column] public string ColLongText { get { return _ColLongText; } set { _ColLongText = value; MarkColumnModified("ColLongText"); } } string _ColLongText;
+        [Column] public string ColText { get { return _ColText; } set { _ColText = value; MarkColumnModified("ColText"); } } string _ColText;
         /// <summary>longblobの列</summary>
-        [Column] public byte[] ColLongBlob { get { return _ColLongBlob; } set { _ColLongBlob = value; MarkColumnModified("ColLongBlob"); } } byte[] _ColLongBlob;
+        [Column] public byte[] ColBlob { get { return _ColBlob; } set { _ColBlob = value; MarkColumnModified("ColBlob"); } } byte[] _ColBlob;
+        /// <summary>bigint unsignedの列</summary>
+        [Column] public ulong? ColBigintU { get { return _ColBigintU; } set { _ColBigintU = value; MarkColumnModified("ColBigintU"); } } ulong? _ColBigintU;
+        /// <summary>int unsignedの列</summary>
+        [Column] public uint? ColIntU { get { return _ColIntU; } set { _ColIntU = value; MarkColumnModified("ColIntU"); } } uint? _ColIntU;
+        /// <summary>mediumintの列</summary>
+        [Column] public int? ColMediumint { get { return _ColMediumint; } set { _ColMediumint = value; MarkColumnModified("ColMediumint"); } } int? _ColMediumint;
+        /// <summary>mediumint unsignedの列</summary>
+        [Column] public uint? ColMediumintU { get { return _ColMediumintU; } set { _ColMediumintU = value; MarkColumnModified("ColMediumintU"); } } uint? _ColMediumintU;
+        /// <summary>smallint unsignedの列</summary>
+        [Column] public ushort? ColSmallintU { get { return _ColSmallintU; } set { _ColSmallintU = value; MarkColumnModified("ColSmallintU"); } } ushort? _ColSmallintU;
+        /// <summary>tinyint unsignedの列</summary>
+        [Column] public byte? ColTinyintU { get { return _ColTinyintU; } set { _ColTinyintU = value; MarkColumnModified("ColTinyintU"); } } byte? _ColTinyintU;
+        /// <summary>bitの列</summary>
+        [Column] public bool? ColBit { get { return _ColBit; } set { _ColBit = value; MarkColumnModified("ColBit"); } } bool? _ColBit;
+        /// <summary>numeric(13,3)の列</summary>
+        [Column] public decimal? ColNumeric { get { return _ColNumeric; } set { _ColNumeric = value; MarkColumnModified("ColNumeric"); } } decimal? _ColNumeric;
+        /// <summary>timestampの列</summary>
+        [Column] public DateTime ColTimeStamp { get { return _ColTimeStamp; } set { _ColTimeStamp = value; MarkColumnModified("ColTimeStamp"); } } DateTime _ColTimeStamp;
     }
 
     /// <summary>テストテーブル - 複合キー</summary>

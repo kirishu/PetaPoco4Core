@@ -1951,26 +1951,26 @@ namespace PetaPoco
         ///       -> これは間違いなので注意！・・・[{ "Key01",  [{"Key01", "123"}]}]
         /// ]]>
         /// </example>
-        private Dictionary<string, object> GetPrimaryKeyValues(string primaryKeyName, object primaryKeyValue)
+        private static Dictionary<string, object> GetPrimaryKeyValues(string primaryKeyName, object primaryKeyValue)
         {
-            Dictionary<string, object> primaryKeyValues;
+            Dictionary<string, object> kvs;
 
             var multiplePrimaryKeysNames = primaryKeyName.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
             if (primaryKeyValue != null)
             {
                 if (multiplePrimaryKeysNames.Length == 1)
-                    primaryKeyValues = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase) { { primaryKeyName, primaryKeyValue } };
+                    kvs = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase) { { primaryKeyName, primaryKeyValue } };
                 else
-                    primaryKeyValues = multiplePrimaryKeysNames.ToDictionary(x => x,
+                    kvs = multiplePrimaryKeysNames.ToDictionary(x => x,
                         x => primaryKeyValue.GetType().GetProperties()
                             .Where(y => string.Equals(x, y.Name, StringComparison.OrdinalIgnoreCase))
                             .Single().GetValue(primaryKeyValue, null), StringComparer.OrdinalIgnoreCase);
             }
             else
             {
-                primaryKeyValues = multiplePrimaryKeysNames.ToDictionary(x => x, x => (object)null, StringComparer.OrdinalIgnoreCase);
+                kvs = multiplePrimaryKeysNames.ToDictionary(x => x, x => (object)null, StringComparer.OrdinalIgnoreCase);
             }
-            return primaryKeyValues;
+            return kvs;
         }
 
 

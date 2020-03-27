@@ -4,11 +4,11 @@
 // 
 // The following connection settings were used to generate this file
 // 
-//     Connection String:      `Server=CentOSdb;Port=5432;Database=petapoco_sample;Encoding=UTF8;User Id=testman;Password=**zapped**;`
+//     Connection String:      `Server=localhost;Port=5432;Database=petapoco_sample;Encoding=UTF8;User Id=testman;Password=**zapped**;`
 //     Provider:               `Npgsql`
 //     Schema:                 ``
 //     Include Views:          `True`
-//     Genetated:              `2020/03/07 00:05:30`
+//     Genetated:              `2020/03/27 15:58:47`
 
 using System;
 using PetaPoco;
@@ -34,8 +34,6 @@ namespace PetaPocoAppFx.Database.PostgreSql
         /// </summary>
         public DB() : base(Config.ConnectionString, RDBType.PostgreSql)
         {
-            CommandTimeout = 30;
-            UseA5Mk2Params = true;
         }
     }
 
@@ -62,10 +60,6 @@ namespace PetaPocoAppFx.Database.PostgreSql
     {
         /// <summary>プライマリキーその１</summary>
         [Column("key01")] public string Key01 { get { return _Key01; } set { _Key01 = value; MarkColumnModified("key01"); } } string _Key01;
-        /// <summary>varcharの列</summary>
-        [Column("col_varchar")] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("col_varchar"); } } string _ColVarchar;
-        /// <summary>charの列</summary>
-        [Column("col_char")] public string ColChar { get { return _ColChar; } set { _ColChar = value; MarkColumnModified("col_char"); } } string _ColChar;
         /// <summary>bigintの列</summary>
         [Column("col_bigint")] public long? ColBigint { get { return _ColBigint; } set { _ColBigint = value; MarkColumnModified("col_bigint"); } } long? _ColBigint;
         /// <summary>intの列</summary>
@@ -74,14 +68,10 @@ namespace PetaPocoAppFx.Database.PostgreSql
         [Column("col_smallint")] public short? ColSmallint { get { return _ColSmallint; } set { _ColSmallint = value; MarkColumnModified("col_smallint"); } } short? _ColSmallint;
         /// <summary>booleanの列</summary>
         [Column("col_bool")] public bool ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("col_bool"); } } bool _ColBool;
-        /// <summary>boolの列</summary>
-        [Column("col_bool2")] public bool? ColBool2 { get { return _ColBool2; } set { _ColBool2 = value; MarkColumnModified("col_bool2"); } } bool? _ColBool2;
         /// <summary>decimalの列</summary>
         [Column("col_decimal")] public decimal? ColDecimal { get { return _ColDecimal; } set { _ColDecimal = value; MarkColumnModified("col_decimal"); } } decimal? _ColDecimal;
-        /// <summary>numericの列</summary>
-        [Column("col_numeric")] public decimal? ColNumeric { get { return _ColNumeric; } set { _ColNumeric = value; MarkColumnModified("col_numeric"); } } decimal? _ColNumeric;
         /// <summary>realの列</summary>
-        [Column("col_real")] public float? ColReal { get { return _ColReal; } set { _ColReal = value; MarkColumnModified("col_real"); } } float? _ColReal;
+        [Column("col_float")] public float? ColFloat { get { return _ColFloat; } set { _ColFloat = value; MarkColumnModified("col_float"); } } float? _ColFloat;
         /// <summary>double precisionの列</summary>
         [Column("col_double")] public double? ColDouble { get { return _ColDouble; } set { _ColDouble = value; MarkColumnModified("col_double"); } } double? _ColDouble;
         /// <summary>dateの列</summary>
@@ -89,13 +79,29 @@ namespace PetaPocoAppFx.Database.PostgreSql
         /// <summary>timeの列</summary>
         [Column("col_time")] public TimeSpan? ColTime { get { return _ColTime; } set { _ColTime = value; MarkColumnModified("col_time"); } } TimeSpan? _ColTime;
         /// <summary>timestampの列</summary>
-        [Column("col_timestamp")] public DateTime ColTimestamp { get { return _ColTimestamp; } set { _ColTimestamp = value; MarkColumnModified("col_timestamp"); } } DateTime _ColTimestamp;
-        /// <summary>timestamp(3)の列</summary>
-        [Column("col_timestamp3")] public DateTime ColTimestamp3 { get { return _ColTimestamp3; } set { _ColTimestamp3 = value; MarkColumnModified("col_timestamp3"); } } DateTime _ColTimestamp3;
+        [Column("col_date_time")] public DateTime ColDateTime { get { return _ColDateTime; } set { _ColDateTime = value; MarkColumnModified("col_date_time"); } } DateTime _ColDateTime;
+        /// <summary>charの列</summary>
+        [Column("col_char")] public string ColChar { get { return _ColChar; } set { _ColChar = value; MarkColumnModified("col_char"); } } string _ColChar;
+        /// <summary>varcharの列</summary>
+        [Column("col_varchar")] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("col_varchar"); } } string _ColVarchar;
         /// <summary>textの列</summary>
         [Column("col_text")] public string ColText { get { return _ColText; } set { _ColText = value; MarkColumnModified("col_text"); } } string _ColText;
         /// <summary>byteaの列</summary>
-        [Column("col_bytea")] public byte[] ColBytea { get { return _ColBytea; } set { _ColBytea = value; MarkColumnModified("col_bytea"); } } byte[] _ColBytea;
+        [Column("col_blob")] public byte[] ColBlob { get { return _ColBlob; } set { _ColBlob = value; MarkColumnModified("col_blob"); } } byte[] _ColBlob;
+        /// <summary>boolの列</summary>
+        [Column("col_bool_bool")] public bool? ColBoolBool { get { return _ColBoolBool; } set { _ColBoolBool = value; MarkColumnModified("col_bool_bool"); } } bool? _ColBoolBool;
+        /// <summary>timestamp(3)の列</summary>
+        [Column("col_timestamp3")] public DateTime? ColTimestamp3 { get { return _ColTimestamp3; } set { _ColTimestamp3 = value; MarkColumnModified("col_timestamp3"); } } DateTime? _ColTimestamp3;
+        /// <summary>numericの列</summary>
+        [Column("col_numeric")] public decimal? ColNumeric { get { return _ColNumeric; } set { _ColNumeric = value; MarkColumnModified("col_numeric"); } } decimal? _ColNumeric;
+        /// <summary>moneyの列</summary>
+        [Column("col_money")] public decimal? ColMoney { get { return _ColMoney; } set { _ColMoney = value; MarkColumnModified("col_money"); } } decimal? _ColMoney;
+        /// <summary>big_serialの列</summary>
+        [Column("col_big_serial")] public long ColBigSerial { get { return _ColBigSerial; } set { _ColBigSerial = value; MarkColumnModified("col_big_serial"); } } long _ColBigSerial;
+        /// <summary>serialの列</summary>
+        [Column("col_serial")] public int ColSerial { get { return _ColSerial; } set { _ColSerial = value; MarkColumnModified("col_serial"); } } int _ColSerial;
+        /// <summary>small_serialの列</summary>
+        [Column("col_small_serial")] public short ColSmallSerial { get { return _ColSmallSerial; } set { _ColSmallSerial = value; MarkColumnModified("col_small_serial"); } } short _ColSmallSerial;
     }
 
     /// <summary>テストテーブル - 複合キー</summary>

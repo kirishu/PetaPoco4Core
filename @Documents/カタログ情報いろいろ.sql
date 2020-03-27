@@ -43,7 +43,7 @@ SELECT isco.table_name
      , isco.numeric_scale
      , isco.datetime_precision
      , col_description(isco.table_name::regclass, isco.ordinal_position) AS column_comment
-  FROM information_schema.columns ifco
+  FROM information_schema.columns isco
  WHERE isco.table_name = '@tableName'
 --   AND isco.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
  ORDER BY isco.ordinal_position;
@@ -106,8 +106,8 @@ SELECT cif.table_catalog AS [Database]
      , cif.data_type AS DataType
      , cif.character_maximum_length AS [MaxLength]
      , cif.datetime_precision AS DatePrecision
-     , COLUMNPROPERTY(object_id('[' + table_schema + '].[' + table_name + ']'), column_name, 'IsIdentity') AS IsIdentity
-     , COLUMNPROPERTY(object_id('[' + table_schema + '].[' + table_name + ']'), column_name, 'IsComputed') AS IsComputed
+     , COLUMNPROPERTY(object_id('[' + cif.table_schema + '].[' + cif.table_name + ']'), cif.column_name, 'IsIdentity') AS IsIdentity
+     , COLUMNPROPERTY(object_id('[' + cif.table_schema + '].[' + cif.table_name + ']'), cif.column_name, 'IsComputed') AS IsComputed
      , exp.value AS Commnet
   FROM information_schema.columns AS cif
         LEFT JOIN sys.tables AS tbl

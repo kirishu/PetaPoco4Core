@@ -110,16 +110,14 @@ namespace PetaPoco4Core.Test.Unit
         [Fact]
         public void DMP005_GetPrimaryKeyValues_Mono()
         {
-            var db = new PetaPoco.Database("test", PetaPoco.Database.RDBType.MySql);
-
             // Invoke refrectionを使ってprivateメソッドを実行する
-            MethodInfo methodInfo = typeof(PetaPoco.Database).GetMethod("GetPrimaryKeyValues", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo methodInfo = typeof(PetaPoco.Database).GetMethod("GetPrimaryKeyValues", BindingFlags.NonPublic | BindingFlags.Static);
             object[] parameters =
                 {
                     PetaPoco.Database.PocoData.ForType(typeof(Models.YottaEntity)).TableInfo.PrimaryKey,
                     123,
                 };
-            var result = (Dictionary<string, object>)methodInfo.Invoke(db, parameters);
+            var result = (Dictionary<string, object>)methodInfo.Invoke(null, parameters);
 
             Assert.Single(result);
 
@@ -139,16 +137,14 @@ namespace PetaPoco4Core.Test.Unit
                 Id3 = 300,
             };
 
-            var db = new PetaPoco.Database("test", PetaPoco.Database.RDBType.MySql);
-
             // Invoke refrectionを使ってprivateメソッドを実行する
-            MethodInfo methodInfo = typeof(PetaPoco.Database).GetMethod("GetPrimaryKeyValues", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo methodInfo = typeof(PetaPoco.Database).GetMethod("GetPrimaryKeyValues", BindingFlags.NonPublic | BindingFlags.Static);
             object[] parameters = 
                 {
                     PetaPoco.Database.PocoData.ForType(typeof(Models.TeraEntity)).TableInfo.PrimaryKey,
                     pk,
                 };
-            var result = (Dictionary<string, object>)methodInfo.Invoke(db, parameters);
+            var result = (Dictionary<string, object>)methodInfo.Invoke(null, parameters);
 
             Assert.Equal(3, result.Count);
 

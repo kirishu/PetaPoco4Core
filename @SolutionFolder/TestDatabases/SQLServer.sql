@@ -113,52 +113,54 @@ EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@
 -- ---------------------------------------------------------------------------------------
 CREATE TABLE TrColumns (
       Key01                 nvarchar(2)       NOT NULL
-    , ColBigInt             bigint
+    , ColBigint             bigint
     , ColInt                int
-    , ColSmallInt           smallint
-    , ColTinyInt            tinyint
-    , ColBit                bit
-    , ColDecimal            decimal(10,2)
-    , ColNumeric            numeric(12,0)
-    , ColMoney              money
-    , ColFloat              float
-    , ColReal               real
-    , ColDateTime           datetime
-    , ColDateTime2          datetime2
-    , ColSmallDateTime      smalldatetime
+    , ColSmallint           smallint
+    , ColTinyint            tinyint
+    , ColBool               bit               NOT NULL DEFAULT 0
+    , ColDecimal            decimal(14,2)
+    , ColFloat              real
+    , ColDouble             float             
     , ColDate               date
     , ColTime               time
-    , ColChar               char(5)
-    , ColNchar              nchar(5)
-    , ColVarChar            varchar(50)
-    , ColNvarChar           nvarchar(50)
-    , ColText               text
-    , ColNText              ntext
-    , ColImage              image
+    , ColDateTime           datetime2         DEFAULT GETDATE()
+    , ColChar               nchar(5)
+    , ColVarchar            nvarchar(255)
+    , ColText               ntext
+    , ColBlob               image
+
+    , ColNumeric            numeric(13,3)
+    , ColMoney              money
+    , ColDateTimePast       datetime
+    , ColSmallDateTime      smalldatetime
+    , ColCharPast           char(5)
+    , ColVarCharPast        varchar(50)
+    , ColTextPast           text
     , ColVarBinary          varbinary
     , CONSTRAINT pk_TrColumns PRIMARY KEY (Key01)
 );
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@value=N'テストテーブル - 列の型テスト';
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColBigInt'             ,@value=N'bigintの列'              ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColInt'                ,@value=N'intの列'                 ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColSmallInt'           ,@value=N'smallintの列'            ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColTinyInt'            ,@value=N'tinyintの列'             ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColBit'                ,@value=N'bitの列'                 ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColDecimal'            ,@value=N'decimal(10,2)の列'       ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColNumeric'            ,@value=N'numeric(12,0)の列'       ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColMoney'              ,@value=N'money(10,2)の列'         ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColFloat'              ,@value=N'floatの列'               ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColReal'               ,@value=N'realの列'                ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColDateTime'           ,@value=N'datetimeの列'            ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColDateTime2'          ,@value=N'datetime2の列'           ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColSmallDateTime'      ,@value=N'smalldatetimeの列'       ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColDate'               ,@value=N'dateの列'                ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColTime'               ,@value=N'timeの列'                ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColChar'               ,@value=N'char(5)の列'             ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColNchar'              ,@value=N'nchar(5)の列'            ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColVarChar'            ,@value=N'varchar(50)の列'         ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColNvarChar'           ,@value=N'nvarchar(50)の列'        ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColText'               ,@value=N'textの列'                ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColNText'              ,@value=N'ntextの列'               ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColImage'              ,@value=N'imageの列'               ;
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColVarBinary'          ,@value=N'varbinaryの列'           ;
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'Key01'           ,@value=N'プライマリキー';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColBigint'       ,@value=N'bigintの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColInt'          ,@value=N'intの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColSmallint'     ,@value=N'smallintの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColTinyint'      ,@value=N'tinyintの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColBool'         ,@value=N'bitの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColDecimal'      ,@value=N'decimal(14,2)の列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColFloat'        ,@value=N'realの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColDouble'       ,@value=N'floatの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColDate'         ,@value=N'dateの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColTime'         ,@value=N'timeの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColDateTime'     ,@value=N'datetime2の列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColChar'         ,@value=N'nchar(5)の列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColVarchar'      ,@value=N'nvarchar(255)の列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColText'         ,@value=N'ntextの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColBlob'         ,@value=N'imageの列';
+
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColNumeric'      ,@value=N'numeric(13,3)の列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColMoney'        ,@value=N'moneyの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColDateTimePast' ,@value=N'datetimeの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColSmallDateTime',@value=N'smalldatetimeの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColCharPast'     ,@value=N'char(5)の列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColVarCharPast'  ,@value=N'varchar(50)の列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColTextPast'     ,@value=N'textの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColVarBinary'    ,@value=N'varbinaryの列';

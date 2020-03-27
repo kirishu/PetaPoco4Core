@@ -122,7 +122,7 @@ namespace PetaPoco4Core.Test.MySql
         [Fact]
         public void 例外系_マッピング型エラー()
         {
-            var ex = Assert.Throws<System.InvalidCastException>(() =>
+            var ex = Assert.Throws<System.FormatException>(() =>
             {
                 using (var db = new DB())
                 {

@@ -103,41 +103,51 @@ COMMENT ON COLUMN vi_hoge_fuga.tbl1_key02              IS 'ふが';
 -- ---------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS tr_columns (
       key01                  varchar(2)        NOT NULL
-    , col_varchar            varchar(50)
-    , col_char               char(3)
     , col_bigint             bigint
     , col_int                int
     , col_smallint           smallint
+
     , col_bool               boolean           NOT NULL DEFAULT FALSE
-    , col_bool2              bool
-    , col_decimal            decimal(10,2)
-    , col_numeric            decimal(13,0)
-    , col_real               real
+    , col_decimal            decimal(14,2)
+    , col_float              real
     , col_double             double precision
     , col_date               date
     , col_time               time
-    , col_timestamp          timestamp         NOT NULL
-    , col_timestamp3         timestamp(3)      NOT NULL
+    , col_date_time          timestamp         NOT NULL DEFAULT NOW()
+    , col_char               char(5)
+    , col_varchar            varchar(255)
     , col_text               text
-    , col_bytea              bytea
+    , col_blob               bytea
+
+    , col_bool_bool          bool
+    , col_timestamp3         timestamp(3)
+    , col_numeric            numeric(13,3)
+    , col_money              money
+    , col_big_serial         bigserial
+    , col_serial             serial
+    , col_small_serial       smallserial
     , PRIMARY KEY (key01)
 );
 COMMENT ON TABLE tr_columns IS 'テストテーブル - 列の型テスト';
 COMMENT ON COLUMN tr_columns.key01              IS 'プライマリキーその１';
-COMMENT ON COLUMN tr_columns.col_varchar        IS 'varcharの列';
-COMMENT ON COLUMN tr_columns.col_char           IS 'charの列';
 COMMENT ON COLUMN tr_columns.col_bigint         IS 'bigintの列';
 COMMENT ON COLUMN tr_columns.col_int            IS 'intの列';
 COMMENT ON COLUMN tr_columns.col_smallint       IS 'smallintの列';
 COMMENT ON COLUMN tr_columns.col_bool           IS 'booleanの列';
-COMMENT ON COLUMN tr_columns.col_bool2          IS 'boolの列';
 COMMENT ON COLUMN tr_columns.col_decimal        IS 'decimalの列';
-COMMENT ON COLUMN tr_columns.col_numeric        IS 'numericの列';
-COMMENT ON COLUMN tr_columns.col_real           IS 'realの列';
+COMMENT ON COLUMN tr_columns.col_float          IS 'realの列';
 COMMENT ON COLUMN tr_columns.col_double         IS 'double precisionの列';
 COMMENT ON COLUMN tr_columns.col_date           IS 'dateの列';
 COMMENT ON COLUMN tr_columns.col_time           IS 'timeの列';
-COMMENT ON COLUMN tr_columns.col_timestamp      IS 'timestampの列';
-COMMENT ON COLUMN tr_columns.col_timestamp3     IS 'timestamp(3)の列';
+COMMENT ON COLUMN tr_columns.col_date_time      IS 'timestampの列';
+COMMENT ON COLUMN tr_columns.col_char           IS 'charの列';
+COMMENT ON COLUMN tr_columns.col_varchar        IS 'varcharの列';
 COMMENT ON COLUMN tr_columns.col_text           IS 'textの列';
-COMMENT ON COLUMN tr_columns.col_bytea          IS 'byteaの列';
+COMMENT ON COLUMN tr_columns.col_blob           IS 'byteaの列';
+COMMENT ON COLUMN tr_columns.col_bool_bool      IS 'boolの列';
+COMMENT ON COLUMN tr_columns.col_timestamp3     IS 'timestamp(3)の列';
+COMMENT ON COLUMN tr_columns.col_numeric        IS 'numericの列';
+COMMENT ON COLUMN tr_columns.col_money          IS 'moneyの列';
+COMMENT ON COLUMN tr_columns.col_big_serial     IS 'big_serialの列';
+COMMENT ON COLUMN tr_columns.col_serial         IS 'serialの列';
+COMMENT ON COLUMN tr_columns.col_small_serial   IS 'small_serialの列';
