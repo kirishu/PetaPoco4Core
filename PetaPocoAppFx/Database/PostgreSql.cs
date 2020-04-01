@@ -8,7 +8,7 @@
 //     Provider:               `Npgsql`
 //     Schema:                 ``
 //     Include Views:          `True`
-//     Genetated:              `2020/03/27 15:58:47`
+//     Genetated:              `2020/03/30 14:08:50`
 
 using System;
 using PetaPoco;

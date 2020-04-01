@@ -7,7 +7,7 @@ using PetaPoco;
 
 namespace <#=Namespace #>
 {
-<# if (GenerateCommon) { //**[A]** #>
+<# if (GenerateCommon) { /*[A]*/ #>
     /// <summary>
     /// <#=DatabaseName#> 接続文字列
     /// </summary>
@@ -29,37 +29,31 @@ namespace <#=Namespace #>
         {
         }
     }
-<# } //**[A]** #>
+<# } /*[A]*/ #>
 
-<# if (GeneratePocos) { //**[E]** #>
-<#
-foreach(Table tbl in tables.Where(x => !x.Ignore).OrderBy(x => x.IsView).ThenBy(x => x.Name).Select(x => x))
-{ //**[F]**
-#>
+<# if (GeneratePocos) { /*[B]*/ #>
+<# foreach(Table tbl in tables.Where(x => !x.Ignore).OrderBy(x => x.IsView).ThenBy(x => x.Name).Select(x => x)) { /*[C]*/ #>
 
     /// <summary><#=tbl.Comment#></summary>
     [TableName("<#=(String.IsNullOrEmpty(tbl.Schema) || tbl.Schema == tbl.DefaultSchema)?"":tbl.Schema+"."#><#=tbl.Name#>")]
-<# if (!tbl.IsView && tbl.PK != null && tbl.PK.Count() > 0) { //**[G]** #>
+<# if (!tbl.IsView && tbl.PK != null && tbl.PK.Count() > 0) { /*[D]*/ #>
     <#=GetPrimaryKeyAttrubute(tbl)#>
-<# } //**[G]** #>
+<# } /*[D]*/ #>
     [ExplicitColumns]
     public class <#=tbl.ClassName#><#if (TrackModifiedColumns && !tbl.IsView) {#>: PetaPoco.PetaPocoRecord<<#=tbl.ClassName#>><#}#>
 
     {
-<#
-foreach(Column col in tbl.Columns.Where(x => !x.Ignore).Select(x => x))
-{ //**[J]**
-#>
-<# if (col.Comment != null) { //**[L]** #>
+<# foreach(Column col in tbl.Columns.Where(x => !x.Ignore).Select(x => x)) { /*[E]*/ #>
+<# if (col.Comment != null) { /*[F]*/ #>
         /// <summary><#=col.Comment#></summary>
-<# } //**[L]** #>
-<# if (TrackModifiedColumns && !tbl.IsView) { //**[K]** #>
-        [<#=GetColumnAttribute(col)#>] public <#=col.PropertyType #><#=CheckNullable(col)#> <#=col.PropertyName #> { get { return _<#=col.PropertyName #>; } set { _<#=col.PropertyName #> = value; MarkColumnModified("<#=col.Name#>"); } } <#=col.PropertyType #><#=CheckNullable(col)#> _<#=col.PropertyName #>;
+<# } /*[F]*/ #>
+<# if (TrackModifiedColumns && !tbl.IsView) { /*[G]*/ #>
+        <#=GetColumnAttribute(col)#> public <#=col.PropertyType #><#=CheckNullable(col)#> <#=col.PropertyName #> { get { return _<#=col.PropertyName #>; } set { _<#=col.PropertyName #> = value; MarkColumnModified("<#=col.Name#>"); } } <#=col.PropertyType #><#=CheckNullable(col)#> _<#=col.PropertyName #>;
 <# } else { #>
-        [<#=GetColumnAttribute(col)#>] public <#=col.PropertyType #><#=CheckNullable(col)#> <#=col.PropertyName #> { get; set; }
-<# } //**[K]** #>
-<# } //**[J]** #>
+        <#=GetColumnAttribute(col)#> public <#=col.PropertyType #><#=CheckNullable(col)#> <#=col.PropertyName #> { get; set; }
+<# } /*[G]*/ #>
+<# } /*[E]*/ #>
     }
-<# } //**[F]** #>
-<# } //**[E]** #>
+<# } /*[C]*/ #>
+<# } /*[B]*/ #>
 }

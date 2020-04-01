@@ -229,7 +229,7 @@ namespace PetaPoco4Core.Test.MySql
                 // これは含まれるべき文字列
                 Assert.Contains("ColVarchar", sql);
 
-                // これ以降は含まれてはいけない文字列
+                // 含まれてはいけない文字列
                 Assert.DoesNotContain("ColBool", sql);
                 Assert.DoesNotContain("ColInt", sql);
                 Assert.DoesNotContain("ColDec", sql);
@@ -240,7 +240,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void Update系_変更列のみ更新_事前読込なし_Key1_1()
+        public void Update系_変更列のみ更新_NewRec_PK引数あり_列引数なし()
         {
             using (var db = new DB())
             {
@@ -262,7 +262,7 @@ namespace PetaPoco4Core.Test.MySql
                 // これは含まれるべき文字列
                 Assert.Contains("ColVarchar", sql);
 
-                // これ以降は含まれてはいけない文字列
+                // 含まれてはいけない文字列
                 Assert.DoesNotContain("ColBool", sql);
                 Assert.DoesNotContain("ColInt", sql);
                 Assert.DoesNotContain("ColDec", sql);
@@ -272,7 +272,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void Update系_変更列のみ更新_事前読込なし_Key1_2()
+        public void Update系_変更列のみ更新_NewRec_PK引数なし_列引数なし()
         {
             using (var db = new DB())
             {
@@ -295,7 +295,7 @@ namespace PetaPoco4Core.Test.MySql
                 // これは含まれるべき文字列
                 Assert.Contains("ColVarchar", sql);
 
-                // これ以降は含まれてはいけない文字列
+                // 含まれてはいけない文字列
                 Assert.DoesNotContain("ColBool", sql);
                 Assert.DoesNotContain("ColInt", sql);
                 Assert.DoesNotContain("ColDec", sql);
@@ -305,7 +305,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void Update系_変更列のみ更新_事前読込なし_Key2_1()
+        public void Update系_変更列のみ更新_NewRec_PK引数あり2_列引数なし()
         {
             using (var db = new DB())
             {
@@ -334,7 +334,7 @@ namespace PetaPoco4Core.Test.MySql
                 // これは含まれるべき文字列
                 Assert.Contains("ColVarchar", sql);
 
-                // これ以降は含まれてはいけない文字列
+                // 含まれてはいけない文字列
                 Assert.DoesNotContain("ColBool", sql);
                 Assert.DoesNotContain("ColInt", sql);
                 Assert.DoesNotContain("ColDec", sql);
@@ -344,7 +344,7 @@ namespace PetaPoco4Core.Test.MySql
         }
 
         [Fact]
-        public void Update系_変更列のみ更新_事前読込なし_Key2_2()
+        public void Update系_変更列のみ更新_NewRec_PK引数なし2_列引数なし()
         {
             using (var db = new DB())
             {
@@ -368,7 +368,7 @@ namespace PetaPoco4Core.Test.MySql
                 // これは含まれるべき文字列
                 Assert.Contains("ColVarchar", sql);
 
-                // これ以降は含まれてはいけない文字列
+                // 含まれてはいけない文字列
                 Assert.DoesNotContain("ColBool", sql);
                 Assert.DoesNotContain("ColInt", sql);
                 Assert.DoesNotContain("ColDec", sql);
@@ -376,6 +376,102 @@ namespace PetaPoco4Core.Test.MySql
                 Assert.DoesNotContain("UpdateDt", sql);
             }
         }
+
+        [Fact]
+        public void Update系_変更列のみ更新_NewRec_PK引数なし_列引数あり()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                // 更新する値
+                var rec = new PtTable02
+                {
+                    Key01 = "13",
+                    Key02 = 13,
+                    ColVarchar = "1234567890",
+                    CreateBy = "hogehoge",
+                    CreateDt = DateTime.Now,
+                    UpdateBy = "hogehoge",
+                    UpdateDt = DateTime.Now,
+                };
+                // 更新する列だけを別に指定
+                var updatingCols = new string[]
+                {
+                    "ColVarchar",
+                    "UpdateBy",
+                };
+
+                var cnt = db.Update(rec, updatingCols);   // 更新列を指定するメソッド
+                _output.WriteLine(db.LastCommand);
+
+                Assert.Equal(1, cnt);
+
+                var sql = db.LastSQL;
+
+                // これは含まれるべき文字列
+                Assert.Contains("ColVarchar", sql);
+                Assert.Contains("UpdateBy", sql);
+
+                // 含まれてはいけない文字列
+                Assert.DoesNotContain("ColBool", sql);
+                Assert.DoesNotContain("ColInt", sql);
+                Assert.DoesNotContain("ColDec", sql);
+                Assert.DoesNotContain("CreateBy", sql);
+                Assert.DoesNotContain("UpdateDt", sql);
+            }
+        }
+
+        [Fact]
+        public void Update系_変更列のみ更新_NewRec_PK引数あり_列引数あり()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                // 更新する値
+                var rec = new PtTable02
+                {
+                    ColVarchar = "1234567890",
+                    CreateBy = "hogehoge",
+                    CreateDt = DateTime.Now,
+                    UpdateBy = "hogehoge",
+                    UpdateDt = DateTime.Now,
+                };
+                // 更新する列だけを別に指定
+                var updatingCols = new string[]
+                {
+                    "ColVarchar",
+                    "UpdateBy",
+                };
+
+                // PK
+                var pk = new
+                {
+                    Key01 = "13",
+                    Key02 = 13,
+                };
+
+                var cnt = db.Update(rec, pk, updatingCols);   // PKと更新列を指定するメソッド
+                _output.WriteLine(db.LastCommand);
+
+                Assert.Equal(1, cnt);
+
+                var sql = db.LastSQL;
+
+                // これは含まれるべき文字列
+                Assert.Contains("ColVarchar", sql);
+                Assert.Contains("UpdateBy", sql);
+
+                // 含まれてはいけない文字列
+                Assert.DoesNotContain("ColBool", sql);
+                Assert.DoesNotContain("ColInt", sql);
+                Assert.DoesNotContain("ColDec", sql);
+                Assert.DoesNotContain("CreateBy", sql);
+                Assert.DoesNotContain("UpdateDt", sql);
+            }
+        }
+
 
         [Fact]
         public void Update系_Transaction_Commit()

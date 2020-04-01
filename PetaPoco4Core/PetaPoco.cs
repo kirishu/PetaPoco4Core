@@ -9,7 +9,7 @@
  */
 /* --------------------------------------------------------------------------
  * Modified by kirishu (zapshu@gmail.com)
- * v4.7.1.3
+ * v4.7.1.4
  * https://github.com/kirishu/PetaPoco4Core
  * -------------------------------------------------------------------------- */
 
@@ -134,6 +134,10 @@ namespace PetaPoco
     /// IMapper provides a way to hook into PetaPoco's Database to POCO mapping mechanism to either
     /// customize or completely replace it.
     /// </summary>
+    /// <remarks>
+    /// To use this functionality, instantiate a class that implements IMapper and then pass it to
+    /// PetaPoco through the static method Mappers.Register()
+    /// </remarks>
     public interface IMapper
     {
         void GetTableInfo(Type t, TableInfo ti);
@@ -262,6 +266,9 @@ namespace PetaPoco
         Tuple<List<T1>, List<T2>, List<T3>, List<T4>> FetchMultiple<T1, T2, T3, T4>(Sql sql);
     }
 
+    /// <summary>
+    /// Represents the core functionality of PetaPoco.
+    /// </summary>
     public interface IDatabase : IDatabaseQuery
     {
         IDbConnection Connection { get; }
@@ -273,8 +280,6 @@ namespace PetaPoco
         void BeginTransaction(IsolationLevel? isolationLevel);
         void AbortTransaction();
         void CompleteTransaction();
-        object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco);
-        object Insert(string tableName, string primaryKeyName, object poco);
         object Insert<T>(T poco) where T : IPetaPocoRecord<T>;
         int Update<T>(T poco) where T : IPetaPocoRecord<T>;
         int Update<T>(T poco, object primaryKey) where T : IPetaPocoRecord<T>;
@@ -282,8 +287,6 @@ namespace PetaPoco
         int Update<T>(T poco, object primaryKey, IEnumerable<string> columns) where T : IPetaPocoRecord<T>;
         int Update<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>;
         int Update<T>(Sql sql) where T : IPetaPocoRecord<T>;
-        int Delete(string tableName, string primaryKeyName, object poco);
-        int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue);
         int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>;
         int Delete<T>(Sql sql) where T : IPetaPocoRecord<T>;
         int Delete<T>(T poco) where T : IPetaPocoRecord<T>;
@@ -305,15 +308,20 @@ namespace PetaPoco
         }
         protected readonly RDBType _rdbType;
 
+        /// <summary>The prefix used to delimit parameters in SQL query strings.</summary>
         public string ParamPrefix = "@";
 
-        public bool ForceDateTimesToUtc { get; set; }
-        public bool EnableAutoSelect { get; set; }
-
+        /// <summary>Sets the timeout value for all SQL statements.</summary>
         public int CommandTimeout { get; set; }
+        /// <summary>Sets the timeout value for the next (and only next) SQL statement</summary>
         public int OneTimeCommandTimeout { get; set; }
 
+        /// <summary>This static class manages registation of IMapper instances with PetaPoco</summary>
         public static IMapper Mapper { get; set; }
+        /// <summary>True if time and date values returned through this column should be forced to UTC DateTimeKind.</summary>
+        public bool ForceDateTimesToUtc { get; set; }
+        /// <summary>When set to true, PetaPoco will automatically create the "SELECT columns" part of any query that looks like it</summary>        
+        public bool EnableAutoSelect { get; set; }
 
         // Member variables
         private string _connectionString;
@@ -325,7 +333,6 @@ namespace PetaPoco
         private bool _transactionCancelled;
         private string _lastSql;
         private object[] _lastArgs;
-        private VersionExceptionHandling _versionException = VersionExceptionHandling.Ignore;
 
         /// <summary>
         /// Constructs an instance using a supplied connections string and provider name.
@@ -371,26 +378,22 @@ namespace PetaPoco
         /// <exception cref="ArgumentException">Thrown when AssemblyName does not match a type.</exception>
         protected DbProviderFactory GetDbFactory(RDBType rdbType)
         {
-            string providerName = string.Empty;
             string[] assemblyName;
 
             if (rdbType == RDBType.SqlServer)
             {
-                providerName = "System.Data.SqlClient";
                 assemblyName = new string[] {
                     "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 };
             }
             else if (rdbType == RDBType.MySql)
             {
-                providerName = "MySql.Data.MySqlClient";
                 assemblyName = new string[] {
                     "MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Culture=neutral, PublicKeyToken=c5687fc88969c44d",
                 };
             }
             else if (rdbType == RDBType.Oracle)
             {
-                providerName = "Oracle.DataAccess.Client";
                 assemblyName = new string[] {
                     "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess, Culture=neutral, PublicKeyToken=89b483f429c47342",
                     "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess",
@@ -398,14 +401,12 @@ namespace PetaPoco
             }
             else if (rdbType == RDBType.PostgreSql)
             {
-                providerName = "Npgsql";
                 assemblyName = new string[] {
                     "Npgsql.NpgsqlFactory, Npgsql, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
                 };
             }
             else if (rdbType == RDBType.SQLite)
             {
-                providerName = "System.Data.SQLite";
                 assemblyName = new string[] {
                     "System.Data.SQLite.SQLiteFactory, System.Data.SQLite",
                 };
@@ -500,12 +501,6 @@ namespace PetaPoco
                     _sharedConnection = null;
                 }
             }
-        }
-
-        public VersionExceptionHandling VersionException
-        {
-            get { return _versionException; }
-            set { _versionException = value; }
         }
 
         // Access to our shared connection
@@ -1699,27 +1694,6 @@ namespace PetaPoco
             }
         }
 
-        #region Obsolete Insert Methods
-        // 下記のメソッド（テーブル名を指定するもの）は使用禁止にします
-        //      object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco);
-        //      object Insert(string tableName, string primaryKeyName, object poco);
-
-        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
-        public object Insert(string tableName, string primaryKeyName, object poco)
-        {
-            return Insert(tableName, primaryKeyName, true, poco);
-        }
-
-        // Insert a poco into a table.  If the poco has a property with the same name
-        // as the primary key the id of the new record is assigned to it.  Either way,
-        // the new id is returned.
-        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
-        public object Insert(string tableName, string primaryKeyName, bool autoIncrement, object poco)
-        {
-            return this.InsertExecute(tableName, primaryKeyName, autoIncrement, poco);
-        }
-        #endregion
-
         // Insert an annotated poco object
         public object Insert<T>(T poco) where T : IPetaPocoRecord<T>
         {
@@ -1739,7 +1713,6 @@ namespace PetaPoco
                     var values = new List<string>();
                     var rawvalues = new List<object>();
                     var index = 0;
-                    var versionName = "";
 
                     foreach (var i in pd.Columns)
                     {
@@ -1763,14 +1736,7 @@ namespace PetaPoco
                         names.Add(EscapeSqlIdentifier(i.Key));
                         values.Add(string.Format(Culture, "{0}{1}", ParamPrefix, index++));
 
-                        object val = i.Value.GetValue(poco);
-                        if (i.Value.VersionColumn)
-                        {
-                            val = 1;
-                            versionName = i.Key;
-                        }
-
-                        rawvalues.Add(val);
+                        rawvalues.Add(i.Value.GetValue(poco));
                     }
 
                     using (var cmd = CreateCommand(_sharedConnection, ""))
@@ -1884,15 +1850,6 @@ namespace PetaPoco
                             }
                         }
 
-                        // Assign the Version column
-                        if (!string.IsNullOrEmpty(versionName))
-                        {
-                            if (pd.Columns.TryGetValue(versionName, out PocoColumn pc))
-                            {
-                                pc.SetValue(poco, pc.ChangeType(1));
-                            }
-                        }
-
                         return id;
                     }
                 }
@@ -1973,122 +1930,6 @@ namespace PetaPoco
             return kvs;
         }
 
-
-        #region Obsolete Update Methods
-        // 下記のメソッド（テーブル名を指定するものや、PKのキー名を取るもの）は使用禁止にします
-        //      int Update(string tableName, string primaryKeyName, object poco, object primaryKeyValue);
-        //      int Update(string tableName, string primaryKeyName, object poco);
-        //      int Update(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns);
-        //      int Update(string tableName, string primaryKeyName, object poco, IEnumerable<string> columns);
-
-        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
-        // Update a record with values from a poco.  primary key value can be either supplied or read from the poco
-        public int Update<T>(string tableName, string primaryKeyName, IPetaPocoRecord<T> poco, object primaryKeyValue, IEnumerable<string> columns)
-        {
-            if (primaryKeyName == null) { throw new ArgumentNullException(nameof(primaryKeyName)); }
-
-            if (columns != null && !columns.Any())
-                return 0;
-
-            var sb = new StringBuilder();
-            var index = 0;
-            var rawvalues = new List<object>();
-            var pd = PocoData.ForObject(poco, primaryKeyName);
-            string versionName = null;
-            object versionValue = null;
-
-            var primaryKeyValuePairs = GetPrimaryKeyValues(primaryKeyName, primaryKeyValue);
-
-            foreach (var i in pd.Columns)
-            {
-                // Don't update the primary key, but grab the value if we don't have it
-                if (primaryKeyValue == null && primaryKeyValuePairs.ContainsKey(i.Key))
-                {
-                    primaryKeyValuePairs[i.Key] = i.Value.GetValue(poco);
-                    continue;
-                }
-
-                // Dont update result only columns
-                if (i.Value.ResultColumn)
-                    continue;
-
-                if (!i.Value.VersionColumn
-                    && columns != null
-                    && !columns.Contains(i.Value.ColumnName, StringComparer.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                object value = i.Value.GetValue(poco);
-
-                if (i.Value.VersionColumn)
-                {
-                    versionName = i.Key;
-                    versionValue = value;
-                    value = Convert.ToInt64(value, Culture) + 1;
-                }
-
-                // Build the sql
-                if (index > 0)
-                    sb.Append(", ");
-                sb.AppendFormat(Culture, "{0} = @{1}", EscapeSqlIdentifier(i.Key), index++);
-
-                rawvalues.Add(value);
-            }
-
-            if (columns != null && columns.Any() && sb.Length == 0)
-                throw new ArgumentException(string.Format(Culture, "There were no columns in the columns list that matched your table"), nameof(columns));
-
-            var sql = string.Format(Culture, "UPDATE {0} SET {1} WHERE {2}", EscapeTableName(tableName), sb, BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
-
-            rawvalues.AddRange(primaryKeyValuePairs.Select(keyValue => keyValue.Value));
-
-            if (!string.IsNullOrEmpty(versionName))
-            {
-                sql += string.Format(Culture, " AND {0} = @{1}", EscapeSqlIdentifier(versionName), index++);
-                rawvalues.Add(versionValue);
-            }
-
-            var result = Execute(sql, rawvalues.ToArray());
-
-            if (result == 0 && !string.IsNullOrEmpty(versionName) && VersionException == VersionExceptionHandling.Exception)
-            {
-                throw new DBConcurrencyException(string.Format(Culture, "A Concurrency update occurred in table '{0}' for primary key value(s) = '{1}' and version = '{2}'", tableName, string.Join(",", primaryKeyValuePairs.Values.Select(x => x.ToString()).ToArray()), versionValue));
-            }
-
-            // Set Version
-            if (!string.IsNullOrEmpty(versionName))
-            {
-                if (pd.Columns.TryGetValue(versionName, out PocoColumn pc))
-                {
-                    pc.SetValue(poco, Convert.ChangeType(Convert.ToInt64(versionValue, Culture) + 1, pc.PropertyInfo.PropertyType, Culture));
-                }
-            }
-
-            return result;
-        }
-
-        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
-        public int Update<T>(string tableName, string primaryKeyName, IPetaPocoRecord<T> poco, object primaryKeyValue)
-        {
-            return Update(tableName, primaryKeyName, poco, primaryKeyValue, null);
-        }
-
-
-        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
-        public int Update<T>(string tableName, string primaryKeyName, IPetaPocoRecord<T> poco)
-        {
-            return Update(tableName, primaryKeyName, poco, null);
-        }
-
-        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
-        public int Update<T>(string tableName, string primaryKeyName, IPetaPocoRecord<T> poco, IEnumerable<string> columns)
-        {
-            return Update(tableName, primaryKeyName, poco, null, columns);
-        }
-        #endregion
-
-
         public int Update<T>(T poco) where T : IPetaPocoRecord<T>
         {
             return Update<T>(poco, null, null);
@@ -2153,8 +1994,6 @@ namespace PetaPoco
             var sb = new StringBuilder();
             var index = 0;
             var rawvalues = new List<object>();
-            string versionName = null;
-            object versionValue = null;
 
             foreach (var col in pd.Columns)
             {
@@ -2171,21 +2010,13 @@ namespace PetaPoco
                     continue;
                 }
 
-                if (!col.Value.VersionColumn
-                    && columns != null
+                if (columns != null
                     && !columns.Contains(col.Value.ColumnName, StringComparer.OrdinalIgnoreCase))
                 {
                     continue;
                 }
 
                 object value = col.Value.GetValue(poco);
-
-                if (col.Value.VersionColumn)
-                {
-                    versionName = col.Key;
-                    versionValue = value;
-                    value = Convert.ToInt64(value, Culture) + 1;
-                }
 
                 // Build the sql
                 if (index > 0)
@@ -2206,29 +2037,7 @@ namespace PetaPoco
 
             rawvalues.AddRange(primaryKeyValuePairs.Select(keyValue => keyValue.Value));
 
-            if (!string.IsNullOrEmpty(versionName))
-            {
-                sql += string.Format(Culture, " AND {0} = @{1}", EscapeSqlIdentifier(versionName), index++);
-                rawvalues.Add(versionValue);
-            }
-
-            var result = Execute(sql, rawvalues.ToArray());
-
-            if (result == 0 && !string.IsNullOrEmpty(versionName) && VersionException == VersionExceptionHandling.Exception)
-            {
-                throw new DBConcurrencyException(string.Format(Culture, "A Concurrency update occurred in table '{0}' for primary key value(s) = '{1}' and version = '{2}'", tableName, string.Join(",", primaryKeyValuePairs.Values.Select(x => x.ToString()).ToArray()), versionValue));
-            }
-
-            // Set Version
-            if (!string.IsNullOrEmpty(versionName))
-            {
-                if (pd.Columns.TryGetValue(versionName, out PocoColumn pc))
-                {
-                    pc.SetValue(poco, Convert.ChangeType(Convert.ToInt64(versionValue, Culture) + 1, pc.PropertyInfo.PropertyType, Culture));
-                }
-            }
-
-            return result;
+            return Execute(sql, rawvalues.ToArray());
         }
 
         public int Update<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>
@@ -2242,43 +2051,6 @@ namespace PetaPoco
             var pd = PocoData.ForType(typeof(T));
             return Execute(new Sql(string.Format(Culture, "UPDATE {0}", EscapeTableName(pd.TableInfo.TableName))).Append(sql));
         }
-
-        #region Obsolete Delete Methods
-        // 下記のメソッド（テーブル名を指定するものや、PKのキー名を取るもの）は使用禁止にします
-        //  （ここまで書くならDMLでいいだろう）
-        //      int Delete(string tableName, string primaryKeyName, object poco);
-        //      int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
-        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
-        public int Delete(string tableName, string primaryKeyName, object poco)
-        {
-            return Delete(tableName, primaryKeyName, poco, null);
-        }
-
-        [System.ObsoleteAttribute("This method is obsolete. Call Update(IPetaPocoRecord<T> poco, object primaryKey).")]
-        public int Delete(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
-        {
-            if (primaryKeyName == null) { throw new ArgumentNullException(nameof(primaryKeyName)); }
-            var primaryKeyValuePairs = GetPrimaryKeyValues(primaryKeyName, primaryKeyValue);
-            // If primary key value not specified, pick it up from the object
-            if (primaryKeyValue == null)
-            {
-                var pd = PocoData.ForObject(poco, primaryKeyName);
-                foreach (var i in pd.Columns)
-                {
-                    if (primaryKeyValuePairs.ContainsKey(i.Key))
-                    {
-                        primaryKeyValuePairs[i.Key] = i.Value.GetValue(poco);
-                    }
-                }
-            }
-
-            // Do it
-            var index = 0;
-            var sql = string.Format(Culture, "DELETE FROM {0} WHERE {1}", EscapeTableName(tableName), BuildPrimaryKeySql(primaryKeyValuePairs, ref index));
-            return Execute(sql, primaryKeyValuePairs.Select(x => x.Value).ToArray());
-        }
-
-        #endregion
 
         public int Delete<T>(string sql, params object[] args) where T : IPetaPocoRecord<T>
         {
@@ -2366,18 +2138,11 @@ namespace PetaPoco
             return sb.ToString();
         }
 
-        public enum VersionExceptionHandling
-        {
-            Ignore,
-            Exception
-        }
-
         public class PocoColumn
         {
             public string ColumnName;
             public PropertyInfo PropertyInfo;
             public bool ResultColumn;
-            public bool VersionColumn;
             public virtual void SetValue(object target, object val) { PropertyInfo.SetValue(target, val, null); }
             public virtual object GetValue(object target) { return PropertyInfo.GetValue(target, null); }
             public virtual object ChangeType(object val) { return Convert.ChangeType(val, PropertyInfo.PropertyType, Culture); }
@@ -2500,24 +2265,32 @@ namespace PetaPoco
 
                 // Call column mapper
                 if (Database.Mapper != null)
+                {
                     Database.Mapper.GetTableInfo(t, TableInfo);
+                }
 
                 // Work out bound properties
-                bool ExplicitColumns = t.GetCustomAttributes(typeof(ExplicitColumnsAttribute), true).Length > 0;
+                bool isExplicit = t.GetCustomAttributes(typeof(ExplicitColumnsAttribute), true).Length > 0;
                 Columns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
                 foreach (var pi in t.GetProperties())
                 {
                     // Work out if properties is to be included
                     var colAttrs = pi.GetCustomAttributes(typeof(ColumnAttribute), true);
-                    if (ExplicitColumns)
+                    if (isExplicit)
                     {
+                        // When TableInfo has ExplicitColumnsAttribute, must column attributes.
                         if (colAttrs.Length == 0)
+                        {
                             continue;
+                        }
                     }
                     else
                     {
-                        if (pi.GetCustomAttributes(typeof(IgnoreAttribute), true).Length != 0)
+                        // When TableInfo has NOT ExplicitColumnsAttribute, all public columns mapping
+                        if (pi.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0)
+                        {
                             continue;
+                        }
                     }
 
                     var pc = new PocoColumn
@@ -2531,15 +2304,18 @@ namespace PetaPoco
                         var colattr = (ColumnAttribute)colAttrs[0];
                         pc.ColumnName = colattr.Name;
                         if ((colattr as ResultColumnAttribute) != null)
+                        {
                             pc.ResultColumn = true;
-                        if ((colattr as VersionColumnAttribute) != null)
-                            pc.VersionColumn = true;
+                        }
                     }
                     if (pc.ColumnName == null)
                     {
                         pc.ColumnName = pi.Name;
-                        if (Database.Mapper != null && !Database.Mapper.MapPropertyToColumn(pi, ref pc.ColumnName, ref pc.ResultColumn))
+                        if (Database.Mapper != null
+                            && !Database.Mapper.MapPropertyToColumn(pi, ref pc.ColumnName, ref pc.ResultColumn))
+                        {
                             continue;
+                        }
                     }
 
                     // Store it
@@ -2547,10 +2323,7 @@ namespace PetaPoco
                 }
 
                 // Build column list for automatic select
-                QueryColumns = new ReadOnlyCollection<string>(
-                    Columns.Where(c => !c.Value.ResultColumn)
-                            .Select(c => c.Key).ToArray()
-                    );
+                QueryColumns = new ReadOnlyCollection<string>(Columns.Select(c => c.Key).ToArray());
 
             }
 
@@ -2575,7 +2348,13 @@ namespace PetaPoco
                 if (r == null) { throw new ArgumentNullException(nameof(r)); }
 
                 // Check cache
-                var key = string.Format(Culture, "{0}:{1}:{2}:{3}:{4}:{5}", sql, connString, ForceDateTimesToUtc, firstColumn, countColumns, instance != GetDefault(type));
+                var key = string.Format(Culture, "{0}:{1}:{2}:{3}:{4}:{5}",
+                                    sql,
+                                    connString,
+                                    ForceDateTimesToUtc,
+                                    firstColumn,
+                                    countColumns,
+                                    instance != GetDefault(type));
                 RWLock.EnterReadLock();
                 try
                 {

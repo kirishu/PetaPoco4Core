@@ -254,6 +254,39 @@ namespace PetaPoco4Core.Test.SQLServer
             }
         }
 
+        [Fact]
+        public void Insert系_Ignore_Result_Columns()
+        {
+            using (var db = new DB())
+            {
+                db.BeginTransaction();
+
+                // 下記Updateを実行する
+                var rec = new PtTable04
+                {
+                    ColBool = true,
+                    ColDec = 333m,
+                    ColVarchar = "ほげぇ",               // IgonoreColumn
+                    ColRowVersion = new byte[] { },     // ResultColumn
+                };
+                var pk = db.Insert(rec);
+
+                var sql = db.LastSQL;
+                _output.WriteLine(sql);
+
+                // これは含まれるべき文字列
+                Assert.Contains("ColBool", sql);
+                Assert.Contains("ColDec", sql);
+                // 含まれてはいけない文字列
+                Assert.DoesNotContain("ColRowVersion", sql);
+                Assert.DoesNotContain("ColVarchar", sql);
+
+                // 抽出の確認
+                var rec2 = db.SingleById<PtTable04>(pk);
+                Assert.Equal(333m, rec2.ColDec);
+            }
+        }
+
 
     }
 }

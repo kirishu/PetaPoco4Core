@@ -116,4 +116,23 @@ namespace PetaPoco4Core.Test.SQLServer
         /// <summary></summary>
         [Column] public DateTime UpdateDt { get { return _UpdateDt; } set { _UpdateDt = value; MarkColumnModified("UpdateDt"); } } DateTime _UpdateDt;
     }
+
+    /// <summary></summary>
+    [TableName("PtTable04")]
+    [PrimaryKey("Key04", AutoIncrement=true)]
+    public class PtTable04: PetaPoco.PetaPocoRecord<PtTable04>
+    {
+        /// <summary></summary>
+        public int Key04 { get { return _Key04; } set { _Key04 = value; MarkColumnModified("Key04"); } } int _Key04;
+        /// <summary></summary>
+        public bool ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("ColBool"); } } bool _ColBool;
+        /// <summary></summary>
+        public int? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("ColInt"); } } int? _ColInt;
+        /// <summary></summary>
+        public decimal? ColDec { get { return _ColDec; } set { _ColDec = value; MarkColumnModified("ColDec"); } } decimal? _ColDec;
+        /// <summary></summary>
+        [Ignore] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("ColVarchar"); } } string _ColVarchar;
+        /// <summary></summary>
+        [ResultColumn] public byte[] ColRowVersion { get { return _RowVersion; } set { _RowVersion = value; MarkColumnModified("RowVersion"); } } byte[] _RowVersion;
+    }
 }

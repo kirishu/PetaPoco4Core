@@ -1,7 +1,7 @@
 ﻿/* --------------------------------------------------------------------------
  * DatabaseExtension - PetaPoco.Database Extension class
  * Created by kirishu (zapshu@gmail.com)
- * v4.7.1.3
+ * v4.7.1.4
  * https://github.com/kirishu/PetaPoco4Core
  * -------------------------------------------------------------------------- */
 
@@ -274,7 +274,7 @@ namespace PetaPoco
                 case DbType.AnsiStringFixedLength:
                 case DbType.String:
                 case DbType.StringFixedLength:
-                    datatype = UseA5Mk2Params ? "String" : "NVARCHAR(4000)";
+                    datatype = UseA5Mk2Params ? "STRING" : "NVARCHAR(4000)";
                     break;
                 case DbType.Boolean:
                     datatype = "BOOLEAN";
@@ -322,10 +322,11 @@ namespace PetaPoco
                 case DbType.Object:
                 case DbType.Xml:
                     // バイナリ
-                    datatype = UseA5Mk2Params ? "String" : param.DbType.ToString().ToUpperInvariant();
+                    datatype = UseA5Mk2Params ? "STRING" : param.DbType.ToString().ToUpperInvariant();
                     break;
                 default:
                     // なんだかわかんないもの
+                    datatype = "STRING";
                     break;
             }
             return datatype;

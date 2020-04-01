@@ -510,5 +510,49 @@ namespace PetaPoco4Core.Test.SQLServer
             }
         }
 
+        [Fact]
+        public void Select系_Ignore列()
+        {
+            using (var db = new DB())
+            {
+                var recs = db.Fetch<PtTable04>();
+
+                var sql = db.LastSQL;
+                _output.WriteLine(sql);
+
+                Assert.Equal(2, recs.Count);
+                Assert.Null(recs[0].ColVarchar);
+                Assert.Null(recs[1].ColVarchar);
+
+                // これは含まれるべき文字列
+                Assert.Contains("ColDec", sql);
+                // 含まれてはいけない文字列
+                Assert.DoesNotContain("ColVarchar", sql);
+            }
+        }
+
+        [Fact]
+        public void Select系_ResultColumn列()
+        {
+            using (var db = new DB())
+            {
+                var recs = db.Fetch<PtTable04>();
+
+                var sql = db.LastSQL;
+                _output.WriteLine(sql);
+
+                Assert.Equal(2, recs.Count);
+
+                // これは含まれるべき文字列
+                Assert.Contains("ColRowVersion", sql);
+                // 含まれてはいけない文字列
+                Assert.DoesNotContain("ColVarchar", sql);
+
+                Assert.NotNull(recs[0].ColRowVersion);
+                Assert.NotNull(recs[1].ColRowVersion);
+                _output.WriteLine(System.Text.Encoding.Default.GetString(recs[0].ColRowVersion));
+            }
+        }
+
     }
 }

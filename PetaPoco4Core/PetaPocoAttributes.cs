@@ -9,7 +9,7 @@
  */
 /* --------------------------------------------------------------------------
  * Modified by kirishu (zapshu@gmail.com)
- * v4.7.1.3
+ * v4.7.1.4
  * https://github.com/kirishu/PetaPoco4Core
  * -------------------------------------------------------------------------- */
 
@@ -19,9 +19,9 @@ using System.Collections.Generic;
 namespace PetaPoco
 {
     /// <summary>
-    /// Represents the attribute which decorates a poco class to state all columns must be explicitly mapped using either a
+    /// Represents the attribute which decorates a poco class to state all columns must be explicitly mapped using either
+    /// a <seealso cref="ColumnAttribute" /> or <seealso cref="ResultColumnAttribute" />.
     /// </summary>
-    /// <seealso cref="ColumnAttribute" /> or <seealso cref="ResultColumnAttribute" />.
     [AttributeUsage(AttributeTargets.Class)]
     public class ExplicitColumnsAttribute : Attribute
     {
@@ -37,8 +37,8 @@ namespace PetaPoco
     }
 
     /// <summary>
-    /// Represents an attribute which can decorate a Poco property to mark the property as a column. It may also optionally
-    /// supply the DB column name.
+    /// Represents an attribute which can decorate a Poco property to mark the property as a column.
+    /// It may also optionally supply the DB column name.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class ColumnAttribute : Attribute
@@ -49,8 +49,8 @@ namespace PetaPoco
     }
 
     /// <summary>
-    /// Represents an attribute which can decorate a poco property as a result only column. A result only column is a
-    /// column that is only populated in queries and is not used for updates or inserts operations.
+    /// Represents an attribute which can decorate a poco property as a result only column.
+    /// A result only column is a column that is only populated in queries and is not used for updates or inserts operations.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class ResultColumnAttribute : ColumnAttribute
@@ -88,19 +88,6 @@ namespace PetaPoco
         public string Value { get; private set; }
         public string SequenceName { get; set; }
         public bool AutoIncrement { get; set; }
-    }
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class AutoJoinAttribute : Attribute
-    {
-        public AutoJoinAttribute() { }
-    }
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class VersionColumnAttribute : ColumnAttribute
-    {
-        public VersionColumnAttribute() { }
-        public VersionColumnAttribute(string name) : base(name) { }
     }
 
     #region PetaPocoRecord

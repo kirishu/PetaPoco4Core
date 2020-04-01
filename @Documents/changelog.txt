@@ -1,27 +1,65 @@
+/* ************************************
+ * PetaPoco4Core Change log
+************************************ */
 
-20-Mar-2020
-	[PocoData.GetConverter] Nullableのマッピングを修正してSQLiteとOracleのCastエラーに対応
-	[Database] 以下のメソッドを削除
-		Single, SingleInto, SingleOrDefaultInto, FirstInto, FirstOrDefaultInto
-	Refactoring：コード分析対応
-		CA1303, CA1305, CA1062, CA2211, CA1716, CA1720, CA1819, CA1825
+01-Apr-2020 <ver 4.1.7.4>
+	[Database, IDatabase]
+		以下のメソッドを削除（テーブル名を文字列で受け取るもの）
+			Insert(string, string, bool, object)
+			Insert(string, string, object)
+			Update(string, string, object, object)
+			Update(string, string, object)
+			Update(string, string, object, object, IEnumerable<string>)
+			Update(string, string, object, IEnumerable<string>)
+			Delete(string, string, object)
+			Delete(string, string, object, object)
+	[PetaPocoAttributes]
+		以下の属性を削除
+			AutoJoinAttribute
+			VersionColumnAttribute
+
+
+20-Mar-2020 <ver 4.1.7.3>
+	[GENERAL]
+		Refactoring：コード分析対応
+			CA1303, CA1305, CA1062, CA2211, CA1716, CA1720, CA1819, CA1825
+	[PocoData.GetConverter]
+		Nullableのマッピングを修正してSQLiteとOracleのCastエラーに対応
+	[Database]
+		以下のメソッドを削除
+			Single, SingleInto, SingleOrDefaultInto, FirstInto, FirstOrDefaultInto
+
 
 04-Feb-2020
-	[Database] 以下のメソッドを削除
-		Save, IsNew
-	[Database] Insert, Update, Delete メソッドから、テーブル名を文字列で受け取るものに、ObsoleteAttributeを付けた
-	[Database] Dictionary<TKey, TValue> を追加
+	[Database]
+		以下のメソッドを削除
+			Save, IsNew
+	[Database]
+		Insert, Update, Delete メソッドから、テーブル名を文字列で受け取るものに、ObsoleteAttributeを付けた
+		Dictionary<TKey, TValue> メソッドを追加
+	[Database.GetDbFactory]
+		DbFactoryの取得方法を .NET Framework と .NET Core で同じにして、ライブラリをGACにインストールしなくてもイケるように
 
-21-Jun-2019
-	.NET Standard 2.0 に対応
-	[Database] コンストラクタは1種類だけにしました
+
+21-Jun-2019 <ver 4.1.7.0>
+	[GENERAL]
+		.NET Standard 2.0 に対応
+	[Database]
+		コンストラクタは1種類だけにしました
+
 
 01-Mar-2017
-	[Sql.Clone] ICloneable実装 ディープコピーメソッド追加
-	[Sql.Where] オブジェクトを引数に持つoverloadを追加
+	[Sql.Clone]
+		ICloneable実装 ディープコピーメソッド追加
+	[Sql.Where]
+		オブジェクトを引数に持つoverloadを追加
+
 
 29-Oct-2015
-	[Database.AddParam] バイナリ列へのnullセット対応
+	[Database.AddParam]
+		バイナリ列へのnullセット対応
+
 
 25-Feb-2013
-	プロジェクト作成
+	[GENERAL]
+		プロジェクト作成

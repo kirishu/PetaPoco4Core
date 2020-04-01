@@ -137,8 +137,11 @@ CREATE TABLE TrColumns (
     , ColVarCharPast        varchar(50)
     , ColTextPast           text
     , ColVarBinary          varbinary
+    , ColRowVersion         rowversion
     , CONSTRAINT pk_TrColumns PRIMARY KEY (Key01)
 );
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@value=N'テストテーブル - 列の型テスト';
+
 EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'Key01'           ,@value=N'プライマリキー';
 EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColBigint'       ,@value=N'bigintの列';
 EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColInt'          ,@value=N'intの列';
@@ -164,3 +167,4 @@ EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@
 EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColVarCharPast'  ,@value=N'varchar(50)の列';
 EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColTextPast'     ,@value=N'textの列';
 EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColVarBinary'    ,@value=N'varbinaryの列';
+EXEC sys.sp_addextendedproperty  @name=N'MS_Description',@level0type=N'SCHEMA',@level0name=N'dbo',@level1type=N'TABLE',@level1name=N'TrColumns',@level2type=N'COLUMN',@level2name=N'ColRowVersion'   ,@value=N'rowversionの列';

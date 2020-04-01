@@ -8,7 +8,7 @@
 //     Provider:               `System.Data.SqlClient`
 //     Schema:                 ``
 //     Include Views:          `True`
-//     Genetated:              `2020/03/27 15:48:00`
+//     Genetated:              `2020/04/01 10:48:01`
 
 using System;
 using PetaPoco;
@@ -52,7 +52,7 @@ namespace PetaPocoAppFx.Database.SQLServer
         [Column] public int? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("ColInt"); } } int? _ColInt;
     }
 
-    /// <summary>TrColumns</summary>
+    /// <summary>テストテーブル - 列の型テスト</summary>
     [TableName("TrColumns")]
     [PrimaryKey("Key01", AutoIncrement=false)]
     [ExplicitColumns]
@@ -106,6 +106,8 @@ namespace PetaPocoAppFx.Database.SQLServer
         [Column] public string ColTextPast { get { return _ColTextPast; } set { _ColTextPast = value; MarkColumnModified("ColTextPast"); } } string _ColTextPast;
         /// <summary>varbinaryの列</summary>
         [Column] public byte[] ColVarBinary { get { return _ColVarBinary; } set { _ColVarBinary = value; MarkColumnModified("ColVarBinary"); } } byte[] _ColVarBinary;
+        /// <summary>rowversionの列</summary>
+        [ResultColumn][Column] public byte[] ColRowVersion { get { return _ColRowVersion; } set { _ColRowVersion = value; MarkColumnModified("ColRowVersion"); } } byte[] _ColRowVersion;
     }
 
     /// <summary>テストテーブル - 複合キー</summary>

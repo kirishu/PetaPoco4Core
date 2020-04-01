@@ -115,26 +115,23 @@
 
         h4 {
             color: #7030a0;
-            font-size: 10pt;
+            font-size: 12pt;
             font-weight: bold;
             line-height: 1.1em;
             margin-top: 30px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         h5 {
             font-weight: normal;
+            color: #1f1dca;
             font-size: 10pt;
+            margin-bottom: 10px;
         }
 
         h6 {
             margin-top: 10px;
             margin-bottom: 10px;
-        }
-
-        span.h5 {
-            font-weight: normal;
-            font-size: 10pt;
         }
 
         /* ***************************************** */
@@ -286,63 +283,65 @@
     </style>
 </head>
 <body>
-    <!-- メニューエリア -->
-    <div id="area__left">
-        <div id="area__menu">
-            <ul></ul>
-        </div>
-    </div>
-    <!-- メインコンテンツエリア -->
-    <div id="area__content">
 
-        <div style="text-align:right;font-style:italic">25-Mar-2020 &nbsp; zapshu@gmail.com</div>
-        <h1>PetaPoco4Coreの使い方</h1>
+<!-- メニューエリア -->
+<div id="area__left">
+<div id="area__menu">
+    <ul></ul>
+</div>
+</div>
 
-        <p>
-            .NET用micro-ORMです。
-        </p>
-        <p>
-            オリジナルの公式サイト [<a href="http://www.toptensoftware.com/petapoco/" target=_blank>http://www.toptensoftware.com/petapoco/</a>]
-        </p>
-        <p>
-            このライブラリのGitHub [<a href="https://github.com/kirishu/PetaPoco4Core" target=_blank>https://github.com/kirishu/PetaPoco4Core</a>]
-        </p>
-        <br />
+<!-- メインコンテンツエリア -->
+<div id="area__content">
 
-        <p>
-            【特徴】
-            <ul>
-                <li>SQL文は自分で書く</li>
-                <li>マッピングは自動でやってくれる</li>
-                <li>みんな大好きLINQで操作</li>
-                <li>DMLのメソッドがひと通り揃っている</li>
-                <li>TextTemplateによる自動Entity生成機能あり</li>
-                <li>ADO.NETをラッピングしているだけなので、パフォーマンスは著名なORMの中でもトップクラス</li>
-                <li>.NET Framework時代の topten software オリジナル v4.0.3をベースに、.NET Standard 2.0用に修正を加えたものです</li>
-            </ul>
-        </p>
+<div style="text-align:right;font-style:italic">25-Mar-2020 &nbsp; zapshu@gmail.com</div>
+<h1>PetaPoco4Coreの使い方</h1>
 
-        <p>
-            【注意】
-            <ul>
-                <li>このマニュアルは、オリジナルを継承したカスタムクラス「DatabaseExtension」を対象にしているので、オリジナルとは異なる点があります</li>
-                <li>さらにT4Templateも超カスタムしてます</li>
-                <li>このT4TemplateでEntityクラスを生成済みとして書いています</li>
-                <li>
-                    このマニュアル内で使っているサンプルDBは、MySQLの公式で紹介されている[employees]データベースです<br />
-                    <a href="https://dev.mysql.com/doc/employee/en/sakila-structure.html" target="_blank">https://dev.mysql.com/doc/employee/en/sakila-structure.html</a>
-                </li>
-            </ul>
-        </p>
+<p>
+    .NET用micro-ORMです。
+</p>
+<p>
+    オリジナルの公式サイト [<a href="http://www.toptensoftware.com/petapoco/" target=_blank>http://www.toptensoftware.com/petapoco/</a>]
+</p>
+<p>
+    このライブラリのGitHub [<a href="https://github.com/kirishu/PetaPoco4Core" target=_blank>https://github.com/kirishu/PetaPoco4Core</a>]
+</p>
+<br />
 
-        <h2>使い方</h2>
-        <p>
-            まずLINQの理解があることが前提です。
-        </p>
+<p>
+    【特徴】
+    <ul>
+        <li>SQL文は自分で書く</li>
+        <li>マッピングは自動でやってくれる</li>
+        <li>みんな大好きLINQで操作</li>
+        <li>DMLのメソッドがひと通り揃っている</li>
+        <li>TextTemplateによる自動Entity生成機能あり</li>
+        <li>ADO.NETをラッピングしているだけなので、パフォーマンスは著名なORMの中でもトップクラス</li>
+        <li>.NET Framework時代の topten software オリジナル v4.0.3をベースに、.NET Standard 2.0用の修正を加えたものです</li>
+    </ul>
+</p>
 
-        <h3>接続</h3>
+<p>
+    【注意】
+    <ul>
+        <li>このマニュアルは、オリジナルを継承したカスタムクラス「DatabaseExtension」を対象にしているので、オリジナルとは異なる点があります</li>
+        <li>さらにT4Templateも超カスタムしてます</li>
+        <li>このT4TemplateでEntityクラスを生成済みとして書いています</li>
+        <li>
+            このマニュアル内で使っているサンプルDBは、MySQLの公式で紹介されている[employees]データベースです<br />
+            <a href="https://dev.mysql.com/doc/employee/en/sakila-structure.html" target="_blank">https://dev.mysql.com/doc/employee/en/sakila-structure.html</a>
+        </li>
+    </ul>
+</p>
 
-        <h4>DBへ接続</h4>
+<h2>使い方</h2>
+<p>
+    まずLINQの理解があることが前提です。
+</p>
+
+<h3>接続</h3>
+
+<h4>DBへ接続</h4>
 <pre class="prettyprint lang-cs">
 // アプリの起動時に接続文字列をセット（MySQLの例）
 Database.Employees.Config.ConnectionString
@@ -362,7 +361,8 @@ public staticメンバのConfig.ConnectionStringに接続文字列をセット�
 接続文字列のセットは、アプリケーションで最初に1回行えば、以降は省略できます。
 </pre>
 
-        <h4>別DBへ接続したいとき</h4>
+
+<h4>別DBへ接続したいとき</h4>
 <pre class="prettyprint lang-cs">
 // 別DBの接続文字列
 var otherStr = "server=SERVER_ADDRESS;uid=hoge;pwd=fuga;database=OTHERDB;";
@@ -374,46 +374,53 @@ using (var otherdb = new PetaPoco.DatabaseExtension(otherStr, "MySql.Data.MySqlC
     // これで接続
 }
 </pre>
-        <p>対応しているRDBは下記の5種類</p>
-        <table class=table-mapping>
-            <tr>
-                <th>RDB</th>
-                <th>主なプロバイダ名</th>
-            </tr>
-            <tr>
-                <td>MS SQL Server</td>
-                <td>System.Data.SqlClient</td>
-            </tr>
-            <tr>
-                <td>MySQL / MariaDB</td>
-                <td>MySql.Data.MySqlClient</td>
-            </tr>
-            <tr>
-                <td>PostgreSQL</td>
-                <td>Npgsql</td>
-            </tr>
-            <tr>
-                <td>Oracle</td>
-                <td>Oracle.ManagedDataAccess
-                <br />（System.Data.Oracleは非対応）
-                </td>
-            </tr>
-            <tr>
-                <td>SQLite</td>
-                <td>System.Data.SQLite</td>
-            </tr>
-        </table>
+
+<p>対応しているRDBは下記の5種類</p>
+<table class=table-mapping>
+    <tr>
+        <th>RDB</th>
+        <th>主なプロバイダ名</th>
+    </tr>
+    <tr>
+        <td>MS SQL Server</td>
+        <td>System.Data.SqlClient</td>
+    </tr>
+    <tr>
+        <td>MySQL / MariaDB</td>
+        <td>MySql.Data.MySqlClient</td>
+    </tr>
+    <tr>
+        <td>PostgreSQL</td>
+        <td>Npgsql</td>
+    </tr>
+    <tr>
+        <td>Oracle</td>
+        <td>Oracle.ManagedDataAccess
+        <br />（System.Data.Oracleは非対応）
+        </td>
+    </tr>
+    <tr>
+        <td>SQLite</td>
+        <td>System.Data.SQLite</td>
+    </tr>
+</table>
+
+
+<pre>
 
 
 
-        <h3>Select例</h3>
+</pre>
+
+<h3>Select例</h3>
 
 
-        <h4>PKで1件だけ抽出</h4>
+<h4>PKで1件だけ抽出</h4>
 <pre class="prettyprint lang-cs">
 var rec1 = db.SingleById&lt;Database.Employees.Employee&gt;(99999);
 var rec2 = db.SingleOrDefaultById&lt;Database.Employees.Employee&gt;(10006);
 </pre>
+
 <pre class="note">
 PKの値を引数にして、SingleById, SingleOrDefaultById を使います。
 抽出結果が複数件数あると例外が発生します。
@@ -423,6 +430,7 @@ PKの値を引数にして、SingleById, SingleOrDefaultById を使います。
 （正確に言うと、PetaPoco.TableName や PetaPoco.PrimaryKey アトリビュートが付与されているクラス）
 ※ここではこのようなEntityクラスを普通のPocoと区別するため、「PetaPocoRecordオブジェクト」と呼んでいます。
 </pre>
+
 <pre class="prettyprint lang-cs">
 // employeesテーブルの例
 [TableName("employees")]
@@ -440,7 +448,7 @@ public class Employee: PetaPoco.PetaPocoRecord&lt;Employee&gt;
 </pre>
 
 
-        <h4>PKが複数列で構成されている場合</h4>
+<h4>PKが複数列で構成されている場合</h4>
 <pre class="prettyprint lang-cs">
 // PKが３列で構成されているテーブルの例
 var pk = new {
@@ -457,7 +465,7 @@ var rec = db.SingleOrDefaultById&lt;Database.Employees.Title&gt;(pk);
 </pre>
 
 
-        <h4>条件を指定して1件だけ抽出</h4>
+<h4>条件を指定して1件だけ抽出</h4>
 <pre class="prettyprint lang-cs">
 var rec1 = db.SingleOrDefault&lt;Database.Employees.DeptEmp&gt;("WHERE emp_no=@0 AND dept_no=@1", 1001, "d005");
 </pre>
@@ -469,7 +477,7 @@ SingleOrDefault を使う。
 </pre>
 
 
-        <h4>複数結果の中から先頭の1件だけ抽出</h4>
+<h4>複数結果の中から先頭の1件だけ抽出</h4>
 <pre class="prettyprint lang-cs">
 var rec1 = db.First&lt;Database.Employees.DeptEmp&gt;("WHERE dept_no=@0 ORDER BY emp_no", "d005");
 var rec2 = db.FirstOrDefault&lt;Database.Employees.DeptEmp&gt;("WHERE dept_no=@0 ORDER BY emp_no", "d005");
@@ -480,7 +488,7 @@ First、FirstOrDefault を使う。
 </pre>
 
 
-        <h4>単一項目スカラ クエリ</h4>
+<h4>単一項目スカラ クエリ</h4>
 <pre class="prettyprint lang-cs">
 var count = db.ExecuteScalar&lt;int&gt;("SELECT COUNT(*) FROM employee");
 </pre>
@@ -489,7 +497,7 @@ ExecuteScalarを使う。
 指定した型で結果を受ける。
 </pre>
 
-        <h4>複数件数取得(Fetch)</h4>
+<h4>複数件数取得(Fetch)</h4>
 <pre class="prettyprint lang-cs">
 var records = db.Fetch&lt;Database.Employees.DeptEmp&gt;("WHERE dept_no=@0", "d005");
 </pre>
@@ -505,7 +513,7 @@ Fetchメソッドを使う。
 
 
 
-        <h4>SQL Builder</h4>
+<h4>SQL Builder</h4>
 <pre class="note">
 SQLを組み立てるオブジェクト。
 SQLインジェクション対策のため必ず使おう。
@@ -557,7 +565,7 @@ Whereメソッドは、一番最初に現れるとき "WHERE" を、それ以降
 てやると、「WHERE cond1 AND (cond2 OR cond3)」となります。
 </pre>
 
-        <h4>SQL Builder - 値代入時の注意</h4>
+<h4>SQL Builder - 値代入時の注意</h4>
 <pre class="prettyprint lang-cs">
 .Append("WHERE update_date &gt;= CAST(@0, AS datetime)", "2011/01/15 10:00:00")　・・・　OK
 
@@ -570,8 +578,8 @@ Whereメソッドは、一番最初に現れるとき "WHERE" を、それ以降
 これらをどうしてもやりたい場合は、普通に文字列編集した結果を渡すしかないです。
 </pre>
 
-        <h4>SQL Builder - サブクエリにリテラル</h4>
-        <pre class="prettyprint lang-cs">
+<h4>SQL Builder - サブクエリにリテラル</h4>
+<pre class="prettyprint lang-cs">
 // WHERE WeekName IN ('月','水','金') というサブクエリで表現する場合
 // まずはコレクション作成
 var weeks = new List&lt;string&gt;
@@ -586,7 +594,7 @@ sql.Append("WHERE WeekName IN (@0)", weeks);
 </pre>
 
 
-        <h4>SQL Builder - 名前付きパラメータ</h4>
+<h4>SQL Builder - 名前付きパラメータ</h4>
 <pre class="prettyprint lang-cs">
 sql.Append("AND update_date &gt;= @start AND update_date &lt;= @end",
                 new
@@ -598,7 +606,7 @@ sql.Append("AND update_date &gt;= @start AND update_date &lt;= @end",
 </pre>
 
 
-        <h4>SQL Builder - LIKE条件の例</h4>
+<h4>SQL Builder - LIKE条件の例</h4>
 <pre class="prettyprint lang-cs">
 string searchText = "検索文字列";
 sql.Append("WHERE first_name LIKE @0 ESCAPE '\\\\'" , "%" + searchText + "%");
@@ -609,7 +617,7 @@ sql.Append("   OR last_name LIKE @0 ESCAPE '\\\\'" , "%" + searchText + "%");
 </pre>
 
 
-        <h4>SQL Builder - SQL文のコピー</h4>
+<h4>SQL Builder - SQL文のコピー</h4>
 <pre class="note">
 PetaPoco.Sql はオブジェクトなので、単純にコピーできない。
 </pre>
@@ -628,6 +636,7 @@ sql3.Append("WHERE emp_no = 99999");
 // sql3の内容も、     SELECT * FROM employees WHERE emp_no = 10002 WHERE emp_no = 99999
 
 </pre>
+
 <pre class="note">
 PetaPoc.SqlオブジェクトのSQLプロパティとArgumentsプロパティを使って新しいインスタンスを作りましょう
 </pre>
@@ -649,13 +658,13 @@ sql3.Append("WHERE emp_no = 99999");
 
 
 
-        <h4>テーブル結合クエリ</h4>
+<h4>テーブル結合クエリ</h4>
 <pre class="note">
 クエリ結果を受け取るEntityクラスを自分で作る。
 <s>列のプロパティに [PetaPoco.Column]アトリビュートを付けると、クエリ結果列と自動的にマッピングしてくれる。</s>
 ※アトリビュートをつけなくてもマッピングしてくれます。
 　ただし、↓の例のようにアトリビュート付きのEntityクラスを継承した場合は、追加列にも同様に[PetaPoco.Column]をつけないとダメ。
-　（正確には[PetaPoco.ExplicitColumns]が付いているクラス）
+　（次の「列のアトリビュート」を参照）
 
 イチから作るのは面倒なので、PetaPocoRecordクラスを継承して列を追加するとベター。
 </pre>
@@ -699,55 +708,60 @@ var recs = db.Fetch&lt;DeptEmpDto&gt;(PetaPoco.Sql.Builder
 
 
 <h4>列のアトリビュート</h4>
+<h5>[Column] と [Ignore]</h5>
+<pre class="note">
+    テーブルクラスのアトリビュートに [ExplicitColumns] が付いている場合は、
+    [Column] をつけたメンバ列だけがマッピングされる。
+    （ついていない列はマッピングされない）
 
+    [ExplicitColumns] が付いていないクラスの場合は、publicなメンバなら自動的にマッピングされる。
+    マッピングしたくないメンバには、[Ignore] を付与する。
+
+</pre>
 
 <pre class="prettyprint lang-cs">
-    <span class="h5">[Column]</span>
-    // クラスのアトリビュートに[PetaPoco.ExplicitColumns]が付いている場合、このColumnをつけた列だけがマッピングされる。
+[Column]
+    // クラスのアトリビュートに[ExplicitColumns]が付いている場合、このColumnをつけた列だけがマッピングされる
     // （付いていないフィールドはマッピングされない）
-
     [PetaPoco.Column]
     public string FirstName { get; set; }
 
     // ※[PetaPoco.ExplicitColumns]が付いていないクラスなら、このColumnは不要
-</pre>
 
-<pre class="prettyprint lang-cs">
-    <span class="h5">[Column(Name="列名")]</span>
+
+[Column(Name="列名")]
     // フィールド名と異なる列名を指定できる。
-    // ※逆にいうとNameを指定しないときは、プロパティ名と抽出列名が完全に一致しないとマッピングされない。
+    // ※逆にいうとNameを指定しないときは、プロパティ名と抽出列名が完全に一致しないとマッピングされない
     // ↓抽出結果の列「hoge_hoge」を FugaFuga にマッピングする
-
     [PetaPoco.Column(Name="hoge_hoge")]
     public string FugaFuga { get; set; }
 
 
     ※ "Name=" は省略可能。↓でもイケる。
     　 [PetaPoco.Column("列名")]
-</pre>
 
-<pre class="prettyprint lang-cs">
-    <span class="h5">[Ignore]</span>
-    // マッピングしない列を指定
-    // ↓FirstName列はマッピングされない
 
+[Ignore]
+    // クラスのアトリビュートに[ExplicitColumns]が付いていない場合は、すべての列がマッピングされる
+    // マッピングしたくないメンバには [Ignore]を指定する
     [PetaPoco.Ignore]
     public string FirstName { get; set; }
 </pre>
 
+<h4></h4>
+<h5>[ResultColumn]</h5>
 <pre class="note">
-他にも
-　　[ResultColumn]
-　　[AutoJoin]
-　　[VersionColumn]
-なんてのがあるけど、よくわからない・・・
+    SELECT 文では自動マッピングしたいけど、INSERT や UPDATE のSQLに含めたくないものには、この [ResultColumn] を付与する。
+
+    こいつが付いていると、INSERT/UPDATE文のSQL文からメンバを除外します。
+    ※MS SQL Serverの rowversion型などの、ユーザから更新できない列などに使います。
 
 </pre>
 
 
 
 
-        <h4>Paging</h4>
+<h4>Paging</h4>
 <pre class="prettyprint lang-cs">
 // 1ページ当たり50件として、2ページ目の結果を取得する例
 var results = db.Page&lt;Database.Employees.Order&gt;(2, 50, PetaPoco.Sql.Builder
@@ -789,6 +803,7 @@ var results = db.PageWithHaving&lt;SalaryDto&gt;(2, 50, PetaPoco.Sql.Builder
     );
 </pre>
 
+
 <h4>Dictionaryで受け取る</h4>
 <pre class="prettyprint lang-cs">
 var results = db.Dictionary&lt;int, string&gt;(PetaPoco.Sql.Builder
@@ -804,7 +819,7 @@ var results = db.Dictionary&lt;int, string&gt;(PetaPoco.Sql.Builder
   またList&lt;T&gt;と違って、配列の順番は保証されません。
 </pre>
 
-        <h4>dynamicで受け取る</h4>
+<h4>dynamicで受け取る</h4>
 <pre class="prettyprint lang-cs">
 var results = db.Fetch&lt;dynamic&gt;(PetaPoco.Sql.Builder
         .Append("SELECT emp_no")
@@ -828,7 +843,7 @@ foreach (var rec in results)
 </pre>
 
 
-        <h4>DataTableで受け取る</h4>
+<h4>DataTableで受け取る</h4>
 <pre class="prettyprint lang-cs">
 var dt = db.GetDataTable(PetaPoco.Sql.Builder
         .Append("SELECT emp_no")
@@ -867,9 +882,9 @@ ADO.NETを素で使わない。思想が古い。OOP理念に反している。L
 
 
 
-        <h3>Inserts, Updates and Deletes</h3>
-        <h4>Insert</h4>
-        <pre class="prettyprint lang-cs">
+<h3>Inserts, Updates and Deletes</h3>
+<h4>Insert</h4>
+<pre class="prettyprint lang-cs">
 // Entityクラス（PetaPocoオブジェクト）にデータをセットしてInsertメソッドを実行
 var rec = new Database.Employees.Title
 {
@@ -893,6 +908,7 @@ var newKey = db.Insert(rec);
 // 戻り値には付与されたキー値が取得できる
 // ※ちなみにAutoIncrementでないInsertメソッドの戻り値は、常に-1。
 </pre>
+
 
 <h4>Update</h4>
 <pre class="prettyprint lang-cs">
@@ -1028,37 +1044,8 @@ db.Delete&lt;Database.Employees.DeptManager&gt;("WHERE EmpNo = @0 AND DeptNo = @
 
 </pre>
 
-<!--
-<pre class="note">
 
-これら以外に、Entityクラスを使わない方法もあります。
-</pre>
-<pre class="prettyprint lang-cs">
-// テーブル名、PK名、更新内容を匿名型、PKの値を渡してUpdateする例
-db.Update("tablename", "pkname", new { title="New title" }, 123);
-
-// テーブル名、PK名、PKの値を渡してDeleteする例
-db.Delete("tablename", "pkname", null, 123);
-</pre>
--->
-
-<!--
-        <h4>Save</h4>
-<pre class="prettyprint lang-cs">
-db.Save(Entity);
-</pre>
-<pre class="note">
-引数に渡したレコードが存在しなかったらInsert、あったらUpdateしてくれるメソッド。
-※OracleのMargeみたいなやつ。PKの値だけで判断してます。
-ただし、PKがIDENTITY型（auto increment）じゃないとダメみたい。
-更新前のEntity値が新規行か否かを返してくれる IsNew(Entity)っていうメソッドもあるけど、これもPKがIDENTITY型でないとダメ。
-
-でもさ、IDENTITY型のテーブルにInsertする場合ってキー値なんか指定しないし、
-キーの有無を調べる局面なんていまだかつてないんだけど・・・
-</pre>
--->
-
-        <h4>Transaction</h4>
+<h4>Transaction</h4>
 <pre class="prettyprint lang-cs">
 using (var db = new Database.Employees.DB())
 {
@@ -1088,8 +1075,8 @@ Completeが発行されなければ、自動的にRollbackします。
 
 
 
-        <h3>Non-query Commands, DDL</h3>
-        <h4>Execute</h4>
+<h3>Non-query Commands, DDL</h3>
+<h4>Execute</h4>
 <pre class="prettyprint lang-cs">
 db.Execute(PetaPoco.Sql.Builder
     .Append("UPDATE M_Master")
@@ -1101,8 +1088,8 @@ db.Execute(PetaPoco.Sql.Builder
 DML、DDLはExecuteメソッドで実行。
 </pre>
 
-        <h4>Stored Prcedure</h4>
-        <span style="color:#cc0000;font-weight:normal;">(多分MSSQLのみ)</span>
+<h4>Stored Prcedure</h4>
+<span style="color:#cc0000;font-weight:normal;">(多分MSSQLのみ)</span>
 
 <pre class="prettyprint lang-sql">
 -- Employees.CustOrdersOrders
@@ -1162,8 +1149,8 @@ using (var db = new PetaPoco.DatabaseEx(@"Data Source=SERVER_ADDRESS;Database=ma
 </pre>
 
 
-        <h4>User Temporary Table</h4>
-        <span style="color:#cc0000;font-weight:normal;">(MSSQLのみ)</span>
+<h4>User Temporary Table</h4>
+<span style="color:#cc0000;font-weight:normal;">(MSSQLのみ)</span>
 
 <pre class="note">
 【CREATE TABLE文を発行する例】
@@ -1190,7 +1177,7 @@ using (var db = new Database.Employees.DB)
 <pre class="note">
 
 【SELECT INTO の例】
-   何故かPetaPoco経由だと、"SELECT INTO ～"で作成した一時表が使えない。
+   PetaPoco経由だと、"SELECT INTO ～"で作成した一時表が使えない。
    しょうがないので、既存テーブルと同じ構造の一時表を作成するメソッドを、PetaPocoExtensionに作りました。
 </pre>
 <pre class="prettyprint lang-cs">
@@ -1209,11 +1196,16 @@ using (var db = new Database.Employees.DB())
 }
 </pre>
 
+<pre>
+
+
+
+</pre>
 
 
 
 
-        <h3>デバッグ情報</h3>
+<h3>デバッグ情報</h3>
 <pre class="note">
 VisualStudioにてDebug構成で実行しているときは、出力ウィンドウにSQLコマンドを出力します。
 </pre>
@@ -1255,10 +1247,15 @@ SELECT [DateHoliday], [WeekName], [HolidayName] FROM [M_Holiday] WHERE WeekName 
 
 <pre class="note">
 
-</pre>
-        <h2>注意点</h2>
 
-        <h3>LINQ 遅延実行</h3>
+
+</pre>
+
+
+
+<h2>注意点</h2>
+
+<h3>LINQ 遅延実行</h3>
 <pre class="note">
 Queryメソッドの結果は、IEnumerable&lt;T&gt;を返すので、処理は遅延実行されます。
 ※メソッドを発行したタイミングではSELECT文は実行されず、実際に使う場面で実行されます。
@@ -1305,7 +1302,11 @@ foreach (var rec in recs)
 <pre class="note">
 
 </pre>
-        <h2>Database.ttについて</h2>
+
+
+
+
+<h2>Database.ttについて</h2>
 <pre class="note">
 PetaPocoに付属してきたT4Templateファイルです。
 （Javaでいうところの Velocity や FreeMarker Templateみたいなもの）
@@ -1331,8 +1332,8 @@ DBに接続して、指定したDBのテーブルから列情報を読み取り�
 </pre>
 
 
-        <h3>使い方</h3>
-        <h4>① 基本設定</h4>
+<h3>使い方</h3>
+<h4>① 基本設定</h4>
 <pre class="note">
 PetaPoco.csと同フォルダにあるファイル「Database.tt」をテキストエディタで開き、DB接続文字列や、生成されるクラスの名前空間等を設定します。
 </pre>
@@ -1349,7 +1350,7 @@ PetaPoco.csと同フォルダにあるファイル「Database.tt」をテキス�
     // ******** ここまで *********
 </pre>
 
-        <h4>② コード生成</h4>
+<h4>② コード生成</h4>
 <pre class="note">
 コマンドプロンプトを起動し、該当フォルダに移動します。
 下記のコマンドを貼り付けて実行します。
@@ -1369,7 +1370,7 @@ D:\HogeProject\Database&gt; "C:\Program Files\Common Files\Microsoft Shared\Text
 ※テーブルのレイアウトが変更となったら、このコマンドを実行してcsファイルを再生成すること。
 </pre>
 
-        <h3>注意</h3>
+<h3>注意</h3>
 <pre class="note">
 このT4Template、ご丁寧にもテーブル名が複数形だったら、レコードEntity名は単数形に変換してくれちゃってるので注意！
 例：[IPM_Items]テーブルのEntityは、[IPM_Item]、
@@ -1377,13 +1378,14 @@ D:\HogeProject\Database&gt; "C:\Program Files\Common Files\Microsoft Shared\Text
 
 PetaPoco.Core.ttinclude の1360行付近に置換ルールがあります。
 </pre>
-        <br />
-        <br />
+
+<br />
+<br />
 
 
 
-        <h3>名前のUpper/Lower</h3>
-        <pre class="note">
+<h3>名前のUpper/Lower</h3>
+<pre class="note">
 RDBによって、名前（テーブルやカラム等）の大文字／小文字区別仕様が異なります。
 <pre class="prettyprint lang-sql">
 -- パスカル表記
@@ -1461,7 +1463,7 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
 
 </pre>
 <div id="modal_sqlserver_tips" class="modal">
-    <pre style="text-wrap: avoid; white-space: pre-wrap; word-break:break-all;">
+<pre style="text-wrap: avoid; white-space: pre-wrap; word-break:break-all;">
 この"CI""AS"の末尾の一文字
 "I"－Insensitive：識別しない
 "S"－Sensitive：識別する
@@ -1475,614 +1477,619 @@ OracleとPostgreSQLの場合、引用符（ダブルクォーテーション）�
 これらの組み合わせで出来ています。
 なので、"Japanese_CI_AS"なら、「日本語・大文字小文字は識別しない・アクセントは識別する」という意味。
 省略されたものは「識別しない」になるらしい。
-    </pre>
+</pre>
 </div>
 
+<br />
 
-        <br />
-        <h2>Mapping</h2>
-        <h3>MS SQL Server</h3>
-        <table class="table-mapping">
-            <thead>
-                <tr>
-                    <th>RDB type</th>
-                    <th>range</th>
-                    <th>size</th>
-                    <th>C# type</th>
-                    <th>remark</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>bigint</td>
-                    <td>-9223372036854775808 ～ 9223372036854775807</td>
-                    <td>8</td>
-                    <td>long</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>int</td>
-                    <td>-2147483648 ～ 2147483647</td>
-                    <td>4</td>
-                    <td>int</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>smallint</td>
-                    <td>-32768 ～ 32767</td>
-                    <td>2</td>
-                    <td>short</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>tinyint</td>
-                    <td>0 ～ 255</td>
-                    <td>1</td>
-                    <td>byte</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>bit</td>
-                    <td>0 ～ 1</td>
-                    <td>1</td>
-                    <td>bool</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>decimal</td>
-                    <td>-10^38 +1 ～ 10^38 –1</td>
-                    <td>1 - 9 :  5 byte<br />10-19 :  9 byte<br />20-28 : 13 byte<br />29-38 : 17 byte</td>
-                    <td>decimal</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>numeric</td>
-                    <td>〃</td>
-                    <td>〃</td>
-                    <td>decimal</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>money</td>
-                    <td>-922337203685477.5808 ～ 922337203685477.5807</td>
-                    <td>8</td>
-                    <td>decimal</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>smallmoney</td>
-                    <td>-214748.3648 ～ 214748.3647</td>
-                    <td>4</td>
-                    <td>decimal</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>real</td>
-                    <td>-3.40E + 38 ～ 3.40E + 38</td>
-                    <td>4 byte</td>
-                    <td>float</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>float</td>
-                    <td>-1.79E + 308 ～ 1.79E + 308</td>
-                    <td>1-24  : 7桁 : 4 byte<br />25-53 :15桁 : 8 byte</td>
-                    <td>double</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>datetime</td>
-                    <td>1753/1/1 0:00:00 ～ 9999/12/31 23:59:59</td>
-                    <td>1/300秒、つまり 3.33ミリ秒の精度<br />値は、.000、.003、または .007 秒単位に丸められます</td>
-                    <td>DateTime</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>datetime2</td>
-                    <td>0001/1/1 0:00:00 ～ 9999/12/31 23:59:59</td>
-                    <td>精度は 100 ナノ秒<br />23:59:59.9999999</td>
-                    <td>DateTime</td>
-                    <td>&gt;=2005</td>
-                </tr>
-                <tr>
-                    <td>smalldatetime</td>
-                    <td>1900/1/1 0:00 ～ 2079/6/6 23:59</td>
-                    <td>精度は1分</td>
-                    <td>DateTime</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>date</td>
-                    <td>0000/1/1 ～ 9999/12/31</td>
-                    <td>精度は1日</td>
-                    <td>DateTime</td>
-                    <td>&gt;=2005</td>
-                </tr>
-                <tr>
-                    <td>time</td>
-                    <td>00:00:00.0000000 ～ 23:59:59.9999999</td>
-                    <td>精度は 100 ナノ秒</td>
-                    <td>TimeSpan</td>
-                    <td>&gt;=2005</td>
-                </tr>
-                <tr>
-                    <td>char</td>
-                    <td>8000</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>varchar</td>
-                    <td>8000</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>text</td>
-                    <td>2,147,483,647</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>nchar</td>
-                    <td>4000</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>nvarchar</td>
-                    <td>4000</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>ntext</td>
-                    <td>1,073,741,823</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>binary</td>
-                    <td>8,000 byte</td>
-                    <td></td>
-                    <td>byte[]</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>varbinary</td>
-                    <td>8,000 byte</td>
-                    <td></td>
-                    <td>byte[]</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>image</td>
-                    <td>2,147,483,647 byte</td>
-                    <td></td>
-                    <td>byte[]</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>timestamp</td>
-                    <td></td>
-                    <td></td>
-                    <td>byte[]</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>uniqueidentifier</td>
-                    <td></td>
-                    <td></td>
-                    <td>Guid</td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-
-
-
-
-        <h3>MySQL / MariaDB</h3>
-        <table class="table-mapping">
-            <thead>
-                <tr>
-                    <th>RDB type</th>
-                    <th>range</th>
-                    <th>size</th>
-                    <th>C# type</th>
-                    <th>remark</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>bigint</td>
-                    <td>-9223372036854775808 ～ 9223372036854775807</td>
-                    <td>8</td>
-                    <td>long</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>bigint (unsigned)</td>
-                    <td>0～18446744073709551615</td>
-                    <td>8</td>
-                    <td>ulong</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>int</td>
-                    <td>-2147483648 ～ 2147483647</td>
-                    <td>4</td>
-                    <td>int</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>int (unsigned)</td>
-                    <td>0～4294967295</td>
-                    <td>4</td>
-                    <td>uint</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>mediumint</td>
-                    <td>-8388608 ～ 8388607</td>
-                    <td>3</td>
-                    <td>int</td>
-                    <td>*カスタマイズ</td>
-                </tr>
-                <tr>
-                    <td>mediumint (unsigned)</td>
-                    <td>0～16777215</td>
-                    <td>3</td>
-                    <td>uint</td>
-                    <td>*カスタマイズ</td>
-                </tr>
-                <tr>
-                    <td>smallint</td>
-                    <td>-32768 ～ 32767</td>
-                    <td>2</td>
-                    <td>short</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>smallint (unsigned)</td>
-                    <td>0～65535</td>
-                    <td>2</td>
-                    <td>ushort</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>tinyint</td>
-                    <td>-128 ～ 127</td>
-                    <td>1</td>
-                    <td>sbyte</td>
-                    <td rowspan="2">*カスタマイズ<br /><span style="color:#990000;">オリジナルは、tinyintを無条件でboolにしてました<br />（ver5で直したみたい）</span></td>
-                </tr>
-                <tr>
-                    <td>tinyint (unsigned)</td>
-                    <td>0～255</td>
-                    <td>1</td>
-                    <td>byte</td>
-                </tr>
-                <tr>
-                    <td>bit</td>
-                    <td>1 ～ 64</td>
-                    <td>(m+7)/8</td>
-                    <td><span style="color:red;">bool</span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>bool</td>
-                    <td>tinyint(1)のシノニム</td>
-                    <td>1</td>
-                    <td>bool</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>decimal</td>
-                    <td>最大65桁</td>
-                    <td>(m/9)*4+(4)</td>
-                    <td>decimal</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>double</td>
-                    <td>-1.79e + 308 ～ 1.79e + 308</td>
-                    <td></td>
-                    <td>double</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>float</td>
-                    <td>-3.40e + 38 ～ 3.40e + 38</td>
-                    <td></td>
-                    <td>float</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>date</td>
-                    <td>1000-01-01 ～ 9999-12-31</td>
-                    <td>3</td>
-                    <td>DateTime</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>datetime</td>
-                    <td>1000-01-01 00:00:00 ～ 9999-12-31 23:59:59</td>
-                    <td>8</td>
-                    <td>DateTime</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>timestamp</td>
-                    <td>1970-01-01 00:00:01 ～ 2037-12-31 23:59:59</td>
-                    <td>4</td>
-                    <td>DateTime</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>time</td>
-                    <td>-838:59:59 ～ 838:59:59</td>
-                    <td>3</td>
-                    <td>TimeSpan</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>char</td>
-                    <td>255</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>varchar</td>
-                    <td>65535</td>
-                    <td>m*3+2</td>
-                    <td>string</td>
-                    <td>utf8なら1文字あたり3byte必要<br />※1レコード長は最大65535byte</td>
-                </tr>
-                <tr>
-                    <td>tinytext</td>
-                    <td>255</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>text</td>
-                    <td>65,535</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>mediumtext</td>
-                    <td>16,777,215</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>longtext</td>
-                    <td>4,294,967,295</td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>tinyblob</td>
-                    <td></td>
-                    <td></td>
-                    <td>byte[]</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>blob</td>
-                    <td></td>
-                    <td></td>
-                    <td>byte[]</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>mediumblob</td>
-                    <td></td>
-                    <td></td>
-                    <td>byte[]</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>longblob</td>
-                    <td></td>
-                    <td></td>
-                    <td>byte[]</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>enum</td>
-                    <td>65535 選択肢</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>set</td>
-                    <td>64選択肢</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
+<h2>Mapping</h2>
+<h3>MS SQL Server</h3>
+<table class="table-mapping">
+    <thead>
+        <tr>
+            <th>RDB type</th>
+            <th>range</th>
+            <th>size</th>
+            <th>C# type</th>
+            <th>remark</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>bigint</td>
+            <td>-9223372036854775808 ～ 9223372036854775807</td>
+            <td>8</td>
+            <td>long</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>int</td>
+            <td>-2147483648 ～ 2147483647</td>
+            <td>4</td>
+            <td>int</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>smallint</td>
+            <td>-32768 ～ 32767</td>
+            <td>2</td>
+            <td>short</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>tinyint</td>
+            <td>0 ～ 255</td>
+            <td>1</td>
+            <td>byte</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>bit</td>
+            <td>0 ～ 1</td>
+            <td>1</td>
+            <td>bool</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>decimal</td>
+            <td>-10^38 +1 ～ 10^38 –1</td>
+            <td>1 - 9 :  5 byte<br />10-19 :  9 byte<br />20-28 : 13 byte<br />29-38 : 17 byte</td>
+            <td>decimal</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>numeric</td>
+            <td>〃</td>
+            <td>〃</td>
+            <td>decimal</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>money</td>
+            <td>-922337203685477.5808 ～ 922337203685477.5807</td>
+            <td>8</td>
+            <td>decimal</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>smallmoney</td>
+            <td>-214748.3648 ～ 214748.3647</td>
+            <td>4</td>
+            <td>decimal</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>real</td>
+            <td>-3.40E + 38 ～ 3.40E + 38</td>
+            <td>4 byte</td>
+            <td>float</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>float</td>
+            <td>-1.79E + 308 ～ 1.79E + 308</td>
+            <td>1-24  : 7桁 : 4 byte<br />25-53 :15桁 : 8 byte</td>
+            <td>double</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>datetime</td>
+            <td>1753/1/1 0:00:00 ～ 9999/12/31 23:59:59</td>
+            <td>1/300秒、つまり 3.33ミリ秒の精度<br />値は、.000, .003, .007 秒単位に丸められます</td>
+            <td>DateTime</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>datetime2</td>
+            <td>0001/1/1 0:00:00 ～ 9999/12/31 23:59:59</td>
+            <td>精度は 100 ナノ秒<br />23:59:59.9999999</td>
+            <td>DateTime</td>
+            <td>&gt;=2005</td>
+        </tr>
+        <tr>
+            <td>smalldatetime</td>
+            <td>1900/1/1 0:00 ～ 2079/6/6 23:59</td>
+            <td>精度は1分</td>
+            <td>DateTime</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>date</td>
+            <td>0000/1/1 ～ 9999/12/31</td>
+            <td>精度は1日</td>
+            <td>DateTime</td>
+            <td>&gt;=2005</td>
+        </tr>
+        <tr>
+            <td>time</td>
+            <td>00:00:00.0000000 ～ 23:59:59.9999999</td>
+            <td>精度は 100 ナノ秒</td>
+            <td>TimeSpan</td>
+            <td>&gt;=2005</td>
+        </tr>
+        <tr>
+            <td>char</td>
+            <td>8000</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>varchar</td>
+            <td>8000</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>text</td>
+            <td>2,147,483,647</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>nchar</td>
+            <td>4000</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>nvarchar</td>
+            <td>4000</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>ntext</td>
+            <td>1,073,741,823</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>binary</td>
+            <td>8,000 byte</td>
+            <td></td>
+            <td>byte[]</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>varbinary</td>
+            <td>8,000 byte</td>
+            <td></td>
+            <td>byte[]</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>image</td>
+            <td>2,147,483,647 byte</td>
+            <td></td>
+            <td>byte[]</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>rowversion</td>
+            <td></td>
+            <td></td>
+            <td>byte[]</td>
+            <td rowspan="2">T4Templateでは自動的に[ResultColumn]を付与</td>
+        </tr>
+        <tr>
+            <td>timestamp</td>
+            <td>rowversionのシノニム（非推奨）だそうで</td>
+            <td></td>
+            <td>byte[]</td>
+        </tr>
+        <tr>
+            <td>uniqueidentifier</td>
+            <td></td>
+            <td></td>
+            <td>Guid</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
 
 
 
-        <h3>Oracle</h3>
+
+<h3>MySQL / MariaDB</h3>
+<table class="table-mapping">
+    <thead>
+        <tr>
+            <th>RDB type</th>
+            <th>range</th>
+            <th>size</th>
+            <th>C# type</th>
+            <th>remark</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>bigint</td>
+            <td>-9223372036854775808 ～ 9223372036854775807</td>
+            <td>8</td>
+            <td>long</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>bigint (unsigned)</td>
+            <td>0～18446744073709551615</td>
+            <td>8</td>
+            <td>ulong</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>int</td>
+            <td>-2147483648 ～ 2147483647</td>
+            <td>4</td>
+            <td>int</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>int (unsigned)</td>
+            <td>0～4294967295</td>
+            <td>4</td>
+            <td>uint</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>mediumint</td>
+            <td>-8388608 ～ 8388607</td>
+            <td>3</td>
+            <td>int</td>
+            <td>*カスタマイズ</td>
+        </tr>
+        <tr>
+            <td>mediumint (unsigned)</td>
+            <td>0～16777215</td>
+            <td>3</td>
+            <td>uint</td>
+            <td>*カスタマイズ</td>
+        </tr>
+        <tr>
+            <td>smallint</td>
+            <td>-32768 ～ 32767</td>
+            <td>2</td>
+            <td>short</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>smallint (unsigned)</td>
+            <td>0～65535</td>
+            <td>2</td>
+            <td>ushort</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>tinyint</td>
+            <td>-128 ～ 127</td>
+            <td>1</td>
+            <td>sbyte</td>
+            <td rowspan="2">*カスタマイズ<br /><span style="color:#990000;">オリジナルは、tinyintを無条件でboolにしてました<br />（ver5で直したみたい）</span></td>
+        </tr>
+        <tr>
+            <td>tinyint (unsigned)</td>
+            <td>0～255</td>
+            <td>1</td>
+            <td>byte</td>
+        </tr>
+        <tr>
+            <td>bit</td>
+            <td>1 ～ 64</td>
+            <td>(m+7)/8</td>
+            <td><span style="color:red;">bool</span></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>bool</td>
+            <td>tinyint(1)のシノニム</td>
+            <td>1</td>
+            <td>bool</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>decimal</td>
+            <td>最大65桁</td>
+            <td>(m/9)*4+(4)</td>
+            <td>decimal</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>double</td>
+            <td>-1.79e + 308 ～ 1.79e + 308</td>
+            <td></td>
+            <td>double</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>float</td>
+            <td>-3.40e + 38 ～ 3.40e + 38</td>
+            <td></td>
+            <td>float</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>date</td>
+            <td>1000-01-01 ～ 9999-12-31</td>
+            <td>3</td>
+            <td>DateTime</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>datetime</td>
+            <td>1000-01-01 00:00:00 ～ 9999-12-31 23:59:59</td>
+            <td>8</td>
+            <td>DateTime</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>timestamp</td>
+            <td>1970-01-01 00:00:01 ～ 2037-12-31 23:59:59</td>
+            <td>4</td>
+            <td>DateTime</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>time</td>
+            <td>-838:59:59 ～ 838:59:59</td>
+            <td>3</td>
+            <td>TimeSpan</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>char</td>
+            <td>255</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>varchar</td>
+            <td>65535</td>
+            <td>m*3+2</td>
+            <td>string</td>
+            <td>utf8なら1文字あたり3byte必要<br />※1レコード長は最大65535byte</td>
+        </tr>
+        <tr>
+            <td>tinytext</td>
+            <td>255</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>text</td>
+            <td>65,535</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>mediumtext</td>
+            <td>16,777,215</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>longtext</td>
+            <td>4,294,967,295</td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>tinyblob</td>
+            <td></td>
+            <td></td>
+            <td>byte[]</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>blob</td>
+            <td></td>
+            <td></td>
+            <td>byte[]</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>mediumblob</td>
+            <td></td>
+            <td></td>
+            <td>byte[]</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>longblob</td>
+            <td></td>
+            <td></td>
+            <td>byte[]</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>enum</td>
+            <td>65535 選択肢</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>set</td>
+            <td>64選択肢</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+<h3>Oracle</h3>
 <pre class="note">
 （※準備中）
 </pre>
 
 
-        <h3>PostgreSQL</h3>
-        <table class="table-mapping">
-            <thead>
-                <tr>
-                    <th>RDB type</th>
-                    <th>range</th>
-                    <th>size</th>
-                    <th>C# type</th>
-                    <th>remark</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>bigint</td>
-                    <td>-9223372036854775808 ～ 9223372036854775807</td>
-                    <td>8</td>
-                    <td>long</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>bigserial</td>
-                    <td>1 ～ 9223372036854775807</td>
-                    <td>8</td>
-                    <td>long</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>integer, int</td>
-                    <td>-2147483648 ～ 2147483647</td>
-                    <td>4</td>
-                    <td>int</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>serial</td>
-                    <td>1 ～ 2147483647</td>
-                    <td>4</td>
-                    <td>int</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>smallint</td>
-                    <td>-32768 ～ 32767</td>
-                    <td>2</td>
-                    <td>short</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>boolean, bool</td>
-                    <td>0 ～ 1</td>
-                    <td>1</td>
-                    <td>bool</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>decimal</td>
-                    <td>小数点前までは131072桁、小数点以降は16383桁</td>
-                    <td></td>
-                    <td>decimal</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>numeric</td>
-                    <td>decimalのシノニム</td>
-                    <td></td>
-                    <td>decimal</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>money</td>
-                    <td>-92233720368547758.08 ～ +92233720368547758.07</td>
-                    <td>8</td>
-                    <td>decimal</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>real</td>
-                    <td>6桁精度</td>
-                    <td>4</td>
-                    <td>float</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>double precision</td>
-                    <td>15桁精度</td>
-                    <td>8</td>
-                    <td>double</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>date</td>
-                    <td>BC4,713 ～ AD5,874,897　（精度は1日）</td>
-                    <td>4</td>
-                    <td>DateTime</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>timestamp</td>
-                    <td>BC4,713 ～ AD294,276　（精度は1μ秒）</td>
-                    <td>8</td>
-                    <td>DateTime</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>time</td>
-                    <td>00:00:00 ～ 24:00:00　（精度は1μ秒）</td>
-                    <td>8</td>
-                    <td>TimeSpan</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>bytea</td>
-                    <td></td>
-                    <td></td>
-                    <td>byte[]</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>（その他）</td>
-                    <td></td>
-                    <td></td>
-                    <td>string</td>
-                    <td></td>
-                </tr>
-            <tbody>
-        </table>
+<h3>PostgreSQL</h3>
+<table class="table-mapping">
+    <thead>
+        <tr>
+            <th>RDB type</th>
+            <th>range</th>
+            <th>size</th>
+            <th>C# type</th>
+            <th>remark</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>bigint</td>
+            <td>-9223372036854775808 ～ 9223372036854775807</td>
+            <td>8</td>
+            <td>long</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>bigserial</td>
+            <td>1 ～ 9223372036854775807</td>
+            <td>8</td>
+            <td>long</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>integer, int</td>
+            <td>-2147483648 ～ 2147483647</td>
+            <td>4</td>
+            <td>int</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>serial</td>
+            <td>1 ～ 2147483647</td>
+            <td>4</td>
+            <td>int</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>smallint</td>
+            <td>-32768 ～ 32767</td>
+            <td>2</td>
+            <td>short</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>boolean, bool</td>
+            <td>0 ～ 1</td>
+            <td>1</td>
+            <td>bool</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>decimal</td>
+            <td>小数点前までは131072桁、小数点以降は16383桁</td>
+            <td></td>
+            <td>decimal</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>numeric</td>
+            <td>decimalのシノニム</td>
+            <td></td>
+            <td>decimal</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>money</td>
+            <td>-92233720368547758.08 ～ +92233720368547758.07</td>
+            <td>8</td>
+            <td>decimal</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>real</td>
+            <td>6桁精度</td>
+            <td>4</td>
+            <td>float</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>double precision</td>
+            <td>15桁精度</td>
+            <td>8</td>
+            <td>double</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>date</td>
+            <td>BC4,713 ～ AD5,874,897　（精度は1日）</td>
+            <td>4</td>
+            <td>DateTime</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>timestamp</td>
+            <td>BC4,713 ～ AD294,276　（精度は1μ秒）</td>
+            <td>8</td>
+            <td>DateTime</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>time</td>
+            <td>00:00:00 ～ 24:00:00　（精度は1μ秒）</td>
+            <td>8</td>
+            <td>TimeSpan</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>bytea</td>
+            <td></td>
+            <td></td>
+            <td>byte[]</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>（その他）</td>
+            <td></td>
+            <td></td>
+            <td>string</td>
+            <td></td>
+        </tr>
+    <tbody>
+</table>
 
-        <!--
-    <br />
-    <br />
-    <h2>PetaPoco v5について</h2>
-    <pre class="note">
-    GitHubやNuGetで取得できるPetaPoco（ver5以降）は大幅に変わってしまいました。
+<!--
+<br />
+<br />
+<h2>PetaPoco v5について</h2>
+<pre class="note">
+GitHubやNuGetで取得できるPetaPoco（ver5以降）は大幅に変わってしまいました。
 
-    ソースはシンプルな1ファイルではなく、各クラスごとにファイルが別れて、
-    機能が増えた分、廃止されたメソッドもあります。
-    ソースのソリューションには、1ファイルに結合するプロジェクト「PetaPoco.Cs.Joiner」があり、
-    一応これで1ファイルにはできるけど、7Kステップオーバーの、ちっともMicroでないものになっちゃいました。
-    ※オリジナルのver4.0.3は2.3Kだというのに。
-       それまでにはなかったコメント行や、コード規則に則ったコーディングなっているから・・・ってのもあるんだけど。
+ソースはシンプルな1ファイルではなく、各クラスごとにファイルが別れて、
+機能が増えた分、廃止されたメソッドもあります。
+ソースのソリューションには、1ファイルに結合するプロジェクト「PetaPoco.Cs.Joiner」があり、
+一応これで1ファイルにはできるけど、7Kステップオーバーの、ちっともMicroでないものになっちゃいました。
+※オリジナルのver4.0.3は2.3Kだというのに。
+    それまでにはなかったコメント行や、コード規則に則ったコーディングなっているから・・・ってのもあるんだけど。
 
-    シンプルなソースを、好みでカスタマイズできるのが利点だったのに、ちょっと残念。
-    NuGetでDLL版を使うくらいなら、いっそEntityFrameworkを使ったほうが、いろいろと良いかも・・・
+シンプルなソースを、好みでカスタマイズできるのが利点だったのに、ちょっと残念。
+NuGetでDLL版を使うくらいなら、いっそEntityFrameworkを使ったほうが、いろいろと良いかも・・・
+
+</pre>
+-->
 
 
-    </pre>
-    -->
+</div>
 
-
-    </div>
-
-    <div style=height:40px;></div>
-
-    <div style="clear: both;"></div>
+<div style=height:40px;></div>
+<div style="clear: both;"></div>
 </body>
 </html>
+
 <script type="text/javascript">
     $(function () {
         // メニューの中身を作る

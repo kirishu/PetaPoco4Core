@@ -34,6 +34,8 @@ namespace PetaPoco4Core.Test.SQLServer
                 CreateTable01(db);
                 CreateTable02(db);
                 CreateTable03(db);   // AutoIncrement PK
+
+                CreateTable04(db);   // typical of SQLServer 
             }
         }
 
@@ -48,6 +50,7 @@ namespace PetaPoco4Core.Test.SQLServer
                 db.Execute("IF OBJECT_ID(N'PtTable01', N'U') IS NOT NULL    DROP TABLE PtTable01");
                 db.Execute("IF OBJECT_ID(N'PtTable02', N'U') IS NOT NULL    DROP TABLE PtTable02");
                 db.Execute("IF OBJECT_ID(N'PtTable03', N'U') IS NOT NULL    DROP TABLE PtTable03");
+                db.Execute("IF OBJECT_ID(N'PtTable04', N'U') IS NOT NULL    DROP TABLE PtTable04");
             }
         }
 
@@ -159,6 +162,33 @@ namespace PetaPoco4Core.Test.SQLServer
 
         }
 
+        /// <summary>
+        /// typical table
+        /// </summary>
+        /// <param name="db"></param>
+        private void CreateTable04(DB db)
+        {
+            // 存在していたらDROP
+            db.Execute("IF OBJECT_ID(N'PtTable04', N'U') IS NOT NULL    DROP TABLE PtTable04");
+
+            // CREATE
+            var sql = PetaPoco.Sql.Builder
+                .Append("CREATE TABLE PtTable04 (")
+                .Append("      Key04                 int          IDENTITY (1, 1)  NOT NULL")
+                .Append("    , ColBool               bit              NOT NULL")
+                .Append("    , ColInt                int")
+                .Append("    , ColDec                decimal(10,2)")
+                .Append("    , ColVarchar            NVARCHAR(20)")
+                .Append("    , ColRowVersion         rowversion   NOT NULL")        // rowversion型を定義
+                .Append("    , CONSTRAINT PK_PtTable04 PRIMARY KEY (Key04)")
+                .Append(");");
+            db.Execute(sql);
+
+            // データINSERT
+            db.Execute("INSERT INTO PtTable04 (ColBool, ColInt, ColDec, ColVarchar) values ('true',789,12345678.99,'北海道');");
+            db.Execute("INSERT INTO PtTable04 (ColBool, ColInt, ColDec, ColVarchar) values ('false',132,null,null);");
+
+        }
 
     }
 

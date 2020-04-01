@@ -7,6 +7,14 @@ namespace PetaPocoAppFx
         public void Execute()
         {
             Database.SQLServer.Config.ConnectionString = Program.ConnectionString;
+
+            Test1();
+            Test2();
+
+        }
+
+        private void Test1()
+        { 
             using (var db = new Database.SQLServer.DB())
             {
                 var pk1 = new
@@ -63,6 +71,7 @@ namespace PetaPocoAppFx
                     ColVarCharPast = "あいうえおほほほほ",
                     ColTextPast = "色は匂へど 散りぬるを 我が世誰そ 常ならむ 有為の奥山 今日越えて 浅き夢見じ 酔ひもせず",
                     ColVarBinary = new byte[64],
+                    ColRowVersion = new byte[64],       // ResultColumn
                 };
                 db.Insert(rec6);
 
@@ -94,6 +103,28 @@ namespace PetaPocoAppFx
 
                 db.AbortTransaction();
             }
+        }
+
+        private void Test2()
+        {
+            //using (var db = new Database.SQLServer.DB())
+            //{
+            //    db.BeginTransaction();
+            //    db.KeepConnectionAlive = true;
+
+            //    // 一時表のテスト
+            //    var sql = PetaPoco.Sql.Builder
+            //        .Append("SELECT *")
+            //        .Append("  INTO [#tempCompositeKey]")
+            //        .Append("  FROM TrCompositeKey")
+            //        .Append(" WHERE Key01 = @0", "08");
+            //    db.Execute(sql);
+
+            //    var rec = db.First<Database.SQLServer.TrCompositeKey>("SELECT * FROM [#tempCompositeKey]");
+
+            //    System.Diagnostics.Debug.WriteLine(rec.ColVarchar);
+
+            //}
         }
     }
 }

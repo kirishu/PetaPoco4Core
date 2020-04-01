@@ -106,8 +106,8 @@ public class Table
     public string CleanName;
     public string SequenceName;
     public bool Ignore;
-    public string Comment;              // added by kirishu
-    public string DefaultSchema;        // added by kirishu
+    public string Comment;              // mod
+    public string DefaultSchema;        // mod
 
     public string ClassName;
 
@@ -143,8 +143,9 @@ public class Column
     public bool IsNullable;
     public bool IsAutoIncrement;
     public bool Ignore;
-    public string Comment;         // added by kirishu
-    public string DefaultValue;    // added by kirishu
+    public string Comment;         // mod
+    public string DefaultValue;    // mod
+    public bool IsResultColumn;    // mod  (Only populated in queries and is not used for updates or inserts operations.)
 }
 
 public class Tables : List<Table>
@@ -195,7 +196,9 @@ string CheckNullable(Column col)
 // ColumnAttributeの記述文字列を返す
 string GetColumnAttribute(Column col)
 {
-    return "Column"    + ((col.Name != col.PropertyName) ? "(\"" + col.Name + "\")" : "");
+	string prop = col.Name != col.PropertyName ? "(\"" + col.Name + "\")" : "";
+	return (col.IsResultColumn ? "[ResultColumn]" : "")
+		 + string.Format("[Column{0}]", prop);
 }
 
 string GetPrimaryKeys(List<Column> cols)
@@ -500,14 +503,21 @@ class SqlServerSchemaReader : SchemaReader
             {
                 while(rdr.Read())
                 {
-                    Column col=new Column();
-                    col.Name=rdr["ColumnName"].ToString();
-                    col.PropertyName=CleanUp(col.Name);
-                    col.PropertyType=GetPropertyType(rdr["DataType"].ToString());
-                    col.IsNullable=rdr["IsNullable"].ToString()=="YES";
-                    col.IsAutoIncrement=((int)rdr["IsIdentity"])==1;
+                    Column col = new Column();
+                    col.Name = rdr["ColumnName"].ToString();
+                    col.PropertyName = CleanUp(col.Name);
+                    col.PropertyType = GetPropertyType(rdr["DataType"].ToString());
+                    col.IsNullable = rdr["IsNullable"].ToString()=="YES";
+                    col.IsAutoIncrement = ((int)rdr["IsIdentity"])==1;
                     col.Comment = Inflector.ConvertHtmlEscape(rdr["commnet"].ToString());
                     col.DefaultValue = rdr["DefaultSetting"].ToString();
+
+					// rowversion, timestamp型 だったらResultColumnAttributeを付与させる
+					if (rdr["DataType"].ToString().Equals("rowversion", StringComparison.InvariantCultureIgnoreCase)
+						|| rdr["DataType"].ToString().Equals("timestamp", StringComparison.InvariantCultureIgnoreCase))
+                    {
+						col.IsResultColumn = true;
+                    }
                     result.Add(col);
                 }
             }
@@ -550,8 +560,8 @@ class SqlServerSchemaReader : SchemaReader
 
     string GetPropertyType(string sqlType)
     {
-        string sysType="string";
-        switch (sqlType)
+        string sysType = "string";
+        switch (sqlType.ToLower())
         {
             case "bigint":
                 sysType = "long";
@@ -591,13 +601,14 @@ class SqlServerSchemaReader : SchemaReader
                 break;
             case "bit":
                 sysType=  "bool";
-                   break;
+                break;
             case "image":
             case "binary":
             case "varbinary":
             case "timestamp":
+            case "rowversion":
                 sysType=  "byte[]";
-                 break;
+                break;
             case "geography":
                 sysType = "Microsoft.SqlServer.Types.SqlGeography";
                 break;

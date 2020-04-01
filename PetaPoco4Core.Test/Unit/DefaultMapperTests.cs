@@ -62,12 +62,10 @@ namespace PetaPoco4Core.Test.Unit
             var colA = poco.Columns.Values.Single(x => x.PropertyInfo.Name == nameof(Models.TeraEntity.TheId2));
             Assert.Equal("Id2", colA.ColumnName);
             Assert.False(colA.ResultColumn);
-            Assert.False(colA.VersionColumn);
 
             var colB = poco.Columns.Values.Single(x => x.PropertyInfo.Name == nameof(Models.TeraEntity.ResultColumn));
             Assert.Equal("result_column", colB.ColumnName);
             Assert.True(colB.ResultColumn);
-            Assert.False(colB.VersionColumn);
 
             var colC = poco.Columns.Values.SingleOrDefault(x => x.PropertyInfo.Name == nameof(Models.TeraEntity.NotAColumn));
             Assert.Null(colC);
@@ -88,12 +86,10 @@ namespace PetaPoco4Core.Test.Unit
             var colA = poco.Columns.Values.Single(x => x.PropertyInfo.Name == nameof(Models.YottaEntity.AnotherColumn));
             Assert.Equal("AnotherColumn", colA.ColumnName);
             Assert.False(colA.ResultColumn);
-            Assert.False(colA.VersionColumn);
 
             var colB = poco.Columns.Values.Single(x => x.PropertyInfo.Name == nameof(Models.YottaEntity.ResultColumn));
             Assert.Equal("ResultColumn", colB.ColumnName);
             Assert.True(colB.ResultColumn);
-            Assert.False(colB.VersionColumn);
 
             var colC = poco.Columns.Values.SingleOrDefault(x => x.PropertyInfo.Name == nameof(Models.YottaEntity.NotAColumn));
             Assert.Null(colC);
@@ -101,7 +97,6 @@ namespace PetaPoco4Core.Test.Unit
             var colD = poco.Columns.Values.Single(x => x.PropertyInfo.Name == nameof(Models.YottaEntity.Creater));
             Assert.Equal("Creater", colD.ColumnName);
             Assert.False(colD.ResultColumn);
-            Assert.False(colD.VersionColumn);
         }
 
         /// <summary>
