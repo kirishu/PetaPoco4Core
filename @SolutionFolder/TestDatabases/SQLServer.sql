@@ -33,6 +33,12 @@ exec sp_addrolemember 'db_owner', 'testman'
 go
 
 -- ---------------------------------------------------------------------------------------
+IF OBJECT_ID(N'TrCompositeKey名', N'U') IS NOT NULL drop table TrCompositeKey;
+IF OBJECT_ID(N'TrAutoNumber名', N'U') IS NOT NULL drop table TrAutoNumber;
+IF OBJECT_ID(N'ViHogeFuga名', N'U') IS NOT NULL drop view ViHogeFuga;
+IF OBJECT_ID(N'TrColumns名', N'U') IS NOT NULL drop table TrColumns;
+
+-- ---------------------------------------------------------------------------------------
 -- CREATE OBJECTS
 -- ---------------------------------------------------------------------------------------
 CREATE TABLE TrCompositeKey (

@@ -7,7 +7,7 @@ namespace PetaPoco4Core.Test.PostgreSql
     /// </summary>
     public class DB : PetaPoco.DatabaseExtension
     {
-        public static readonly string Constr = "Server=localhost;Port=5432;Database=petapoco_sample;Encoding=UTF8;User Id=testman;Password=testpwd;";
+        public static readonly string Constr = "Server=CentOSdb;Port=5432;Database=petapoco_sample;Encoding=UTF8;User Id=testman;Password=testpwd;";
 
         /// <summary>
         /// Database Object

@@ -119,7 +119,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         [Fact]
         public void 例外系_接続タイムアウト_Timeout10秒()
         {
-            var ex = Assert.Throws<System.TimeoutException>(() =>
+            var ex = Assert.Throws<Npgsql.NpgsqlException>(() =>
             {
                 var constr = "Server=8.8.8.8;Port=5432;Timeout=10;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
                 using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.PostgreSql))
@@ -128,7 +128,8 @@ namespace PetaPoco4Core.Test.PostgreSql
                 }
             });
             _output.WriteLine(ex.ToString());
-
+            _output.WriteLine(ex.ErrorCode.ToString());
+            Assert.Equal(-2147467259, ex.ErrorCode);
             /*
                 Message: Test method DevSupport.Tests.Database.例外テスト系.PT2_005_接続タイムアウト_Timeout10秒 threw exception:
                 System.TimeoutException: 操作がタイムアウトしました。
@@ -137,7 +138,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         [Fact]
         public void 例外系_接続タイムアウト_Timeout30秒()
         {
-            var ex = Assert.Throws<System.Net.Sockets.SocketException>(() =>
+            var ex = Assert.Throws<Npgsql.NpgsqlException>(() =>
             {
                 var constr = "Server=8.8.8.8;Port=5432;Timeout=30;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
                 using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.PostgreSql))
@@ -146,6 +147,8 @@ namespace PetaPoco4Core.Test.PostgreSql
                 }
             });
             _output.WriteLine(ex.ToString());
+            _output.WriteLine(ex.ErrorCode.ToString());
+            Assert.Equal(-2147467259, ex.ErrorCode);
 
             /*
                 Message: Test method DevSupport.Tests.Database.例外テスト系.PT2_005_接続タイムアウト_Timeout30秒 threw exception:
@@ -214,7 +217,7 @@ namespace PetaPoco4Core.Test.PostgreSql
         {
             var constr = "Server=localhost;Port=5432;Database=dvdrental;Encoding=UTF8;User Id=testman;Password=testpwd;";
 
-            var ex = Assert.Throws<System.Net.Sockets.SocketException>(() =>
+            var ex = Assert.Throws<Npgsql.NpgsqlException>(() =>
             {
                 using (var db = new PetaPoco.DatabaseExtension(constr, PetaPoco.Database.RDBType.PostgreSql))
                 {
@@ -222,7 +225,7 @@ namespace PetaPoco4Core.Test.PostgreSql
                 }
             });
             _output.WriteLine(ex.ToString());
-            Assert.Equal(10061, ex.ErrorCode);        // 対象のコンピューターによって拒否されたため、接続できませんでした。
+            Assert.Equal(-2147467259, ex.ErrorCode);
         }
 
         [Fact]

@@ -1000,7 +1000,7 @@ db.Update(rec, updatecols);
 var pd = PetaPoco.Database.PocoData.ForType(Database.Employees.T_Table001.GetType());
 var updatecols = pd.Columns.Keys.ToList();
 // ↑から除外フィールドを取り除く
-updatecols.RemoveAll(x => (
+updatecols.RemoveAll(x =&gt; (
     x.Equals("Column01", StringComparison.CurrentCultureIgnoreCase) ||
     x.Equals("Column02", StringComparison.CurrentCultureIgnoreCase) ||
     x.Equals("Column03", StringComparison.CurrentCultureIgnoreCase)

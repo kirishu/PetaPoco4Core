@@ -8,7 +8,7 @@
 //     Provider:               `Oracle.DataAccess.Client`
 //     Schema:                 ``
 //     Include Views:          `True`
-//     Genetated:              `2020/03/07 22:16:58`
+//     Genetated:              `2020/04/04 21:27:57`
 
 using System;
 using PetaPoco;
@@ -34,8 +34,6 @@ namespace PetaPocoAppFx.Database.Oracle
         /// </summary>
         public DB() : base(Config.ConnectionString, RDBType.Oracle)
         {
-            CommandTimeout = 30;
-            UseA5Mk2Params = false;
         }
     }
 
@@ -103,9 +101,9 @@ namespace PetaPocoAppFx.Database.Oracle
         /// <summary>bool型の列</summary>
         [Column("COL_BOOL")] public decimal ColBool { get { return _ColBool; } set { _ColBool = value; MarkColumnModified("COL_BOOL"); } } decimal _ColBool;
         /// <summary>int型の列</summary>
-        [Column("COL_INT")] public int? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("COL_INT"); } } int? _ColInt;
+        [Column("COL_INT")] public decimal? ColInt { get { return _ColInt; } set { _ColInt = value; MarkColumnModified("COL_INT"); } } decimal? _ColInt;
         /// <summary>decimal型の列</summary>
-        [Column("COL_DEC")] public double? ColDec { get { return _ColDec; } set { _ColDec = value; MarkColumnModified("COL_DEC"); } } double? _ColDec;
+        [Column("COL_DEC")] public decimal? ColDec { get { return _ColDec; } set { _ColDec = value; MarkColumnModified("COL_DEC"); } } decimal? _ColDec;
         /// <summary>varchar型の列</summary>
         [Column("COL_VARCHAR")] public string ColVarchar { get { return _ColVarchar; } set { _ColVarchar = value; MarkColumnModified("COL_VARCHAR"); } } string _ColVarchar;
         /// <summary>作成者</summary>

@@ -7,7 +7,7 @@ namespace PetaPoco4Core.Test.MySql
     /// </summary>
     public class DB : PetaPoco.DatabaseExtension
     {
-        public static readonly string Constr = "Server=localhost;Database=PetaPocoSample;uid=testman;pwd=testpwd;SslMode=None;Charset=utf8mb4;";
+        public static readonly string Constr = "Server=CentOSdb;Database=PetaPocoSample;uid=testman;pwd=testpwd;SslMode=None;Charset=utf8mb4;";
 
         /// <summary>
         /// Database Object

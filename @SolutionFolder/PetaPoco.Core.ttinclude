@@ -1113,15 +1113,17 @@ class OracleSchemaReader : SchemaReader
             {
                 while(rdr.Read())
                 {
+					var defval = (DBNull.Value.Equals(rdr["DATADEFAULT"])) ? "" : rdr["DATADEFAULT"].ToString();
                     var col = new Column
                     {
-                        Name = rdr["ColumnName"].ToString(),
-                        PropertyName = CleanUp(rdr["ColumnName"].ToString()),
-                        PropertyType = GetPropertyType(rdr["DataType"].ToString(), (rdr["DataType"] == DBNull.Value ? null : rdr["DataType"].ToString())),
-                        IsNullable = rdr["IsNullable"].ToString() == "Y",
-                        IsAutoIncrement = (rdr["DataDefault"].ToString().ToUpper().IndexOf("NEXTVAL", StringComparison.CurrentCultureIgnoreCase) > 0),
-                        Comment = rdr["comments"].ToString(),
-                        DefaultValue = rdr["DataDefault"].ToString(),
+                        Name = rdr["COLUMNNAME"].ToString(),
+                        PropertyName = CleanUp(rdr["COLUMNNAME"].ToString()),
+                        PropertyType = GetPropertyType(rdr["DATATYPE"].ToString(), (DBNull.Value.Equals(rdr["DATATYPE"]) ? null : rdr["DATATYPE"].ToString())),
+                        IsNullable = rdr["ISNULLABLE"].ToString() == "Y",
+                        IsAutoIncrement = (defval.ToUpper().IndexOf("NEXTVAL", StringComparison.CurrentCultureIgnoreCase) > 0),
+                        Comment = DBNull.Value.Equals(rdr["COMMENTS"]) ? "" : rdr["COMMENTS"].ToString(),
+                        DefaultValue = defval,
+
                     };
                     result.Add(col);
                 }
@@ -1221,16 +1223,21 @@ class OracleSchemaReader : SchemaReader
 
 
     const string COLUMN_SQL=
- @"select utc.table_name TableName
-        , utc.column_name ColumnName
-        , utc.data_type DataType
-        , utc.data_scale DataScale
-        , utc.nullable IsNullable
-        , ucc.comments
-        , dtc.data_default DataDefault
+ @"select utc.table_name TABLENAME
+        , utc.column_name COLUMNNAME
+        , utc.data_type DATATYPE
+        , utc.data_scale DATASCALE
+        , utc.nullable ISNULLABLE
+        , ucc.comments COMMENTS
+        , case when dtc.default_length is null then null
+               else extractvalue
+                     ( dbms_xmlgen.getxmltype
+                         ( 'select data_default from user_tab_columns where table_name = ''' || utc.table_name || ''' and column_name = ''' || utc.column_name || '''' )
+                     , '//text()' )
+          end DATADEFAULT
      from USER_TAB_COLS utc
           left join USER_COL_COMMENTS ucc on utc.table_name = ucc.table_name and utc.column_name  = ucc.column_name
-          left join DBA_TAB_COLUMNS dtc on utc.table_name = dtc.table_name and utc.column_name  = dtc.column_name
+		  left join USER_TAB_COLUMNS dtc on utc.table_name = dtc.table_name and utc.column_name  = dtc.column_name
     where utc.table_name = upper(:tableName)
     order by utc.column_id";
 
