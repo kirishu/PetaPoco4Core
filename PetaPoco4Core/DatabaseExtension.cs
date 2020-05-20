@@ -1,9 +1,15 @@
 ﻿/* --------------------------------------------------------------------------
  * DatabaseExtension - PetaPoco.Database Extension class
  * Created by kirishu (zapshu@gmail.com)
- * v4.7.1.4
+ * v4.7.1.5
  * https://github.com/kirishu/PetaPoco4Core
  * -------------------------------------------------------------------------- */
+
+#region Suppressions
+#pragma warning disable IDE0034 // default expression can be simplified
+#pragma warning disable IDE0063 // 'using' statement can be simplified
+#pragma warning disable IDE0066 // Convert switch statement to switch expression
+#endregion
 
 using NLog;
 using System;
@@ -28,7 +34,7 @@ namespace PetaPoco
     public class DatabaseExtension : PetaPoco.Database
     {
         /// <summary> Logging Instance </summary>
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        private static ILogger _logger;
 
         /// <summary> SQL文実行時の時間 </summary>
         private DateTime _execTime = DateTime.MinValue;
@@ -44,6 +50,20 @@ namespace PetaPoco
         public DatabaseExtension(string connectionString, RDBType rdbType)
             : base(connectionString, rdbType)
         {
+            _logger = LogManager.GetCurrentClassLogger();
+            _logger.Debug(string.Format(Culture, "[New Instance] {0}", connectionString));
+        }
+
+        /// <summary>
+        /// constractor
+        /// </summary>s
+        /// <param name="connectionString"></param>
+        /// <param name="rdbType"></param>
+        /// <param name="logger"></param>
+        public DatabaseExtension(string connectionString, RDBType rdbType, Logger logger)
+            : base(connectionString, rdbType)
+        {
+            _logger = logger;
             _logger.Debug(string.Format(Culture, "[New Instance] {0}", connectionString));
         }
 
@@ -97,7 +117,6 @@ namespace PetaPoco
         private string GetLogParameterDeclare(IDataParameterCollection parameters)
         {
             var log = new StringBuilder();
-            var dateTypes = new string[] { "DATETIME", "DATE", "TIME" };
 
             foreach (IDataParameter param in parameters)
             {
@@ -200,30 +219,21 @@ namespace PetaPoco
                         }
                         log.Append('\'');
                     }
-                    else if (value is TimeSpan)
+                    else if (value is TimeSpan span)
                     {
                         log.Append('\'');
-                        log.Append(((TimeSpan)value).ToString("g", Culture));    //g [-][d:]h:mm:ss[.FFFFFFF]
+                        log.Append(span.ToString("g", Culture));    //g [-][d:]h:mm:ss[.FFFFFFF]
                         log.Append('\'');
                     }
-                    else if (value is Guid)
+                    else if (value is Guid guid)
                     {
                         log.Append('\'');
-                        log.Append(((Guid)value).ToString());
+                        log.Append(guid.ToString());
                         log.Append('\'');
                     }
-                    else if (value is byte[] data)
+                    else if (value is byte[])
                     {
                         log.Append("/* BINARY */");
-                        //if (data == null || data.Length == 0)
-                        //{
-                        //    log.Append("NULL");
-                        //}
-                        //else
-                        //{
-                        //    log.Append("0x");
-                        //    log.Append(BitConverter.ToString(data).Replace("-", string.Empty));
-                        //}
                     }
                     else
                     {
@@ -266,7 +276,7 @@ namespace PetaPoco
         /// <returns></returns>
         private string GetLogParameterType(IDataParameter param)
         {
-            string datatype = string.Empty;
+            string datatype;
 
             switch (param.DbType)
             {
@@ -353,7 +363,7 @@ namespace PetaPoco
         /// <param name="x"></param>
         public override void OnException(Exception x)
         {
-            _logger.Debug(LastCommand);
+            _logger.Error(LastCommand);
             //* stack traceは呼び出し元でロギングしましょう *//
             base.OnException(x);
         }

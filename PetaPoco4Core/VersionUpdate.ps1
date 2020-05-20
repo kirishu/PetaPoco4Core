@@ -5,7 +5,7 @@
 # Version value
 $major = 4
 $miner = 7
-$revision = 1.4
+$revision = 1.5
 # ---------------------------
 
 # target files and line number

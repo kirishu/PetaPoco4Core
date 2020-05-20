@@ -2,53 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
-
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <CodeAnalysisRuleSet />
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <CodeAnalysisRuleSet />
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CodeAnalysisRuleSet />
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <CodeAnalysisRuleSet />
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="SQLServer\**" />
-    <EmbeddedResource Remove="SQLServer\**" />
-    <None Remove="SQLServer\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="MySql\TestCommon.cs" />
-    <Compile Remove="PostgreSql\TestCommon.cs" />
-    <Compile Remove="Unit\StandardMapperTests.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="nlog.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="SQLServer\Delete系.cs" />
-    <Compile Include="SQLServer\Entities.cs" />
-    <Compile Include="SQLServer\Insert系.cs" />
-    <Compile Include="SQLServer\Select系.cs" />
-    <Compile Include="SQLServer\SQLServer.cs" />
-    <Compile Include="SQLServer\Update系.cs" />
-    <Compile Include="SQLServer\例外系.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.0.19" />

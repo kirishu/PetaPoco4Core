@@ -9,7 +9,7 @@
  */
 /* --------------------------------------------------------------------------
  * Modified by kirishu (zapshu@gmail.com)
- * v4.7.1.4
+ * v4.7.1.5
  * https://github.com/kirishu/PetaPoco4Core
  * -------------------------------------------------------------------------- */
 
@@ -111,7 +111,7 @@ namespace PetaPoco
     public abstract class PetaPocoRecord<T> : IPetaPocoRecord<T>
     {
         /// <summary>変更追跡列コレクション</summary>
-        private Dictionary<string, bool> _modifiedColumns { get; set; } = new Dictionary<string, bool>();
+        private Dictionary<string, bool> ModifiedColumns { get; set; } = new Dictionary<string, bool>();
 
         #region On Loaded event memo
         /// <summary>
@@ -125,7 +125,7 @@ namespace PetaPoco
         /// </remarks>
         protected void OnLoaded()
         {
-            _modifiedColumns = new Dictionary<string, bool>();
+            ModifiedColumns = new Dictionary<string, bool>();
         }
         #endregion
 
@@ -135,9 +135,9 @@ namespace PetaPoco
         /// <param name="columnName">Column name</param>
         protected void MarkColumnModified(string columnName)
         {
-            if (_modifiedColumns != null)
+            if (ModifiedColumns != null)
             {
-                _modifiedColumns[columnName] = true;
+                ModifiedColumns[columnName] = true;
             }
         }
 
@@ -147,19 +147,19 @@ namespace PetaPoco
         /// <returns></returns>
         public IEnumerable<string> GetModifiedColumns()
         {
-            if (_modifiedColumns == null)
+            if (ModifiedColumns == null)
             {
                 return null;
             }
-            return _modifiedColumns.Keys;
+            return ModifiedColumns.Keys;
         }
 
         /// <summary>変更追跡列コレクションをクリア</summary>
         public void ClearModifiedColumns()
         {
-            if (_modifiedColumns != null)
+            if (ModifiedColumns != null)
             {
-                _modifiedColumns.Clear();
+                ModifiedColumns.Clear();
             }
         }
     }

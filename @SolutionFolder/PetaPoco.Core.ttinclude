@@ -847,7 +847,7 @@ class PostgreSqlSchemaReader : SchemaReader
         SELECT ifsm.table_name
              , ifsm.table_schema
              , ifsm.table_type
-             , obj_description(ifsm.table_name::regclass) AS table_comment
+             , obj_description((ifsm.table_schema || '.' || ifsm.table_name)::regclass) AS table_comment
           FROM information_schema.tables ifsm
          WHERE ifsm.table_type IN ('BASE TABLE', 'VIEW')
            AND ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
@@ -863,7 +863,7 @@ class PostgreSqlSchemaReader : SchemaReader
              , ifsm.udt_name
              , ifsm.column_default
              , ifsm.ordinal_position
-             , col_description(ifsm.table_name::regclass, ifsm.ordinal_position) AS column_comment
+             , col_description((ifsm.table_schema || '.' || ifsm.table_name)::regclass, ifsm.ordinal_position) AS column_comment
           FROM information_schema.columns ifsm
          WHERE ifsm.table_schema IN (SELECT DISTINCT schemaname FROM pg_stat_user_tables)
            AND ifsm.table_name = @tableName

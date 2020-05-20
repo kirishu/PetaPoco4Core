@@ -9,15 +9,18 @@
  */
 /* --------------------------------------------------------------------------
  * Modified by kirishu (zapshu@gmail.com)
- * v4.7.1.4
+ * v4.7.1.5
  * https://github.com/kirishu/PetaPoco4Core
  * -------------------------------------------------------------------------- */
 
 #region Suppressions
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-#pragma warning disable CA1034 // Nested types should not be visible
-#pragma warning disable CA1051 // Do not declare visible instance fields
-#pragma warning disable CA2227 // Collection properties should be read only
+#pragma warning disable CS1591  // Missing XML comment for publicly visible type or member
+#pragma warning disable CA1034  // Nested types should not be visible
+#pragma warning disable CA1051  // Do not declare visible instance fields
+#pragma warning disable CA2227  // Collection properties should be read only
+#pragma warning disable IDE0034 // default expression can be simplified
+#pragma warning disable IDE0063 // 'using' statement can be simplified
+#pragma warning disable IDE0066 // Convert switch statement to switch expression
 #endregion
 
 using System;
@@ -105,7 +108,7 @@ namespace PetaPoco
             a = t.GetCustomAttributes(typeof(PrimaryKeyAttribute), true);
             ti.PrimaryKey = a.Length == 0 ? null : (a[0] as PrimaryKeyAttribute).Value;
             ti.SequenceName = a.Length == 0 ? null : (a[0] as PrimaryKeyAttribute).SequenceName;
-            ti.AutoIncrement = a.Length == 0 ? false : (a[0] as PrimaryKeyAttribute).AutoIncrement;
+            ti.AutoIncrement = a.Length != 0 && (a[0] as PrimaryKeyAttribute).AutoIncrement;
 
             if (string.IsNullOrEmpty(ti.PrimaryKey))
             {
@@ -324,8 +327,8 @@ namespace PetaPoco
         public bool EnableAutoSelect { get; set; }
 
         // Member variables
-        private string _connectionString;
-        private DbProviderFactory _dbFactory;
+        private readonly string _connectionString;
+        private readonly DbProviderFactory _dbFactory;
         private IDbConnection _sharedConnection;
         private IDbTransaction _transaction;
         private int _sharedConnectionDepth;
@@ -383,7 +386,7 @@ namespace PetaPoco
             if (rdbType == RDBType.SqlServer)
             {
                 assemblyName = new string[] {
-                    "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+                    "System.Data.SqlClient.SqlClientFactory, System.Data, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 };
             }
             else if (rdbType == RDBType.MySql)
@@ -591,7 +594,7 @@ namespace PetaPoco
         }
 
         // Helper to handle named parameters from object properties
-        static Regex rxParams = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
+        static readonly Regex rxParams = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
         public static string ProcessParams(string sql, object[] argsSrc, List<object> argsDest)
         {
             return rxParams.Replace(sql, m =>
@@ -762,7 +765,7 @@ namespace PetaPoco
         }
 
         // Create a command
-        static Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
+        static readonly Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
         // [kirishu] このメソッドをprivate からprotectedに変更
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         protected IDbCommand CreateCommand(IDbConnection connection, string sql, params object[] args)
@@ -894,8 +897,8 @@ namespace PetaPoco
             }
         }
 
-        static Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL|EXEC)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-        static Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        static readonly Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL|EXEC)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        static readonly Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         string AddSelectClause<T>(string sql)
         {
             if (sql.StartsWith(";", StringComparison.OrdinalIgnoreCase))
@@ -1051,7 +1054,7 @@ namespace PetaPoco
 
         public List<T> SkipTake<T>(long skip, long take, string sql, params object[] args)
         {
-            BuildPageQueries<T>(skip, take, sql, ref args, out string sqlCount, out string sqlPage);
+            BuildPageQueries<T>(skip, take, sql, ref args, out _, out string sqlPage);
             return Fetch<T>(sqlPage, args);
         }
 
@@ -1353,9 +1356,9 @@ namespace PetaPoco
         }
 
         // Various cached stuff
-        static Dictionary<string, object> MultiPocoFactories = new Dictionary<string, object>();
-        static Dictionary<string, object> AutoMappers = new Dictionary<string, object>();
-        static System.Threading.ReaderWriterLockSlim RWLock = new System.Threading.ReaderWriterLockSlim();
+        static readonly Dictionary<string, object> MultiPocoFactories = new Dictionary<string, object>();
+        static readonly Dictionary<string, object> AutoMappers = new Dictionary<string, object>();
+        static readonly System.Threading.ReaderWriterLockSlim RWLock = new System.Threading.ReaderWriterLockSlim();
 
         // Get (or create) the multi-poco factory for a query
         Func<IDataReader, object, TRet> GetMultiPocoFactory<TRet>(Type[] types, string sql, IDataReader r)
@@ -2200,7 +2203,7 @@ namespace PetaPoco
                     return ForType(t);
                 }
             }
-            static System.Threading.ReaderWriterLockSlim RWLock = new System.Threading.ReaderWriterLockSlim();
+            static readonly System.Threading.ReaderWriterLockSlim RWLock = new System.Threading.ReaderWriterLockSlim();
             public static PocoData ForType(Type t)
             {
                 if (t == typeof(System.Dynamic.ExpandoObject))
@@ -2258,7 +2261,7 @@ namespace PetaPoco
                 a = t.GetCustomAttributes(typeof(PrimaryKeyAttribute), true);
                 TableInfo.PrimaryKey = a.Length == 0 ? "ID" : (a[0] as PrimaryKeyAttribute).Value;
                 TableInfo.SequenceName = a.Length == 0 ? null : (a[0] as PrimaryKeyAttribute).SequenceName;
-                TableInfo.AutoIncrement = a.Length == 0 ? false : (a[0] as PrimaryKeyAttribute).AutoIncrement;
+                TableInfo.AutoIncrement = a.Length != 0 && (a[0] as PrimaryKeyAttribute).AutoIncrement;
 
                 // Set autoincrement false if primary key has multiple columns
                 TableInfo.AutoIncrement = TableInfo.AutoIncrement ? !TableInfo.PrimaryKey.Contains(',') : TableInfo.AutoIncrement;
@@ -2714,12 +2717,12 @@ namespace PetaPoco
                         return info;
                     t = t.BaseType;
                 }
-                return default(T);
+                return default;
             }
 
 
-            static Dictionary<Type, PocoData> m_PocoDatas = new Dictionary<Type, PocoData>();
-            static List<Func<object, object>> m_Converters = new List<Func<object, object>>();
+            static readonly Dictionary<Type, PocoData> m_PocoDatas = new Dictionary<Type, PocoData>();
+            static readonly List<Func<object, object>> m_Converters = new List<Func<object, object>>();
             static readonly MethodInfo fnGetValue = typeof(IDataRecord).GetMethod("GetValue", new Type[] { typeof(int) });
             static readonly MethodInfo fnIsDBNull = typeof(IDataRecord).GetMethod("IsDBNull");
             static readonly FieldInfo fldConverters = typeof(PocoData).GetField("m_Converters", BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
@@ -2729,7 +2732,7 @@ namespace PetaPoco
             public ReadOnlyCollection<string> QueryColumns { get; protected set; }
             public TableInfo TableInfo { get; protected set; }
             public Dictionary<string, PocoColumn> Columns { get; protected set; }
-            Dictionary<string, Delegate> PocoFactories = new Dictionary<string, Delegate>();
+            readonly Dictionary<string, Delegate> PocoFactories = new Dictionary<string, Delegate>();
         }
 
         class EnumMapper : IDisposable
