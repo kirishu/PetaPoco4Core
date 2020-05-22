@@ -521,7 +521,7 @@ namespace PetaPoco4Core.Test.SQLite
 
                 // PtTable02 の Key01=12 を取得して内容を確認する
                 var rec_04 = db.SingleById<PtTable02>(pk);
-                Assert.Equal("Update-Commitテスト", rec_03.ColVarchar);
+                Assert.Equal("Update-Commitテスト", rec_04.ColVarchar);
             }
         }
 

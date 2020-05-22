@@ -503,7 +503,7 @@ namespace PetaPoco4Core.Test.PostgreSql
 
                 // pt_table02 の key01=12 を取得して内容を確認する
                 var rec_04 = db.SingleById<PtTable02>(pk);
-                Assert.Equal("Update-Commitテスト", rec_03.ColVarchar);
+                Assert.Equal("Update-Commitテスト", rec_04.ColVarchar);
             }
         }
 
