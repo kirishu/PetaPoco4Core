@@ -323,7 +323,7 @@ namespace PetaPoco
         public static IMapper Mapper { get; set; }
         /// <summary>True if time and date values returned through this column should be forced to UTC DateTimeKind.</summary>
         public bool ForceDateTimesToUtc { get; set; }
-        /// <summary>When set to true, PetaPoco will automatically create the "SELECT columns" part of any query that looks like it</summary>        
+        /// <summary>When set to true, PetaPoco will automatically create the "SELECT columns" part of any query that looks like it</summary>
         public bool EnableAutoSelect { get; set; }
 
         // Member variables
@@ -1878,7 +1878,7 @@ namespace PetaPoco
         /// <![CDATA[
         ///     Dictionary<string, object> keys = {{ "Key01", "123" }, { "Key02", 456 }};
         ///     int i = 0;
-        ///     
+        ///
         ///     BuildPrimaryKeySql(keys, ref i);
         ///       -> "\"Key01\" = @0 AND \"Key02\" = @1"
         /// ]]>
@@ -1901,11 +1901,11 @@ namespace PetaPoco
         ///     // キーが1つなら「値」を渡す
         ///     GetPrimaryKeyValues("Key01", "123");
         ///       -> [{ "Key01", "123" }]
-        /// 
+        ///
         ///     // キーが2つ以上なら匿名型で渡す
         ///     GetPrimaryKeyValues("Key01,Key02", new { Key01 = "123", Key02 = 456, });
         ///       -> [{ "Key01", "123" }, { "Key02", 456 }]
-        /// 
+        ///
         ///     // キーが1つなのに匿名型を渡すと正しくない
         ///     GetPrimaryKeyValues("Key01", new { Key01 = "123" });
         ///       -> これは間違いなので注意！・・・[{ "Key01",  [{"Key01", "123"}]}]

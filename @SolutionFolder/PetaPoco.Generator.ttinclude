@@ -5,6 +5,8 @@ if (string.IsNullOrEmpty(RepoName)) RepoName="DB";
 using System;
 using PetaPoco;
 
+#pragma warning disable IDE1006     // Naming Styles
+
 namespace <#=Namespace #>
 {
 <# if (GenerateCommon) { /*[A]*/ #>
