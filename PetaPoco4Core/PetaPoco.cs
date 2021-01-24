@@ -14,11 +14,14 @@
  * -------------------------------------------------------------------------- */
 
 #region Suppressions
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
 #pragma warning disable CS1591  // Missing XML comment for publicly visible type or member
 #pragma warning disable CA1034  // Nested types should not be visible
 #pragma warning disable CA1051  // Do not declare visible instance fields
 #pragma warning disable CA2227  // Collection properties should be read only
 #pragma warning disable IDE0034 // default expression can be simplified
+#pragma warning disable IDE0057 // Substring can be simplified
 #pragma warning disable IDE0063 // 'using' statement can be simplified
 #pragma warning disable IDE0066 // Convert switch statement to switch expression
 #endregion
@@ -2717,7 +2720,7 @@ namespace PetaPoco
                         return info;
                     t = t.BaseType;
                 }
-                return default;
+                return default(T);
             }
 
 

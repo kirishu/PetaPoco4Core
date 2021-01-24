@@ -6,7 +6,10 @@
  * -------------------------------------------------------------------------- */
 
 #region Suppressions
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+
 #pragma warning disable IDE0034 // default expression can be simplified
+#pragma warning disable IDE0057 // Substring can be simplified
 #pragma warning disable IDE0063 // 'using' statement can be simplified
 #pragma warning disable IDE0066 // Convert switch statement to switch expression
 #endregion
